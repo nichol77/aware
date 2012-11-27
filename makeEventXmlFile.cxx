@@ -24,6 +24,7 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TGraph.h"
+#include "TTimeStamp.h"
 
 //TinyXML Includes
 #include "tinyxml2.h"
@@ -71,8 +72,10 @@ int main(int argc, char **argv) {
   int isIcrrEvent=0;
   int isAtriEvent=0;
 
+  Int_t runNumber;
   //Check an event in the run Tree and see if it is station1 or TestBed (stationId<2)
   eventTree->SetBranchAddress("event",&rawEvPtr);
+  eventTree->SetBranchAddress("run",&runNumber);
   eventTree->GetEntry(0);
 
   if((rawEvPtr->stationId)<2){
@@ -116,7 +119,7 @@ int main(int argc, char **argv) {
 
   char xmlBuffer[XML_BUFFER_SIZE];
 
-  numEntries=1;
+  //  numEntries=1;
   for(Long64_t event=0;event<numEntries;event++) {
     if(event%starEvery==0) {
       std::cerr << "*";       
@@ -126,46 +129,64 @@ int main(int argc, char **argv) {
     eventTree->GetEntry(event);
 
     //Here we create a useful event Either an Icrr or Atri event
+    Int_t eventNumber=event;
+    Int_t unixTime=1;
+
+    Double_t triggerTime=0;
 
     if(isIcrrEvent){
       realIcrrEvPtr = new UsefulIcrrStationEvent(rawIcrrEvPtr, AraCalType::kLatestCalib);
       realEvPtr=realIcrrEvPtr;
+      eventNumber=rawIcrrEvPtr->head.eventNumber;
+      unixTime=rawIcrrEvPtr->head.unixTime;
+      triggerTime=rawIcrrEvPtr->getRubidiumTriggerTimeInSec();
     }
     else if(isAtriEvent){
       realAtriEvPtr = new UsefulAtriStationEvent(rawAtriEvPtr, AraCalType::kLatestCalib);
       realEvPtr=realAtriEvPtr;
+      eventNumber=rawAtriEvPtr->eventNumber;
+      unixTime=rawAtriEvPtr->unixTime;
     }
+    TTimeStamp timeStamp(unixTime,0);
+    //    std::cout << "Run: "<< realEvPtr->
      
     //Now you can do whatever analysis you want
     //e.g.
     AraStationId_t stationId=rawEvPtr->getStationId();
-    std::cout << "Station Id: " << int(stationId) << "\n";
-    std::cout << "Station Name: " << fGeomTool->getStationName(rawEvPtr->getStationId()) << "\n";
+    //    std::cout << "Station Id: " << int(stationId) << "\n";
+    //    std::cout << "Station Name: " << fGeomTool->getStationName(rawEvPtr->getStationId()) << "\n";
     Int_t numChannels=realEvPtr->getNumRFChannels();
-    for(int chan=0;chan<numChannels;chan++) {
-      std::cout << fGeomTool->getAntNumByRFChan(chan,stationId)+1 << "\t" << AraAntPol::antPolAsString(fGeomTool->getPolByRFChan(chan,stationId)) << "\n";
-
-
-    }
+   
 
 
     XMLDocument *doc = new XMLDocument();
     doc->InsertEndChild(doc->NewDeclaration());
     XMLNode* rootNode = doc->InsertEndChild( doc->NewElement( "root" ) );
+
+    XMLElement *stationNode=doc->NewElement("station");
+    XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
+    stationNode->InsertFirstChild(doc->NewText(fGeomTool->getStationName(rawEvPtr->getStationId())));  
+    rootNode->InsertEndChild(stationNode);
+
+
     XMLElement *run=doc->NewElement("run");
-    XMLUtil::ToStr(10,xmlBuffer,XML_BUFFER_SIZE);
+    XMLUtil::ToStr(runNumber,xmlBuffer,XML_BUFFER_SIZE);
     run->InsertFirstChild(doc->NewText(xmlBuffer));  
     rootNode->InsertEndChild(run);
 
     XMLElement *eventNum=doc->NewElement("eventNum");
-    XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
+    XMLUtil::ToStr(eventNumber,xmlBuffer,XML_BUFFER_SIZE);
     eventNum->InsertFirstChild(doc->NewText(xmlBuffer));  
     rootNode->InsertEndChild(eventNum);
 
     XMLElement *time=doc->NewElement("time");
-    time->InsertFirstChild(doc->NewText("2012"));
+    time->InsertFirstChild(doc->NewText(timeStamp.AsString("sl")));
     rootNode->InsertEndChild(time);
 
+    XMLElement *triggerTimeNode=doc->NewElement("triggerTime");
+    XMLUtil::ToStr(triggerTime,xmlBuffer,XML_BUFFER_SIZE);
+    triggerTimeNode->InsertFirstChild(doc->NewText(xmlBuffer));  
+    rootNode->InsertEndChild(triggerTimeNode);
 
     XMLElement *numChannelsNode=doc->NewElement("numChannels");
     XMLUtil::ToStr(numChannels,xmlBuffer,XML_BUFFER_SIZE);
@@ -214,7 +235,11 @@ int main(int argc, char **argv) {
       
 
     }
-    doc->SaveFile( "foo.xml" );
+    char outName[FILENAME_MAX];
+    sprintf(outName,"output/2012/1023/run30525/event%d.xml",eventNumber);
+
+    doc->SaveFile(outName);
+    delete doc;
    
   }
   std::cerr << "\n";

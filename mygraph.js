@@ -13,14 +13,16 @@ function Graph(config){
     this.centerY = Math.abs(this.minY / (this.maxY - this.minY)) * this.canvas.height;
     this.centerX = Math.abs(this.minX / (this.maxX - this.minX)) * this.canvas.width;
     this.iteration = 0.1;
-    this.numXTicks = 20;
-    this.numYTicks = 20;
-    this.xTickHeight = 20;
-    this.yTickWidth = 20;
+    this.numXTicks = (this.maxX-this.minX)/20;
+    this.numYTicks = (this.maxY-this.minY)/20;
+    this.xTickHeight = (this.maxY-this.minY)/60;;
+    this.yTickWidth =(this.maxX-this.minX)/60; ;
     this.scaleX = this.canvas.width / (this.maxX - this.minX);
     this.scaleY = this.canvas.height / (this.maxY - this.minY);
     this.axisColor = "#aaa";
  
+    this.axisLabel=Math.round(this.canvas.height/40);
+
     // draw x y axis and tick marks
     this.drawXAxis();
     this.drawYAxis();
@@ -58,6 +60,9 @@ Graph.prototype.drawXAxisTicks = function(){
         context.strokeStyle = this.axisColor;
         context.lineWidth = 2;
         context.stroke();
+	context.font=this.axisLabel+"px Arial";
+	var tickVal=Math.round((n-this.centerX)/this.scaleX);
+//	context.fillText(tickVal,n,this.centerY+this.xTickHeight);
     }
 };
  
@@ -71,6 +76,9 @@ Graph.prototype.drawYAxisTicks = function(){
         context.strokeStyle = this.axisColor;
         context.lineWidth = 2;
         context.stroke();
+	context.font=this.axisLabel+"px Arial";
+	var tickVal=Math.round((this.centerY-n)/this.scaleY);
+	context.fillText(tickVal,this.centerX+this.yTickWidth,n);
     }
 };
  
@@ -138,3 +146,4 @@ Graph.prototype.transformContext = function(){
     context.scale(this.scaleX, -this.scaleY);
 };
  
+

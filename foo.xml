@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <run>10</run>
-    <eventNum>20</eventNum>
-    <time>2012</time>
+    <station>TESTBED</station>
+    <run>30525</run>
+    <eventNum>7</eventNum>
+    <time>2012-10-22 14:47:35</time>
+    <triggerTime>0.365849</triggerTime>
     <numChannels>16</numChannels>
     <channel id="0">
         <numSamples>508</numSamples>

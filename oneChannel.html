@@ -4,8 +4,13 @@
         <script src="mygraph.js"></script>
         <script src="aware.js"></script>
     </head>
-    <body onload="parseXmlEvent('foo.xml'); drawOneChannel();" onresize="drawOneChannel();">
-        <div style="width:90%;height:90%"><canvas id="myCanvas" style="background-color:#ffffff; resize:both;" >
+    <body onload="parseXmlEvent('foo.xml'); drawOneChannel('oneCan',true);" onresize="drawOneChannel('oneCan',true);">
+
+      <canvas id="canTitle" width="100%" height="100%" style="background-color:#ffffff; resize:both;" >
+	Unfortunately, your browser does not support the canvas tag
+      </canvas>
+      
+        <div style="width:90%;height:90%"><canvas id="oneCan" style="background-color:#ffffff; resize:both;" >
             Unfortunately, your browser does not support the canvas tag
         </canvas>
 	</div>
