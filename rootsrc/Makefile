@@ -20,7 +20,7 @@ LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS) $(LD_ARA_UTIL) $(FFTLIBS)
 GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 
-PROGRAM =   makeEventXmlFile
+PROGRAM =   makeEventXmlFile makeSensorHkXmlFiles
 
 all : $(PROGRAM)
 
