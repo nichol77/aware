@@ -26,6 +26,9 @@
 #include "tinyxml2.h"
 using namespace tinyxml2;
 
+//AWARE Includes
+#include "AwareRunSummaryFileMaker.h"
+
 #define XML_BUFFER_SIZE 40960
 
 AtriSensorHkData *sensorHkPtr;
@@ -73,6 +76,7 @@ int main(int argc, char **argv) {
   if(starEvery==0) starEvery++;
 
   AraGeomTool *fGeomTool=AraGeomTool::Instance();
+  AwareRunSummaryFileMaker summaryFile(runNumber,fGeomTool->getStationName(sensorHkPtr->getStationId()));
 
   
   char xmlBuffer[XML_BUFFER_SIZE];
@@ -104,6 +108,8 @@ int main(int argc, char **argv) {
 
     TTimeStamp timeStamp(sensorHkPtr->unixTime,0);
     //    std::cout << "Run: "<< realEvPtr->
+
+    //  std::cout << event << "\t" << timeStamp.AsString("sl") << "\n";
      
     XMLNode* hkNode = doc->InsertEndChild( doc->NewElement( "sensorHk" ) );
 
@@ -111,10 +117,32 @@ int main(int argc, char **argv) {
     time->InsertFirstChild(doc->NewText(timeStamp.AsString("sl")));
     hkNode->InsertEndChild(time);
 
+    //Summary file fun
+    char elementName[180];
+    summaryFile.addVariablePoint("atriVoltage",timeStamp,sensorHkPtr->getAtriVoltage());
+    summaryFile.addVariablePoint("atriCurrent",timeStamp,sensorHkPtr->getAtriCurrent());
+    for( int i=0; i<DDA_PER_ATRI; ++i ) {
+      sprintf(elementName,"stack_%d.ddaVoltage",i);
+      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getDdaVoltage(i));
+      sprintf(elementName,"stack_%d.ddaCurrent",i);
+      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getDdaCurrent(i));
+      sprintf(elementName,"stack_%d.ddaTemp",i);
+      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getDdaTemp(i));
+      sprintf(elementName,"stack_%d.tdaVoltage",i);
+      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaVoltage(i));
+      sprintf(elementName,"stack_%d.tdaCurrent",i);
+      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaCurrent(i));
+      sprintf(elementName,"stack_%d.tdaTemp",i);
+      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaTemp(i));
+    }
+
     XMLElement *atriVoltageNode=doc->NewElement("atriVoltage");
     XMLUtil::ToStr(sensorHkPtr->getAtriVoltage(),xmlBuffer,XML_BUFFER_SIZE);
     atriVoltageNode->InsertFirstChild(doc->NewText(xmlBuffer));  
     hkNode->InsertEndChild(atriVoltageNode);
+    
+
+
 
     XMLElement *atriCurrentNode=doc->NewElement("atriCurrent");
     XMLUtil::ToStr(sensorHkPtr->getAtriCurrent(),xmlBuffer,XML_BUFFER_SIZE);
@@ -175,11 +203,13 @@ int main(int argc, char **argv) {
   
   doc->SaveFile(outName);
   delete doc;
-   
-  
-  
 
-  
- 
 
+  sprintf(outName,"output/%d/%d/run%d/sensorHkSummary.xml",dateInt/10000,dateInt%10000,runNumber);
+  summaryFile.writeSummaryXMLFile(outName);
+
+  sprintf(outName,"output/%d/%d/run%d/sensorHkTime.xml",dateInt/10000,dateInt%10000,runNumber);
+  summaryFile.writeTimeXMLFile(outName);
+  
+  
 }
