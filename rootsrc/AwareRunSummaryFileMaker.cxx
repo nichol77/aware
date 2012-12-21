@@ -19,7 +19,7 @@ char xmlBuffer[XML_BUFFER_SIZE];
 
 
 AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, char * stationName)
-  :fRun(runNumber),fStationName(stationName)
+  :fFullDoc(0),fRootNode(0),fCurrentNode(0),fRun(runNumber),fStationName(stationName)
 {
 
 }
@@ -48,27 +48,29 @@ void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
   XMLDocument *doc = new XMLDocument();
   doc->InsertEndChild(doc->NewDeclaration());
 
+  XMLNode* rootNode = doc->InsertEndChild( doc->NewElement( "runSum" ) );
+
   XMLElement *stationNode=doc->NewElement("station");
   XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
   stationNode->InsertFirstChild(doc->NewText(fStationName.c_str()));  
-  doc->InsertEndChild(stationNode);
+  rootNode->InsertEndChild(stationNode);
   
   XMLElement *run=doc->NewElement("run");
   XMLUtil::ToStr(fRun,xmlBuffer,XML_BUFFER_SIZE);
   run->InsertFirstChild(doc->NewText(xmlBuffer));  
-  doc->InsertEndChild(run);
+  rootNode->InsertEndChild(run);
 
   std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();
   //Lets assume for now that all variables have the same time
   XMLElement *startTime = doc->NewElement("startTime");
   startTime->InsertFirstChild(doc->NewText(it->second.getFirstTimeString()));
-  doc->InsertEndChild(startTime);
+  rootNode->InsertEndChild(startTime);
 
   //Lets assume for now that all variables have the duration
   XMLElement *duration = doc->NewElement("duration");
   XMLUtil::ToStr(it->second.getDuration(),xmlBuffer,XML_BUFFER_SIZE);
   duration->InsertFirstChild(doc->NewText(xmlBuffer));
-  doc->InsertEndChild(duration);
+  rootNode->InsertEndChild(duration);
   
   XMLElement *currentStack=0;
   Int_t currentId=-1;
@@ -78,7 +80,7 @@ void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
     int posDot=it->first.find(".");
     if(posDot<0) {
       if(currentStack) {
-	doc->InsertEndChild(currentStack);
+	rootNode->InsertEndChild(currentStack);
 	currentStack=0;
       }
       sprintf(elementName,"%s",it->first.c_str());
@@ -92,7 +94,7 @@ void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
 	
 	if(thisId!=currentId) {
 	  if(currentStack) {
-	    doc->InsertEndChild(currentStack);
+	    rootNode->InsertEndChild(currentStack);
 	    currentStack=0;
 	  }
 	  currentId=thisId;
@@ -124,11 +126,11 @@ void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
       currentStack->InsertEndChild(element);
     }
     else {
-      doc->InsertEndChild(element);
+      rootNode->InsertEndChild(element);
     }
   }
   if(currentStack)
-    doc->InsertEndChild(currentStack);
+    rootNode->InsertEndChild(currentStack);
 
   doc->SaveFile(xmlName);
   delete doc;
@@ -144,15 +146,17 @@ void AwareRunSummaryFileMaker::writeTimeXMLFile(const char *xmlName)
   XMLDocument *doc = new XMLDocument();
   doc->InsertEndChild(doc->NewDeclaration());
 
+  XMLNode* rootNode = doc->InsertEndChild( doc->NewElement( "timeSum" ) );
+
   XMLElement *stationNode=doc->NewElement("station");
   XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
   stationNode->InsertFirstChild(doc->NewText(fStationName.c_str()));  
-  doc->InsertEndChild(stationNode);
+  rootNode->InsertEndChild(stationNode);
   
   XMLElement *run=doc->NewElement("run");
   XMLUtil::ToStr(fRun,xmlBuffer,XML_BUFFER_SIZE);
   run->InsertFirstChild(doc->NewText(xmlBuffer));  
-  doc->InsertEndChild(run);
+  rootNode->InsertEndChild(run);
 
 
   std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();  
@@ -164,7 +168,7 @@ void AwareRunSummaryFileMaker::writeTimeXMLFile(const char *xmlName)
     int posDot=it->first.find(".");
     if(posDot<0) {
       if(currentStack) {
-	doc->InsertEndChild(currentStack);
+	rootNode->InsertEndChild(currentStack);
 	currentStack=0;
       }
       sprintf(elementName,"%s",it->first.c_str());
@@ -178,7 +182,7 @@ void AwareRunSummaryFileMaker::writeTimeXMLFile(const char *xmlName)
 	
 	if(thisId!=currentId) {
 	  if(currentStack) {
-	    doc->InsertEndChild(currentStack);
+	    rootNode->InsertEndChild(currentStack);
 	    currentStack=0;
 	  }
 	  currentId=thisId;
@@ -228,13 +232,75 @@ void AwareRunSummaryFileMaker::writeTimeXMLFile(const char *xmlName)
       currentStack->InsertEndChild(element);
     }
     else {
-      doc->InsertEndChild(element);
+      rootNode->InsertEndChild(element);
     }
   }
   if(currentStack)
-    doc->InsertEndChild(currentStack);
+    rootNode->InsertEndChild(currentStack);
 
   doc->SaveFile(xmlName);
   delete doc;
 
 }
+
+void AwareRunSummaryFileMaker::startFullXMLFile(const char *rootNode)
+{
+  fFullDoc  = new XMLDocument();
+  fFullDoc->InsertEndChild(fFullDoc->NewDeclaration());
+  
+
+  fRootNode = fFullDoc->InsertEndChild( fFullDoc->NewElement( rootNode ) );
+  fCurrentNode = fRootNode;
+  
+  
+}
+
+
+void AwareRunSummaryFileMaker::addNewNode(const char *nodeName, const char *attName, int attVal)
+{
+  XMLNode *node = fCurrentNode->InsertEndChild(fFullDoc->NewElement(nodeName));
+  if(attName) {
+    XMLElement *elly = (XMLElement*)node;
+    elly->SetAttribute(attName,attVal);
+  }
+  fSubNodeList.push_back(node);
+  fCurrentNode=node;
+}
+
+void AwareRunSummaryFileMaker::addNewElement(const char *elName, const char *elBuffer)
+{
+  
+  XMLElement *element=fFullDoc->NewElement(elName);
+  element->InsertFirstChild(fFullDoc->NewText(elBuffer)); 
+  fCurrentNode->InsertEndChild(element);
+
+}
+
+void AwareRunSummaryFileMaker::finishCurrentNode()
+{
+  int numNodes = fSubNodeList.size();
+  if(numNodes>0) {
+    //Remove last node
+    fSubNodeList.erase(fSubNodeList.begin()+(numNodes-1));
+  }
+  if(numNodes>1) {
+    fCurrentNode=fSubNodeList.back();
+  }
+  else {
+    fCurrentNode=fRootNode;
+  }
+}
+
+void AwareRunSummaryFileMaker::writeFullXMLFile(const char *xmlName)
+{
+  if(fFullDoc) {   
+    fFullDoc->SaveFile(xmlName);
+    delete fFullDoc;
+    fFullDoc=0;
+    fCurrentNode=0;
+    fRootNode=0;
+    fSubNodeList.clear();
+  }
+}
+
+

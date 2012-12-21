@@ -81,21 +81,16 @@ int main(int argc, char **argv) {
   
   char xmlBuffer[XML_BUFFER_SIZE];
   
+  //Start the XML File for the full data
+  summaryFile.startFullXMLFile("sensorHk");
 
-  //Now we can write the xml file for this run
-  XMLDocument *doc = new XMLDocument();
-  doc->InsertEndChild(doc->NewDeclaration());
-
-
-  XMLElement *stationNode=doc->NewElement("station");
-  XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
-  stationNode->InsertFirstChild(doc->NewText(fGeomTool->getStationName(sensorHkPtr->getStationId())));  
-  doc->InsertEndChild(stationNode);
+  //Add station element
+  summaryFile.addNewElement("station",fGeomTool->getStationName(sensorHkPtr->getStationId()));
   
-  XMLElement *run=doc->NewElement("run");
+  //Add run element
   XMLUtil::ToStr(runNumber,xmlBuffer,XML_BUFFER_SIZE);
-  run->InsertFirstChild(doc->NewText(xmlBuffer));  
-  doc->InsertEndChild(run);
+  summaryFile.addNewElement("run",xmlBuffer);
+  
 
   //  numEntries=1;
   for(Long64_t event=0;event<numEntries;event++) {
@@ -110,13 +105,6 @@ int main(int argc, char **argv) {
     //    std::cout << "Run: "<< realEvPtr->
 
     //  std::cout << event << "\t" << timeStamp.AsString("sl") << "\n";
-     
-    XMLNode* hkNode = doc->InsertEndChild( doc->NewElement( "sensorHk" ) );
-
-    XMLElement *time=doc->NewElement("time");
-    time->InsertFirstChild(doc->NewText(timeStamp.AsString("sl")));
-    hkNode->InsertEndChild(time);
-
     //Summary file fun
     char elementName[180];
     summaryFile.addVariablePoint("atriVoltage",timeStamp,sensorHkPtr->getAtriVoltage());
@@ -136,58 +124,48 @@ int main(int argc, char **argv) {
       summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaTemp(i));
     }
 
-    XMLElement *atriVoltageNode=doc->NewElement("atriVoltage");
-    XMLUtil::ToStr(sensorHkPtr->getAtriVoltage(),xmlBuffer,XML_BUFFER_SIZE);
-    atriVoltageNode->InsertFirstChild(doc->NewText(xmlBuffer));  
-    hkNode->InsertEndChild(atriVoltageNode);
+    //Start hk node
+    summaryFile.addNewNode("hk");
     
+    //Add time element
+    summaryFile.addNewElement("time",timeStamp.AsString("sl"));
+    
+    //Add ATRI Voltage Element
+    XMLUtil::ToStr(sensorHkPtr->getAtriVoltage(),xmlBuffer,XML_BUFFER_SIZE);
+    summaryFile.addNewElement("atriVoltage",xmlBuffer);
 
-
-
-    XMLElement *atriCurrentNode=doc->NewElement("atriCurrent");
+    //Add ATRI Current Element
     XMLUtil::ToStr(sensorHkPtr->getAtriCurrent(),xmlBuffer,XML_BUFFER_SIZE);
-    atriCurrentNode->InsertFirstChild(doc->NewText(xmlBuffer));  
-    hkNode->InsertEndChild(atriCurrentNode);
-
-   
-
+    summaryFile.addNewElement("atriCurrent",xmlBuffer);
+          
     for( int i=0; i<DDA_PER_ATRI; ++i ) {
-      XMLElement *stackNode=doc->NewElement( "stack" );
-      stackNode->SetAttribute( "id", i );
+       //Add the stack nodes
+       summaryFile.addNewNode("stack","id",i);
+       
+       XMLUtil::ToStr(sensorHkPtr->getDdaVoltage(i),xmlBuffer,XML_BUFFER_SIZE);
+       summaryFile.addNewElement("ddaVoltage",xmlBuffer);
+       
+       XMLUtil::ToStr(sensorHkPtr->getDdaCurrent(i),xmlBuffer,XML_BUFFER_SIZE);
+       summaryFile.addNewElement("ddaCurrent",xmlBuffer);
+       
+       XMLUtil::ToStr(sensorHkPtr->getDdaTemp(i),xmlBuffer,XML_BUFFER_SIZE);
+       summaryFile.addNewElement("ddaTemp",xmlBuffer);
 
-      XMLElement *ddaVoltage=doc->NewElement("ddaVoltage");
-      XMLUtil::ToStr(sensorHkPtr->getDdaVoltage(i),xmlBuffer,XML_BUFFER_SIZE);
-      ddaVoltage->InsertFirstChild(doc->NewText(xmlBuffer));
-      stackNode->InsertEndChild(ddaVoltage);
+       XMLUtil::ToStr(sensorHkPtr->getTdaVoltage(i),xmlBuffer,XML_BUFFER_SIZE);
+       summaryFile.addNewElement("tdaVoltage",xmlBuffer);
+       
+       XMLUtil::ToStr(sensorHkPtr->getTdaCurrent(i),xmlBuffer,XML_BUFFER_SIZE);
+       summaryFile.addNewElement("tdaCurrent",xmlBuffer);
+       
+       XMLUtil::ToStr(sensorHkPtr->getTdaTemp(i),xmlBuffer,XML_BUFFER_SIZE);
+       summaryFile.addNewElement("tdaTemp",xmlBuffer);
 
-      XMLElement *ddaCurrent=doc->NewElement("ddaCurrent");
-      XMLUtil::ToStr(sensorHkPtr->getDdaCurrent(i),xmlBuffer,XML_BUFFER_SIZE);
-      ddaCurrent->InsertFirstChild(doc->NewText(xmlBuffer));
-      stackNode->InsertEndChild(ddaCurrent);
-
-      XMLElement *ddaTemp=doc->NewElement("ddaTemp");
-      XMLUtil::ToStr(sensorHkPtr->getDdaTemp(i),xmlBuffer,XML_BUFFER_SIZE);
-      ddaTemp->InsertFirstChild(doc->NewText(xmlBuffer));
-      stackNode->InsertEndChild(ddaTemp);
-
-      XMLElement *tdaVoltage=doc->NewElement("tdaVoltage");
-      XMLUtil::ToStr(sensorHkPtr->getTdaVoltage(i),xmlBuffer,XML_BUFFER_SIZE);
-      tdaVoltage->InsertFirstChild(doc->NewText(xmlBuffer));
-      stackNode->InsertEndChild(tdaVoltage);
-
-      XMLElement *tdaCurrent=doc->NewElement("tdaCurrent");
-      XMLUtil::ToStr(sensorHkPtr->getTdaCurrent(i),xmlBuffer,XML_BUFFER_SIZE);
-      tdaCurrent->InsertFirstChild(doc->NewText(xmlBuffer));
-      stackNode->InsertEndChild(tdaCurrent);
-
-      XMLElement *tdaTemp=doc->NewElement("tdaTemp");
-      XMLUtil::ToStr(sensorHkPtr->getTdaTemp(i),xmlBuffer,XML_BUFFER_SIZE);
-      tdaTemp->InsertFirstChild(doc->NewText(xmlBuffer));
-      stackNode->InsertEndChild(tdaTemp);      
+       //Finish the stack node
+       summaryFile.finishCurrentNode();
 	
-      hkNode->InsertEndChild(stackNode);
     }
-      
+    //Finish the hk node
+    summaryFile.finishCurrentNode();
     
   }
   std::cerr << "\n";
@@ -200,9 +178,7 @@ int main(int argc, char **argv) {
   sprintf(outName,"output/%d/%d/run%d/",dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
   sprintf(outName,"output/%d/%d/run%d/sensorHk.xml",dateInt/10000,dateInt%10000,runNumber);
-  
-  doc->SaveFile(outName);
-  delete doc;
+  summaryFile.writeFullXMLFile(outName);
 
 
   sprintf(outName,"output/%d/%d/run%d/sensorHkSummary.xml",dateInt/10000,dateInt%10000,runNumber);
