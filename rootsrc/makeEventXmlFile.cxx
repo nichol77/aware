@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
      
     //Now you can do whatever analysis you want
     //e.g.
-    AraStationId_t stationId=rawEvPtr->getStationId();
+    //    AraStationId_t stationId=rawEvPtr->getStationId();
     //    std::cout << "Station Id: " << int(stationId) << "\n";
     //    std::cout << "Station Name: " << fGeomTool->getStationName(rawEvPtr->getStationId()) << "\n";
     Int_t numChannels=realEvPtr->getNumRFChannels();

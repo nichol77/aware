@@ -18,7 +18,8 @@ using namespace tinyxml2;
 char xmlBuffer[XML_BUFFER_SIZE];
 
 
-AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, char * stationName)
+
+AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * stationName)
   :fFullDoc(0),fRootNode(0),fCurrentNode(0),fRun(runNumber),fStationName(stationName)
 {
 
