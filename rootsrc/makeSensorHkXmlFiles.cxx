@@ -79,6 +79,11 @@ int main(int argc, char **argv) {
   AwareRunSummaryFileMaker summaryFile(runNumber,fGeomTool->getStationName(sensorHkPtr->getStationId()));
 
   
+
+  char stationName[20];
+  sprintf(stationName,"%s",fGeomTool->getStationName(sensorHkPtr->getStationId()));
+
+
   char xmlBuffer[XML_BUFFER_SIZE];
   
   //Start the XML File for the full data
@@ -175,16 +180,16 @@ int main(int argc, char **argv) {
   UInt_t dateInt=timeStamp.GetDate();
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%d/%d/run%d/",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
-  sprintf(outName,"output/%d/%d/run%d/sensorHk.xml",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/sensorHk.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeFullXMLFile(outName);
 
 
-  sprintf(outName,"output/%d/%d/run%d/sensorHkSummary.xml",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/sensorHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryXMLFile(outName);
 
-  sprintf(outName,"output/%d/%d/run%d/sensorHkTime.xml",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/sensorHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeXMLFile(outName);
   
   

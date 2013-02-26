@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
   }
    
   Int_t runNumber;
-  //Check an event in the run Tree and see if it is station1 or TestBed (stationId<2)
+  //Check an event in the run Tree and see if it is station1 or TestBed (tationId<2)
   eventHkTree->SetBranchAddress("eventHk",&eventHkPtr);
   eventHkTree->SetBranchAddress("run",&runNumber);
   
@@ -86,6 +86,9 @@ int main(int argc, char **argv) {
   XMLDocument *doc = new XMLDocument();
   doc->InsertEndChild(doc->NewDeclaration());
 
+
+  char stationName[20];
+  sprintf(stationName,"%s",fGeomTool->getStationName(eventHkPtr->getStationId()));
 
   XMLElement *stationNode=doc->NewElement("station");
   XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
@@ -252,18 +255,18 @@ int main(int argc, char **argv) {
   UInt_t dateInt=timeStamp.GetDate();
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%d/%d/run%d/",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
-  sprintf(outName,"output/%d/%d/run%d/eventHk.xml",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/eventHk.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   
   doc->SaveFile(outName);
   delete doc;
 
 
-  sprintf(outName,"output/%d/%d/run%d/eventHkSummary.xml",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/eventHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryXMLFile(outName);
 
-  sprintf(outName,"output/%d/%d/run%d/eventHkTime.xml",dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%02d/%02d/run%d/eventHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeXMLFile(outName);
   
   
