@@ -19,7 +19,7 @@
 class AwareRunSummaryFileMaker 
 {
  public :
-  AwareRunSummaryFileMaker(Int_t runNumber, char *stationName);
+  AwareRunSummaryFileMaker(Int_t runNumber, const char *stationName);
 
   void addVariablePoint(const char *elName, TTimeStamp timeStamp, Double_t variable);
 

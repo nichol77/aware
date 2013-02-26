@@ -26,7 +26,7 @@ ROOT_LIBRARY = libAwareWeb.so
 LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o awareDict.o
 CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h
 
-PROGRAM =   makeEventXmlFile makeSensorHkXmlFiles
+PROGRAM =   makeEventXmlFile makeSensorHkXmlFiles makeEventHkXmlFiles
 
 all : $(ROOT_LIBRARY) $(PROGRAM)
 
