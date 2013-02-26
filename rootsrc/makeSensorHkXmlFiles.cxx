@@ -180,16 +180,16 @@ int main(int argc, char **argv) {
   UInt_t dateInt=timeStamp.GetDate();
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%s/%02d/%02d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
-  sprintf(outName,"output/%s/%02d/%02d/run%d/sensorHk.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHk.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeFullXMLFile(outName);
 
 
-  sprintf(outName,"output/%s/%02d/%02d/run%d/sensorHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryXMLFile(outName);
 
-  sprintf(outName,"output/%s/%02d/%02d/run%d/sensorHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeXMLFile(outName);
   
   

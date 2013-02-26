@@ -255,18 +255,19 @@ int main(int argc, char **argv) {
   UInt_t dateInt=timeStamp.GetDate();
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%s/%02d/%02d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%d/%04d/run%d/",stationName,dateInt/10000,(dateInt%10000),runNumber);
+  //  std::cout << outName << "\n";
   gSystem->mkdir(outName,kTRUE);
-  sprintf(outName,"output/%s/%02d/%02d/run%d/eventHk.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%d/%04d/run%d/eventHk.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   
   doc->SaveFile(outName);
   delete doc;
 
 
-  sprintf(outName,"output/%s/%02d/%02d/run%d/eventHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%d/%04d/run%d/eventHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryXMLFile(outName);
 
-  sprintf(outName,"output/%s/%02d/%02d/run%d/eventHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%d/%04d/run%d/eventHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeXMLFile(outName);
   
   
