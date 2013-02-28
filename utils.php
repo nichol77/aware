@@ -57,8 +57,8 @@ function doPage($fileName,$titleString,$headString) {
 
 
    echo "<TITLE>$titleString</TITLE>";
-
    echo "<META http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"> 
+
     </HEAD>
     <BODY>";
 

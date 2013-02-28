@@ -4,20 +4,13 @@ virtual("/uhen/ara/monitor/leftMain.shtml");
 ?>
 <!--#include virtual="/uhen/ara/monitor/leftMain.shtml" -->
 <!--#include virtual="/uhen/ara/monitor/leftTimes.shtml" -->
-<h2 class="navigation">Event Plots</h2>
-<p class="navigation">
-<a class=
-"leftBar" title="Last Event" href=""
-accesskey="C">Last Event</a>
-<span class=
-"spacer">&nbsp;&nbsp;</span>
-<a class=
-"leftBar" title="Browse Events" href=""
-accesskey="C">Browse Events</a>
-<span class=
-"spacer">&nbsp;&nbsp;</span>
+<h2 class="navigation">Update Run</h2>
+<?php
+$contentPage=basename($_SERVER['PHP_SELF'], ".php");
+echo  "<form action=\"$contentPage\" method=\"get\">";
+echo  "Run: <input type=\"text\" name=\"run\" value=\"$run\" /><br />";
+echo  "<button type=\"Go To\" value=\"Go To\">Go To</button>";
+echo  "</form>";
+?>
 </p>
-
-
-
 

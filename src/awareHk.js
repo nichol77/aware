@@ -156,7 +156,7 @@ function parseXmlSummaryHk(filename) {
 
 
 
-function drawRunSummaryHk(canName) {
+function drawL1Hk(canName) {
     
     var l1Array = [];
     var l1ArrayErrors = [];
@@ -172,10 +172,8 @@ function drawRunSummaryHk(canName) {
 	}
     }
     
-
     //    $.plot($("#"+canName), [ {data : l1Array, bars: { show: true }} ]);
     
-
     var data3_points = {
 	//do not show points	
 	radius: 0,
@@ -190,14 +188,88 @@ function drawRunSummaryHk(canName) {
 	    }
     
     var data = [
-    // bars with errors
-    {color: "orange", bars: {show: true, align: "center", barWidth: 1}, data: l1Array},
-    {color: "orange", lines: {show: false }, points: data3_points, data: l1ArrayErrors}
+		// bars with errors
+    {data: l1Array, color: "orange", bars: {show: true, align: "center", barWidth: 1}},
+    {data: l1ArrayErrors, color: "orange", lines: {show: false }, points: data3_points}
     ];
 
     $.plot($("#"+canName), data );
-
 	
 }
 
+
+
+function drawThresholdHk(canName) {
     
+    var l1Array = [];
+    var l1ArrayErrors = [];
+    var countL1=0;
+    for(var index=0;index<dpList.length;index++) {
+	var dp2=dpList[index];
+	var dpName=new String(dp2.name);
+	var n=dpName.indexOf("singleChannelThreshold");
+	if(n>=0) {
+	    l1Array.push([countL1,dp2.mean]);
+	    l1ArrayErrors.push(dp2.stdDev);
+	    countL1++;
+	}
+    }
+    
+    //    $.plot($("#"+canName), [ {data : l1Array, bars: { show: true }} ]);
+    
+    var data3_points = {
+	//do not show points	
+	radius: 0,
+	errorbars: "y", 
+	yerr: {show:true, upperCap: "-", lowerCap: "-", radius: 5}
+    };
+    
+
+	
+    for (var i = 0; i < l1Array.length; i++) {
+	l1ArrayErrors[i] = l1Array[i].concat(l1ArrayErrors[i])
+	    }
+    
+    var data = [
+		// bars with errors
+    {data: l1Array, color: "blue", bars: {show: true, align: "center", barWidth: 1}},
+    {data: l1ArrayErrors, color: "blue", lines: {show: false }, points: data3_points}
+    ];
+
+    $.plot($("#"+canName), data );
+	
+}
+
+
+function setDpList(jsonObject) {
+    dpList=jsonObject.runsum.varList;
+}
+
+
+ 
+
+function drawRunSummaryHkJSON(l1Name,threshName, run) {
+    
+    // Extract the first coordinate pair; jQuery has parsed it, so
+    // the data is now just an ordinary JavaScript object
+    
+    var dataurl="output/STATION1B/2013/0123/run"+run+"/eventHkSummary.json"; 
+
+
+    function onDataReceived(jsonObject) {
+	var l1Array = [];
+	var l1ArrayErrors = [];
+	var countL1=0;
+	setDpList(jsonObject);
+	drawL1Hk(l1Name);
+	drawThresholdHk(threshName);
+}
+
+    
+$.ajax({
+	url: dataurl,
+	    type: "GET",
+	    dataType: "json",
+	    success: onDataReceived
+	    }); 
+}
