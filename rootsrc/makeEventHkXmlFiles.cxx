@@ -267,6 +267,10 @@ int main(int argc, char **argv) {
   sprintf(outName,"output/%s/%d/%04d/run%d/eventHkSummary.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryXMLFile(outName);
 
+
+  sprintf(outName,"output/%s/%d/%04d/run%d/eventHkSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  summaryFile.writeSummaryJSONFile(outName);
+
   sprintf(outName,"output/%s/%d/%04d/run%d/eventHkTime.xml",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeXMLFile(outName);
   

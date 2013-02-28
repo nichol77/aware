@@ -11,9 +11,9 @@
 #include "TNamed.h"
 #include "TTimeStamp.h"
 #include "AwareVariableSummary.h"
-#include "tinyxml2.h"
 
 #include <map>
+#include "tinyxml2.h"
 
 
 
@@ -24,11 +24,15 @@ class AwareRunSummaryFileMaker
 
   void addVariablePoint(const char *elName, TTimeStamp timeStamp, Double_t variable);
 
+
   void writeSummaryXMLFile(const char *xmlName);
   void writeTimeXMLFile(const char *xmlName);
   void writeFullXMLFile(const char *xmlName);
-
   void startFullXMLFile(const char *rootNode);
+
+  void writeSummaryJSONFile(const char *jsonName);
+
+
   void addNewNode(const char *nodeName, const char *attName=0, int attVal=-1);
   void addNewElement(const char *elName, const char *buffer);
   void finishCurrentNode();

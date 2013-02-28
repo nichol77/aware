@@ -8,6 +8,7 @@
 #include "AwareRunSummaryFileMaker.h"
 
 #include <iostream>
+#include <fstream>
 
 //TinyXML Includes
 #include "tinyxml2.h"
@@ -37,9 +38,68 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, TTimeStamp t
     newSummary.addDataPoint(timeStamp,variable);
     summaryMap[elString]=newSummary;
   }
-
+  
 }
 
+
+void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
+{
+  //Start new document
+  std::ofstream jsonFile(jsonName);
+  if(!jsonName) {
+    std::cerr << "Error opening " << jsonName << "\n";
+    return ;
+  }
+  
+  std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();
+  //Opening brace
+  jsonFile << "{\n";
+  //Start of runSum
+  jsonFile << "\"runsum\":{\n";
+  jsonFile << "\"run\" : " << fRun <<  ",\n";
+  jsonFile << "\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+  jsonFile << "\"startTime\" : \"" << it->second.getFirstTimeString() <<  "\",\n";
+  jsonFile << "\"duration\" : " << it->second.getDuration() <<  ",\n";
+
+
+  Int_t firstInArray=1;
+  
+  jsonFile << "\"varList\":[\n";
+
+  for(;it!=summaryMap.end();it++) {
+    char elementName[180];
+
+    int posDot=it->first.find(".");
+    if(posDot<0) {
+      sprintf(elementName,"%s",it->first.c_str());
+    }
+    else {
+      int posScore=it->first.find("_");
+      if(posScore>0) {
+	int thisId=atoi(it->first.substr(posScore+1,posDot-posScore-1).c_str());
+	sprintf(elementName,"stack_%d_%s",thisId,it->first.substr(posDot+1).c_str());
+	//	std::cout << currentId << "\t" << it->first.substr(0,posScore)<< "\t" << posScore << "\t" << posDot << "\t" << elementName << "\n";  
+      }
+    }
+    
+    if(!firstInArray) 
+      jsonFile << ",\n";
+    jsonFile << "{\n";
+    jsonFile << " \"name\":  \"" << elementName << "\",\n";
+    jsonFile << " \"mean\":  " << it->second.getRunMean() << ",\n";
+    jsonFile << " \"stdDev\":  " << it->second.getRunStdDev() << ",\n";
+    jsonFile << " \"numEnts\":  " << it->second.getRunNumEnts() << "\n";
+    jsonFile << "}\n";
+    firstInArray=0;
+
+  }
+  jsonFile << "]\n";
+  //End of runSum
+  jsonFile << "}\n";
+  //Closing brace
+  jsonFile << "}\n";
+  jsonFile.close();
+}
 
 
 void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
@@ -48,6 +108,9 @@ void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
   //Now we can write the xml summary file for this run
   XMLDocument *doc = new XMLDocument();
   doc->InsertEndChild(doc->NewDeclaration());
+
+
+  std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();
 
   XMLNode* rootNode = doc->InsertEndChild( doc->NewElement( "runSum" ) );
 
@@ -61,7 +124,6 @@ void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
   run->InsertFirstChild(doc->NewText(xmlBuffer));  
   rootNode->InsertEndChild(run);
 
-  std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();
   //Lets assume for now that all variables have the same time
   XMLElement *startTime = doc->NewElement("startTime");
   startTime->InsertFirstChild(doc->NewText(it->second.getFirstTimeString()));
