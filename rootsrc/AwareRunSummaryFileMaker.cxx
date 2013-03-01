@@ -18,9 +18,18 @@ AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char *
 
 }
 
-void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, TTimeStamp timeStamp, Double_t variable)
+void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *label, TTimeStamp timeStamp, Double_t variable)
 {
   std::string elString(elName);
+  std::string labelString(label);
+
+  //Insert label
+  std::map<std::string,std::string>::iterator labIt=fLabelMap.find(elString);
+  if(labIt==fLabelMap.end()) {
+     fLabelMap.insert(std::pair<std::string, std::string >(elString,labelString));
+  }
+
+
   std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.find(elString);
   if(it!=summaryMap.end()) {
     it->second.addDataPoint(timeStamp,variable);
@@ -88,10 +97,13 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   //Then get an iterator for all the variables at the first timePoint
   std::map<std::string, Double_t>::iterator subMapIt=fRawMapIt->second.begin();
 
+  std::map<std::string, std::string>::iterator labelIt;
+
   //Now open the output files
   for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-    sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
-    std::ofstream *VarFile = new std::ofstream(jsonName);
+     labelIt=fLabelMap.find(subMapIt->first);
+     sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
+     std::ofstream *VarFile = new std::ofstream(jsonName);
     if(!(*VarFile)) {
       std::cerr << "Couldn't open " << jsonName << "\n";
       continue;
@@ -103,6 +115,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     (*VarFile) << "\t\"run\" : " << fRun <<  ",\n";
     (*VarFile) << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
     (*VarFile) << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
+    (*VarFile) << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
     (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
     (*VarFile) << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
     (*VarFile) << "\t\"timeList\" : [\n";
@@ -158,7 +171,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     return;
   }
 
-
+  std::map<std::string,std::string>::iterator labelIt;
 
   //For now we will justr take the time from the first variable in the map;
   std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();  
@@ -201,6 +214,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
   int firstElement=1;
   //Now we loop over the elements
   for(;it!=summaryMap.end();it++) {
+     labelIt=fLabelMap.find(it->first);
     char elementName[180];
 
     int posDot=it->first.find(".");
@@ -228,6 +242,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     TimeFile << "{\n";
     //Start of runSum
     TimeFile << "\t\"name\" : \"" << elementName << "\",\n";
+    TimeFile << "\t\"label\" : \"" << labelIt->second << "\",\n";
     TimeFile << "\t\"timeList\" : [\n";
     int firstInArray=1;
     
@@ -258,6 +273,9 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
     std::cerr << "Error opening " << jsonName << "\n";
     return ;
   }
+
+
+  std::map<std::string,std::string>::iterator labelIt;
   
   std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();
   //Opening brace
@@ -275,6 +293,7 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   jsonFile << "\"varList\":[\n";
 
   for(;it!=summaryMap.end();it++) {
+     labelIt=fLabelMap.find(it->first);
     char elementName[180];
 
     int posDot=it->first.find(".");
@@ -294,6 +313,7 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
       jsonFile << ",\n";
     jsonFile << "{\n";
     jsonFile << " \"name\":  \"" << elementName << "\",\n";
+    jsonFile << "\t\"label\" : \"" << labelIt->second << "\",\n";
     jsonFile << " \"mean\":  " << it->second.getRunMean() << ",\n";
     jsonFile << " \"stdDev\":  " << it->second.getRunStdDev() << ",\n";
     jsonFile << " \"numEnts\":  " << it->second.getRunNumEnts() << "\n";

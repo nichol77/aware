@@ -97,41 +97,51 @@ int main(int argc, char **argv) {
 
     //Summary file fun
     char elementName[180];
-    summaryFile.addVariablePoint("ppsCounter",timeStamp,eventHkPtr->getPpsCounter());
-    summaryFile.addVariablePoint("clockCounter",timeStamp,eventHkPtr->getClockCounter());
+    char elementLabel[180];
+    summaryFile.addVariablePoint("ppsCounter","PPS#",timeStamp,eventHkPtr->getPpsCounter());
+    summaryFile.addVariablePoint("clockCounter","Clock#",timeStamp,eventHkPtr->getClockCounter());
     for( int i=0; i<DDA_PER_ATRI; ++i ) {
-      sprintf(elementName,"stack_%d.wilkinsonCounterNs",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getWilkinsonCounterNs(i));
-      sprintf(elementName,"stack_%d.wilkinsonDelay",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getWilkinsonDelay(i));
-      sprintf(elementName,"stack_%d.vdlyDac",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getVdlyDac(i));
-      sprintf(elementName,"stack_%d.vadjDac",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getVadjDac(i));
+       sprintf(elementName,"stack_%d.wilkinsonCounterNs",i);
+       sprintf(elementLabel,"Wilk# %d",i+1);
+       summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getWilkinsonCounterNs(i));
+       sprintf(elementLabel,"Wilk Delay %d",i+1);
+       sprintf(elementName,"stack_%d.wilkinsonDelay",i);
+       summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getWilkinsonDelay(i));
+       sprintf(elementName,"stack_%d.vdlyDac",i);
+       sprintf(elementLabel,"Vdly %d",i+1);
+       summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getVdlyDac(i));
+       sprintf(elementLabel,"Vadj %d",i+1);
+       sprintf(elementName,"stack_%d.vadjDac",i);
+       summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getVadjDac(i));
     }
 
     for(int i=0;i<TDA_PER_ATRI;++i) {
-      for(int chan=0;chan<ANTS_PER_TDA;chan++) {	
-	sprintf(elementName,"stack_%d.singleChannelRate%d",i,chan);
-	summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getSingleChannelRateHz(i,chan));
-	sprintf(elementName,"stack_%d.singleChannelThreshold%d",i,chan);
-	summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getSingleChannelThreshold(i,chan));
+      for(int chan=0;chan<ANTS_PER_TDA;chan++) {       
+	 sprintf(elementLabel,"L1_%d_%d",i+1,chan+1);	
+	 sprintf(elementName,"stack_%d.singleChannelRate%d",i,chan);
+	 summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getSingleChannelRateHz(i,chan));    
+	 sprintf(elementLabel,"Thresh_%d_%d",i+1,chan+1);
+	 sprintf(elementName,"stack_%d.singleChannelThreshold%d",i,chan);
+	 summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getSingleChannelThreshold(i,chan));
       }
-
+    
+      sprintf(elementLabel,"1 of 4 (%d)",i+1);
       sprintf(elementName,"stack_%d.oneOfFourRate",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getOneOfFourRateHz(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getOneOfFourRateHz(i));
+      sprintf(elementLabel,"2 of 4 (%d)",i+1);
       sprintf(elementName,"stack_%d.twoOfFourRate",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getTwoOfFourRateHz(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getTwoOfFourRateHz(i));
+      sprintf(elementLabel,"3 of 4 (%d)",i+1);
       sprintf(elementName,"stack_%d.threeOfFourRate",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,eventHkPtr->getThreeOfFourRateHz(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,eventHkPtr->getThreeOfFourRateHz(i));
     }
 
-    summaryFile.addVariablePoint("threeOfEightRate0",timeStamp,eventHkPtr->getThreeOfEightRateHz(0));
-    summaryFile.addVariablePoint("threeOfEightRate1",timeStamp,eventHkPtr->getThreeOfEightRateHz(1));
-    summaryFile.addVariablePoint("l4ScalerRate0",timeStamp,eventHkPtr->getL4RateHz(0));
-    summaryFile.addVariablePoint("l4ScalerRate1",timeStamp,eventHkPtr->getL4RateHz(1));
-    summaryFile.addVariablePoint("l4ScalerRate2",timeStamp,eventHkPtr->getL4RateHz(2));
-    summaryFile.addVariablePoint("l4ScalerRate3",timeStamp,eventHkPtr->getL4RateHz(3));
+    summaryFile.addVariablePoint("threeOfEightRate0","3 of 8 (1)",timeStamp,eventHkPtr->getThreeOfEightRateHz(0));
+    summaryFile.addVariablePoint("threeOfEightRate1","3 of 8 (2)",timeStamp,eventHkPtr->getThreeOfEightRateHz(1));
+    summaryFile.addVariablePoint("l4ScalerRate0","L4[0]",timeStamp,eventHkPtr->getL4RateHz(0));
+    summaryFile.addVariablePoint("l4ScalerRate1","L4[1]",timeStamp,eventHkPtr->getL4RateHz(1));
+    summaryFile.addVariablePoint("l4ScalerRate2","L4[2]",timeStamp,eventHkPtr->getL4RateHz(2));
+    summaryFile.addVariablePoint("l4ScalerRate3","L4[3]",timeStamp,eventHkPtr->getL4RateHz(3));
 
    
 

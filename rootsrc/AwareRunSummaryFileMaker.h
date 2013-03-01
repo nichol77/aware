@@ -21,7 +21,7 @@ class AwareRunSummaryFileMaker
  public :
   AwareRunSummaryFileMaker(Int_t runNumber, const char *stationName);
 
-  void addVariablePoint(const char *elName, TTimeStamp timeStamp, Double_t variable);
+  void addVariablePoint(const char *elName, const char *label, TTimeStamp timeStamp, Double_t variable);
 
 
   void writeFullJSONFiles(const char *jsonDir, const char *filePrefix);
@@ -36,6 +36,7 @@ class AwareRunSummaryFileMaker
   Int_t fRun;
   std::string fStationName;
   std::map<std::string,AwareVariableSummary> summaryMap;
+  std::map<std::string,std::string> fLabelMap;
   
   std::map<UInt_t, std::map<std::string, Double_t> > fRawMap;
 

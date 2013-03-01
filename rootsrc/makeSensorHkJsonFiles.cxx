@@ -95,21 +95,28 @@ int main(int argc, char **argv) {
     //  std::cout << event << "\t" << timeStamp.AsString("sl") << "\n";
     //Summary file fun
     char elementName[180];
-    summaryFile.addVariablePoint("atriVoltage",timeStamp,sensorHkPtr->getAtriVoltage());
-    summaryFile.addVariablePoint("atriCurrent",timeStamp,sensorHkPtr->getAtriCurrent());
+    char elementLabel[180];
+    summaryFile.addVariablePoint("atriVoltage","ATRI V",timeStamp,sensorHkPtr->getAtriVoltage());
+    summaryFile.addVariablePoint("atriCurrent","ATRI I",timeStamp,sensorHkPtr->getAtriCurrent());
     for( int i=0; i<DDA_PER_ATRI; ++i ) {
       sprintf(elementName,"stack_%d.ddaVoltage",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getDdaVoltage(i));
+      sprintf(elementLabel,"DDA%d V",i+1);
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,sensorHkPtr->getDdaVoltage(i));
+      sprintf(elementLabel,"DDA%d I",i+1);
       sprintf(elementName,"stack_%d.ddaCurrent",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getDdaCurrent(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,sensorHkPtr->getDdaCurrent(i));
+      sprintf(elementLabel,"DDA%d T",i+1);
       sprintf(elementName,"stack_%d.ddaTemp",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getDdaTemp(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,sensorHkPtr->getDdaTemp(i));
+      sprintf(elementLabel,"TDA%d V",i+1);
       sprintf(elementName,"stack_%d.tdaVoltage",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaVoltage(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,sensorHkPtr->getTdaVoltage(i));
+      sprintf(elementLabel,"TDA%d I",i+1);
       sprintf(elementName,"stack_%d.tdaCurrent",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaCurrent(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,sensorHkPtr->getTdaCurrent(i));
+      sprintf(elementLabel,"TDA%d T",i+1);
       sprintf(elementName,"stack_%d.tdaTemp",i);
-      summaryFile.addVariablePoint(elementName,timeStamp,sensorHkPtr->getTdaTemp(i));
+      summaryFile.addVariablePoint(elementName,elementLabel,timeStamp,sensorHkPtr->getTdaTemp(i));
     }
 
   
