@@ -13,7 +13,6 @@
 #include "AwareVariableSummary.h"
 
 #include <map>
-#include "tinyxml2.h"
 
 
 
@@ -25,26 +24,20 @@ class AwareRunSummaryFileMaker
   void addVariablePoint(const char *elName, TTimeStamp timeStamp, Double_t variable);
 
 
-  void writeSummaryXMLFile(const char *xmlName);
-  void writeTimeXMLFile(const char *xmlName);
-  void writeFullXMLFile(const char *xmlName);
-  void startFullXMLFile(const char *rootNode);
-
+  void writeFullJSONFiles(const char *jsonDir, const char *filePrefix);
   void writeSummaryJSONFile(const char *jsonName);
+  void writeTimeJSONFile(const char *jsonName);
 
 
-  void addNewNode(const char *nodeName, const char *attName=0, int attVal=-1);
-  void addNewElement(const char *elName, const char *buffer);
-  void finishCurrentNode();
 
  private :
-  tinyxml2::XMLDocument *fFullDoc;
-  tinyxml2::XMLNode *fRootNode;
-  tinyxml2::XMLNode *fCurrentNode;
-  std::vector<tinyxml2::XMLNode*> fSubNodeList;
+
+  //Data storge
   Int_t fRun;
   std::string fStationName;
   std::map<std::string,AwareVariableSummary> summaryMap;
+  
+  std::map<UInt_t, std::map<std::string, Double_t> > fRawMap;
 
 
 };

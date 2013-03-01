@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-////// Simple Class to handle the making of AWARE Summary XML Files/////////
+////// Simple Class to handle the making of AWARE Summary JSON Files/////////
 //////                                                             /////////
 ////// r.nichol@ucl.ac.uk --- December 2012                        /////////
 ////////////////////////////////////////////////////////////////////////////
@@ -10,18 +10,10 @@
 #include <iostream>
 #include <fstream>
 
-//TinyXML Includes
-#include "tinyxml2.h"
-using namespace tinyxml2;
-
-
-#define XML_BUFFER_SIZE 40960
-char xmlBuffer[XML_BUFFER_SIZE];
-
 
 
 AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * stationName)
-  :fFullDoc(0),fRootNode(0),fCurrentNode(0),fRun(runNumber),fStationName(stationName)
+  :fRun(runNumber),fStationName(stationName)
 {
 
 }
@@ -38,8 +30,224 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, TTimeStamp t
     newSummary.addDataPoint(timeStamp,variable);
     summaryMap[elString]=newSummary;
   }
+
+  //Now deal with the raw map
+
+  //  std::map<UInt_t, std::map<std::string, Double_t> > fRawMap;
+
+  std::map<UInt_t, std::map<std::string, Double_t> >::iterator rawIt=fRawMap.find(timeStamp.GetSec());
+  if(rawIt!=fRawMap.end()) {
+    //Already have this time point;
+    rawIt->second.insert( std::pair <std::string, Double_t > (elString, variable));
+  }
+  else {
+    //    First time for this one need to make map
+    std::map<std::string, Double_t> newTimePoint;
+    newTimePoint.insert(std::pair <std::string, Double_t > (elString, variable) );
+    fRawMap.insert( std::pair < UInt_t, std::map<std::string, Double_t> > (timeStamp.GetSec(), newTimePoint));
+  }
   
 }
+
+
+void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const char *filePrefix)
+{
+  std::cout << fRawMap.size() << "\n";
+
+  if(fRawMap.size()==0) return;
+  
+  char jsonName[FILENAME_MAX];
+  sprintf(jsonName,"%s/%s_time.json",jsonDir,filePrefix);
+  std::ofstream TimeFile(jsonName);
+  if(!TimeFile) {
+    std::cerr << "Couldn't open " << jsonName << "\n";
+    return;
+  }
+
+
+
+
+  //For now we will justr take the time from the first variable in the map;
+  std::map<std::string,AwareVariableSummary>::iterator sumIt=summaryMap.begin();  
+  //We have some data    
+  TimeFile << "{\n";
+  //Start of runSum
+  TimeFile << "\t\"full\":{\n";
+  TimeFile << "\t\"run\" : " << fRun <<  ",\n";
+  TimeFile << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+  TimeFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
+  TimeFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
+  TimeFile << "\t\"timeList\" : [\n";
+
+
+  
+  std::map<std::string, std::ofstream*> fJsonFileMap;
+  
+  //For now get the first time point in the raw map
+  std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();  
+  //Then get an iterator for all the variables at the first timePoint
+  std::map<std::string, Double_t>::iterator subMapIt=fRawMapIt->second.begin();
+
+  //Now open the output files
+  for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
+    sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
+    std::ofstream *VarFile = new std::ofstream(jsonName);
+    if(!(*VarFile)) {
+      std::cerr << "Couldn't open " << jsonName << "\n";
+      continue;
+    }
+      
+    (*VarFile) << "{\n";
+    //Start of runSum
+    (*VarFile) << "\t\"full\":{\n";
+    (*VarFile) << "\t\"run\" : " << fRun <<  ",\n";
+    (*VarFile) << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+    (*VarFile) << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
+    (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
+    (*VarFile) << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
+    (*VarFile) << "\t\"timeList\" : [\n";
+    fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
+  }
+
+ 
+  int firstInArray=1;
+  //Now loop over the fRawMap
+  for(;fRawMapIt!=fRawMap.end();fRawMapIt++) {
+    //First do the time file
+    if(!firstInArray) TimeFile << ",\n";
+    TimeFile <<  fRawMapIt->first;
+						
+    //Now the variable files
+    subMapIt=fRawMapIt->second.begin();
+    for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
+      std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);  
+
+      if(fileIt!=fJsonFileMap.end()) {	
+	//	std::cout << subMapIt->first.c_str() << "\n";
+	if(!firstInArray) *(fileIt->second) << ",\n";
+	*(fileIt->second) <<  subMapIt->second;
+      }
+    }
+
+
+    firstInArray=0;
+  }  
+  TimeFile << " ]\n}\n}\n";
+  TimeFile.close();
+  
+  fRawMapIt=fRawMap.begin();
+  subMapIt=fRawMapIt->second.begin();
+    for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
+      std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);      
+      if(fileIt!=fJsonFileMap.end()) {	
+	*(fileIt->second) << " ]\n}\n}\n";
+	(fileIt->second)->close();
+      }
+    }
+  
+  
+
+}
+
+void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
+{
+
+  std::ofstream TimeFile(jsonName);
+  if(!TimeFile) {
+    std::cerr << "Couldn't open " << jsonName << "\n";
+    return;
+  }
+
+
+
+  //For now we will justr take the time from the first variable in the map;
+  std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();  
+  
+  if(it->second.timeMapSize()>0) {
+    //We have some data    
+    TimeFile << "{\n";
+    //Start of runSum
+    TimeFile << "\t\"timeSum\":{\n";
+    TimeFile << "\t\"run\" : " << fRun <<  ",\n";
+    TimeFile << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+    TimeFile << "\t\"startTime\" : \"" << it->second.getFirstTimeString() <<  "\",\n";
+  }
+  else {
+    //No data time to quit
+    TimeFile.close();
+    unlink(jsonName);
+    return;
+  }
+  
+  TimeFile << "\t\"timeList\" : [\n";
+  int firstInArray=1;
+
+  //Get the iterator for the variable list
+  std::map<UInt_t,AwareVariable>::iterator timeIt = it->second.timeMapBegin();
+  for(;timeIt!=it->second.timeMapEnd();timeIt++) {
+    if(!firstInArray) TimeFile << "\t,\n";
+    TimeFile << "\t{\n";
+    TimeFile << "\t\t\"startTime\" :" <<  timeIt->second.getStartTime() << " ,\n";
+    TimeFile << "\t\t\"duration\" :" <<  timeIt->second.getDuration() << " ,\n";
+    TimeFile << "\t\t\"numEnts\" :" <<  timeIt->second.getNumEnts() << " \n";
+    TimeFile << "\t}\n";
+    firstInArray=0;
+  }
+  TimeFile << "\t]\n\t,\n";
+  //  TimeFile.close();a/
+  
+  TimeFile << "\"varList\" : [\n";
+  
+  int firstElement=1;
+  //Now we loop over the elements
+  for(;it!=summaryMap.end();it++) {
+    char elementName[180];
+
+    int posDot=it->first.find(".");
+    if(posDot<0) {
+      sprintf(elementName,"%s",it->first.c_str());
+    }
+    else {
+      int posScore=it->first.find("_");
+      if(posScore>0) {
+	int thisId=atoi(it->first.substr(posScore+1,posDot-posScore-1).c_str());
+	sprintf(elementName,"stack_%d_%s",thisId,it->first.substr(posDot+1).c_str());
+	//	std::cout << currentId << "\t" << it->first.substr(0,posScore)<< "\t" << posScore << "\t" << posDot << "\t" << elementName << "\n";  
+      }
+    }
+
+    
+    if(it->second.timeMapSize()==0) {
+      //No data time to quit
+      continue;
+    }
+
+    //We have some data    
+    if(!firstElement) TimeFile << "\t,\n";
+    firstElement=0;
+    TimeFile << "{\n";
+    //Start of runSum
+    TimeFile << "\t\"name\" : \"" << elementName << "\",\n";
+    TimeFile << "\t\"timeList\" : [\n";
+    int firstInArray=1;
+    
+    //Get the iterator for the variable list
+    timeIt = it->second.timeMapBegin();
+    for(;timeIt!=it->second.timeMapEnd();timeIt++) {
+      if(!firstInArray) TimeFile << "\t,\n";
+      TimeFile << "\t{\n";
+      TimeFile << "\t\t\"mean\" :" <<  timeIt->second.getMean() << " ,\n";
+      TimeFile << "\t\t\"stdDev\" :" <<  timeIt->second.getStdDev() << "\n";
+      TimeFile << "\t}\n";
+      firstInArray=0;
+    }
+    TimeFile << "\t]\n\t}";
+  }
+  TimeFile << "\t]\n\t}\n}\n";
+  
+
+}
+
 
 
 void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
@@ -102,268 +310,8 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
 }
 
 
-void AwareRunSummaryFileMaker::writeSummaryXMLFile(const char *xmlName)
-{
-  
-  //Now we can write the xml summary file for this run
-  XMLDocument *doc = new XMLDocument();
-  doc->InsertEndChild(doc->NewDeclaration());
-
-
-  std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();
-
-  XMLNode* rootNode = doc->InsertEndChild( doc->NewElement( "runSum" ) );
-
-  XMLElement *stationNode=doc->NewElement("station");
-  XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
-  stationNode->InsertFirstChild(doc->NewText(fStationName.c_str()));  
-  rootNode->InsertEndChild(stationNode);
-  
-  XMLElement *run=doc->NewElement("run");
-  XMLUtil::ToStr(fRun,xmlBuffer,XML_BUFFER_SIZE);
-  run->InsertFirstChild(doc->NewText(xmlBuffer));  
-  rootNode->InsertEndChild(run);
-
-  //Lets assume for now that all variables have the same time
-  XMLElement *startTime = doc->NewElement("startTime");
-  startTime->InsertFirstChild(doc->NewText(it->second.getFirstTimeString()));
-  rootNode->InsertEndChild(startTime);
-
-  //Lets assume for now that all variables have the duration
-  XMLElement *duration = doc->NewElement("duration");
-  XMLUtil::ToStr(it->second.getDuration(),xmlBuffer,XML_BUFFER_SIZE);
-  duration->InsertFirstChild(doc->NewText(xmlBuffer));
-  rootNode->InsertEndChild(duration);
-  
-  XMLElement *currentStack=0;
-  Int_t currentId=-1;
-  for(;it!=summaryMap.end();it++) {
-    char elementName[180];
-
-    int posDot=it->first.find(".");
-    if(posDot<0) {
-      if(currentStack) {
-	rootNode->InsertEndChild(currentStack);
-	currentStack=0;
-      }
-      sprintf(elementName,"%s",it->first.c_str());
-    }
-    else {
-      int posScore=it->first.find("_");
-      if(posScore>0) {
-	int thisId=atoi(it->first.substr(posScore+1,posDot-posScore-1).c_str());
-	sprintf(elementName,"%s",it->first.substr(posDot+1).c_str());
-	//	std::cout << currentId << "\t" << it->first.substr(0,posScore)<< "\t" << posScore << "\t" << posDot << "\t" << elementName << "\n";       
-	
-	if(thisId!=currentId) {
-	  if(currentStack) {
-	    rootNode->InsertEndChild(currentStack);
-	    currentStack=0;
-	  }
-	  currentId=thisId;
-	  currentStack = doc->NewElement(it->first.substr(0,posScore).c_str());
-	  currentStack->SetAttribute("id",currentId);
-	}	
-      }
-    }
-
-
-    XMLElement *element = doc->NewElement(elementName);
-
-    XMLElement *mean = doc->NewElement("mean");
-    XMLUtil::ToStr(it->second.getRunMean(),xmlBuffer,XML_BUFFER_SIZE);
-    mean->InsertFirstChild(doc->NewText(xmlBuffer));
-    element->InsertEndChild(mean);
-
-    XMLElement *stdDev = doc->NewElement("stdDev");
-    XMLUtil::ToStr(it->second.getRunStdDev(),xmlBuffer,XML_BUFFER_SIZE);
-    stdDev->InsertFirstChild(doc->NewText(xmlBuffer));
-    element->InsertEndChild(stdDev);
-
-    XMLElement *numEnts = doc->NewElement("numEnts");
-    XMLUtil::ToStr(it->second.getRunNumEnts(),xmlBuffer,XML_BUFFER_SIZE);
-    numEnts->InsertFirstChild(doc->NewText(xmlBuffer));
-    element->InsertEndChild(numEnts);
-    
-    if(currentStack) {
-      currentStack->InsertEndChild(element);
-    }
-    else {
-      rootNode->InsertEndChild(element);
-    }
-  }
-  if(currentStack)
-    rootNode->InsertEndChild(currentStack);
-
-  doc->SaveFile(xmlName);
-  delete doc;
-  
-}
 
 
 
-void AwareRunSummaryFileMaker::writeTimeXMLFile(const char *xmlName)
-{
-  
-  //Now we can write the xml summary file for this run
-  XMLDocument *doc = new XMLDocument();
-  doc->InsertEndChild(doc->NewDeclaration());
-
-  XMLNode* rootNode = doc->InsertEndChild( doc->NewElement( "timeSum" ) );
-
-  XMLElement *stationNode=doc->NewElement("station");
-  XMLUtil::ToStr(20,xmlBuffer,XML_BUFFER_SIZE);
-  stationNode->InsertFirstChild(doc->NewText(fStationName.c_str()));  
-  rootNode->InsertEndChild(stationNode);
-  
-  XMLElement *run=doc->NewElement("run");
-  XMLUtil::ToStr(fRun,xmlBuffer,XML_BUFFER_SIZE);
-  run->InsertFirstChild(doc->NewText(xmlBuffer));  
-  rootNode->InsertEndChild(run);
-
-
-  std::map<std::string,AwareVariableSummary>::iterator it=summaryMap.begin();  
-  XMLElement *currentStack=0;
-  Int_t currentId=-1;
-  for(;it!=summaryMap.end();it++) {
-    char elementName[180];
-
-    int posDot=it->first.find(".");
-    if(posDot<0) {
-      if(currentStack) {
-	rootNode->InsertEndChild(currentStack);
-	currentStack=0;
-      }
-      sprintf(elementName,"%s",it->first.c_str());
-    }
-    else {
-      int posScore=it->first.find("_");
-      if(posScore>0) {
-	int thisId=atoi(it->first.substr(posScore+1,posDot-posScore-1).c_str());
-	sprintf(elementName,"%s",it->first.substr(posDot+1).c_str());
-	//	std::cout << currentId << "\t" << it->first.substr(0,posScore)<< "\t" << posScore << "\t" << posDot << "\t" << elementName << "\n";       
-	
-	if(thisId!=currentId) {
-	  if(currentStack) {
-	    rootNode->InsertEndChild(currentStack);
-	    currentStack=0;
-	  }
-	  currentId=thisId;
-	  currentStack = doc->NewElement(it->first.substr(0,posScore).c_str());
-	  currentStack->SetAttribute("id",currentId);
-	}	
-      }
-    }
-
-
-    XMLElement *element = doc->NewElement(elementName);
-    //Now add loop over time
-
-    std::map<UInt_t,AwareVariable>::iterator timeIt = it->second.timeMapBegin();
-    for(;timeIt!=it->second.timeMapEnd();timeIt++) {
-      XMLElement *timePoint = doc->NewElement("point");
-      
-      XMLElement *startTime = doc->NewElement("startTime");
-      startTime->InsertFirstChild(doc->NewText(timeIt->second.getStartTimeString()));
-      timePoint->InsertEndChild(startTime);
-
-      
-      XMLElement *duration = doc->NewElement("duration");
-      XMLUtil::ToStr(timeIt->second.getDuration(),xmlBuffer,XML_BUFFER_SIZE);
-      duration->InsertFirstChild(doc->NewText(xmlBuffer));
-      timePoint->InsertEndChild(duration);
-
-
-      XMLElement *mean = doc->NewElement("mean");
-      XMLUtil::ToStr(timeIt->second.getMean(),xmlBuffer,XML_BUFFER_SIZE);
-      mean->InsertFirstChild(doc->NewText(xmlBuffer));
-      timePoint->InsertEndChild(mean);      
-      
-      XMLElement *stdDev = doc->NewElement("stdDev");
-      XMLUtil::ToStr(timeIt->second.getStdDev(),xmlBuffer,XML_BUFFER_SIZE);
-      stdDev->InsertFirstChild(doc->NewText(xmlBuffer));
-      timePoint->InsertEndChild(stdDev);
-      
-      XMLElement *numEnts = doc->NewElement("numEnts");
-      XMLUtil::ToStr(timeIt->second.getNumEnts(),xmlBuffer,XML_BUFFER_SIZE);
-      numEnts->InsertFirstChild(doc->NewText(xmlBuffer));
-      timePoint->InsertEndChild(numEnts);
-      element->InsertEndChild(timePoint);
-    }    
-
-    if(currentStack) {
-      currentStack->InsertEndChild(element);
-    }
-    else {
-      rootNode->InsertEndChild(element);
-    }
-  }
-  if(currentStack)
-    rootNode->InsertEndChild(currentStack);
-
-  doc->SaveFile(xmlName);
-  delete doc;
-
-}
-
-void AwareRunSummaryFileMaker::startFullXMLFile(const char *rootNode)
-{
-  fFullDoc  = new XMLDocument();
-  fFullDoc->InsertEndChild(fFullDoc->NewDeclaration());
-  
-
-  fRootNode = fFullDoc->InsertEndChild( fFullDoc->NewElement( rootNode ) );
-  fCurrentNode = fRootNode;
-  
-  
-}
-
-
-void AwareRunSummaryFileMaker::addNewNode(const char *nodeName, const char *attName, int attVal)
-{
-  XMLNode *node = fCurrentNode->InsertEndChild(fFullDoc->NewElement(nodeName));
-  if(attName) {
-    XMLElement *elly = (XMLElement*)node;
-    elly->SetAttribute(attName,attVal);
-  }
-  fSubNodeList.push_back(node);
-  fCurrentNode=node;
-}
-
-void AwareRunSummaryFileMaker::addNewElement(const char *elName, const char *elBuffer)
-{
-  
-  XMLElement *element=fFullDoc->NewElement(elName);
-  element->InsertFirstChild(fFullDoc->NewText(elBuffer)); 
-  fCurrentNode->InsertEndChild(element);
-
-}
-
-void AwareRunSummaryFileMaker::finishCurrentNode()
-{
-  int numNodes = fSubNodeList.size();
-  if(numNodes>0) {
-    //Remove last node
-    fSubNodeList.erase(fSubNodeList.begin()+(numNodes-1));
-  }
-  if(numNodes>1) {
-    fCurrentNode=fSubNodeList.back();
-  }
-  else {
-    fCurrentNode=fRootNode;
-  }
-}
-
-void AwareRunSummaryFileMaker::writeFullXMLFile(const char *xmlName)
-{
-  if(fFullDoc) {   
-    fFullDoc->SaveFile(xmlName);
-    delete fFullDoc;
-    fFullDoc=0;
-    fCurrentNode=0;
-    fRootNode=0;
-    fSubNodeList.clear();
-  }
-}
 
 

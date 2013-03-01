@@ -28,6 +28,7 @@ class AwareVariableSummary
   Double_t getRunStdDev() { return runValue.getStdDev();}
   Int_t getRunNumEnts() { return runValue.getNumEnts();}
 
+  int timeMapSize() { return timeMap.size();}
   std::map<UInt_t,AwareVariable>::iterator timeMapBegin() {return timeMap.begin();}
   std::map<UInt_t,AwareVariable>::iterator timeMapEnd() {return timeMap.end();}
   std::map<UInt_t,AwareVariable>::iterator timeMapFind(UInt_t value) {return timeMap.find(value);}

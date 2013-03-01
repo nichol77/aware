@@ -24,9 +24,10 @@ class AwareVariable
     return startTimeStamp.AsString("sl");
   }
 
+  Double_t getStdDev();
+  UInt_t getStartTime() {return fStartTime;}
   Int_t getNumEnts() {return numEnts;}
   Double_t getMean() {return mean/numEnts;}
-  Double_t getStdDev()  {return TMath::Sqrt((meanSq/numEnts)-TMath::Power(mean/numEnts,2));}
   UInt_t getDuration() {return fDuration;}
   
 
