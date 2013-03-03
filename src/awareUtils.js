@@ -28,3 +28,13 @@ function getHkTimeName(station, run) {
     var name="output/"+station+"/2013/0123/run"+run+"/eventHkTime.json"; 
     return name;
 }
+
+function getFullHkName(station,run,hkFile) {
+    var name="output/"+station+"/2013/0123/run"+run+"/full/eventHk_"+hkFile+".json"; 
+    return name;
+}
+
+function getFullHkTimeName(station,run) {
+    var name="output/"+station+"/2013/0123/run"+run+"/full/eventHk_time.json"; 
+    return name;
+}

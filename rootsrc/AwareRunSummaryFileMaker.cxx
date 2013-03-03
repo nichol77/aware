@@ -225,7 +225,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
       int posScore=it->first.find("_");
       if(posScore>0) {
 	int thisId=atoi(it->first.substr(posScore+1,posDot-posScore-1).c_str());
-	sprintf(elementName,"stack_%d_%s",thisId,it->first.substr(posDot+1).c_str());
+	sprintf(elementName,"stack_%d.%s",thisId,it->first.substr(posDot+1).c_str());
 	//	std::cout << currentId << "\t" << it->first.substr(0,posScore)<< "\t" << posScore << "\t" << posDot << "\t" << elementName << "\n";  
       }
     }
@@ -304,7 +304,7 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
       int posScore=it->first.find("_");
       if(posScore>0) {
 	int thisId=atoi(it->first.substr(posScore+1,posDot-posScore-1).c_str());
-	sprintf(elementName,"stack_%d_%s",thisId,it->first.substr(posDot+1).c_str());
+	sprintf(elementName,"stack_%d.%s",thisId,it->first.substr(posDot+1).c_str());
 	//	std::cout << currentId << "\t" << it->first.substr(0,posScore)<< "\t" << posScore << "\t" << posDot << "\t" << elementName << "\n";  
       }
     }

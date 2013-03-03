@@ -11,6 +11,14 @@
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.errorbars.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.js"></script>
+	<script type="text/javascript">
+
+	$(function() {
+
+	
+	});
+
+	</script>
 </head>
 
 <?php
