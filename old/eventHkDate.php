@@ -5,6 +5,7 @@
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/default.css" type="text/css" media="screen" title="RJN default" />
 <title>Event Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+
 <script src="src/awareUtils.js"></script>
 <script src="src/awareHkTime.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.js"></script>
@@ -12,14 +13,27 @@
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.errorbars.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.js"></script>
+<script language="javascript" type="text/javascript" src="src/jqueryui/js/jquery-ui-1.10.1.custom.js"></script>
+
+
 <script type="text/javascript">
 
   $(function() {
-setHkTypeAndCanName('eventHk',"divTime");
-drawFullHkTimePlot();
+      setHkTypeAndCanName('eventHk','divTime');
+      drawDateHkTimePlot();
   });  
 
+
+  $(function() {
+    $( "#datepicker" ).datepicker({
+      onSelect: function() {
+	  drawDateHkTimePlot();
+	}
+      });
+    });
+
 </script>
+
 </head>
 
 
@@ -48,22 +62,16 @@ drawFullHkTimePlot();
 </div></div>
 
 <div class="vertical" id="leftbar">
-<?php
-virtual("/uhen/ara/monitor/leftMain.shtml");
-?>
 <h2>Update</h2>
-<form name="runForm"   id="runForm" action="javascript:drawFullHkTimePlot('divTime'); javascript:void(0);">
-Station: <select id="stationForm" onchange="javascript:drawFullHkTimePlot('divTime');">
+
+
+<form name="runForm"   id="runForm" action="javascript:drawDateHkTimePlot(); javascript:void(0);">
+Station: <select id="stationForm" onchange="javascript:drawDateHkTimePlot();">
   <option value="STATION1B">ARA01</option>
   <option value="STATION2">ARA02</option>
   <option value="STATION3">ARA03</option>
 </select> <br />
-Run: <input type="text" name="runInput" id="runInput" value="1958"  />
-<br />
-<button type="button" value="Next" onclick="javascript:getPreviousRun(defaultFullHkTimePlot);">Previous</button>
-<button type="button" value="Next" onclick="javascript:getNextRun(defaultFullHkTimePlot);">Next</button>
-<br />
-Plot: <select id="plotForm" onchange="javascript:drawFullHkTimePlot('divTime');">
+Plot: <select id="plotForm" onchange="javascript:drawDateHkTimePlot();">
   <option value="singleChannelRate">L1 Rate</option>
   <option value="singleChannelThreshold">L1 Threshold</option>
   <option value="oneOfFour">L2 (1 of 4)</option>
@@ -77,7 +85,11 @@ Plot: <select id="plotForm" onchange="javascript:drawFullHkTimePlot('divTime');"
   <option value="clock">100MHz</option>
 </select>
 </form>
-<br />
+
+Date: <input type="text" id="datepicker" value="01/07/2013"  />
+
+</div>
+
 
 </body></html>
 

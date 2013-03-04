@@ -30,23 +30,28 @@ function getRunListName(station, run) {
 }
 
 
-function getHkName(station, run, year, datecode) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/eventHkSummary.json"; 
+function getHkName(station, run, year, datecode, hkType) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Summary.json"; 
     return name;
 }
 
 
-function getHkTimeName(station, run, year, datecode) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/eventHkTime.json"; 
+function getHkTimeName(station, run, year, datecode,hkType) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Time.json"; 
     return name;
 }
 
-function getFullHkName(station,run,year,datecode,hkFile) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/eventHk_"+hkFile+".json"; 
+function getFullHkName(station,run,year,datecode,hkFile,hkType) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_"+hkFile+".json"; 
     return name;
 }
 
-function getFullHkTimeName(station,run,year,datecode) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/eventHk_time.json"; 
+function getFullHkTimeName(station,run,year,datecode,hkType) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_time.json"; 
     return name;
+}
+
+function getDateRunListName(station,year,datecode) {
+   var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/runList.json";
+   return name;
 }
