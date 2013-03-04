@@ -9,6 +9,8 @@
 
 //Includes
 #include <iostream>
+#include <fstream>
+#include <string>
 
 //AraRoot Includes
 #include "AtriEventHkData.h"
@@ -168,6 +170,58 @@ int main(int argc, char **argv) {
 
   sprintf(outName,"output/%s/%d/%04d/run%d/eventHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
+
+
+  std::map<Int_t, std::string> runListMap;
+  char textVal[180];
+  sprintf(textVal,"[%d,%d,%d]",runNumber,dateInt/10000,dateInt%10000);
   
+
+  runListMap[runNumber]=std::string(textVal);
   
+  Int_t runThousand=1000*(runNumber/1000);
+  char runList[FILENAME_MAX];
+  sprintf(runList,"output/%s/runList%d.json",stationName,runThousand);
+  std::ifstream RunList(runList);
+  if(!RunList) {
+    std::cerr << "Can not open " << runList << "\n";
+  }
+  else {
+    char temp[180];
+    RunList.getline(temp,179); /// {
+    RunList.getline(temp,179); /// runlist : [
+    while(RunList.getline(temp,179)) {
+
+      if(temp[0]=='[') {
+	std::cout  << temp << "\n";
+	int thisRun=0,thisYear=0,thisDateCode=0;
+	sscanf(temp,"[%d,%d,%d]",&thisRun,&thisYear,&thisDateCode);
+	sprintf(textVal,"[%d,%d,%d]",thisRun,thisYear,thisDateCode);
+	runListMap[thisRun]=std::string(textVal);
+      }
+
+    }
+
+    RunList.close();
+  }
+
+
+  std::map<Int_t, std::string>::iterator it=runListMap.begin();;
+  int firstOne=1;
+  std::ofstream NewRunList(runList);
+  if(!NewRunList) {
+    std::cerr << "Can not open " << runList << "\n";
+  }
+  else {
+    NewRunList << "{\n";
+    NewRunList << " \"runList\" : [\n";
+    for(;it!=runListMap.end();it++) {
+      if(!firstOne) NewRunList << ",\n";
+      NewRunList << it->second.c_str();
+      firstOne=0;
+    }
+    NewRunList << "\n]\n}\n";
+    NewRunList.close();
+  }
+
 }

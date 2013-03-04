@@ -11,6 +11,7 @@
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.errorbars.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.js"></script>
+<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.js"></script>
 <script type="text/javascript">
 
   $(function() {
@@ -33,15 +34,19 @@
 
 
 <div id="titleContainer"></div>
-<div id="divTime" style="width:90%; height:300px; padding: 0px; float : left;"></div>
-<div id="divLabel" style="width:10%; height:300px; padding: 0px; float : right;"></div>
+<div id="divTime" style="width:90%; height:50%; padding: 0px; float : left;"></div>
+<div id="divLabel" style="width:10%; height:50%; padding: 0px; float : right;"></div>
+<p>
+  Click and drag on the background to zoom, double click to unzoom.
+</p>
+
 <p id="choices" style=""></p>
 </div>
 
 
 </div></div>
 
-<div class="vertical">
+<div class="vertical" id="leftbar">
 <?php
 virtual("/uhen/ara/monitor/leftMain.shtml");
 ?>
@@ -52,7 +57,11 @@ Station: <select id="stationForm" onchange="javascript:drawFullHkTimePlot('divTi
   <option value="STATION2">ARA02</option>
   <option value="STATION3">ARA03</option>
 </select> <br />
-Run: <input type="text" name="runInput" id="runInput" value="1958" /><br />
+Run: <input type="text" name="runInput" id="runInput" value="1958"  />
+<br />
+<button type="button" value="Next" onclick="javascript:getPreviousRun(defaultFullHkTimePlot);">Previous</button>
+<button type="button" value="Next" onclick="javascript:getNextRun(defaultFullHkTimePlot);">Next</button>
+<br />
 Plot: <select id="plotForm" onchange="javascript:drawFullHkTimePlot('divTime');">
   <option value="singleChannelRate">L1 Rate</option>
   <option value="singleChannelThreshold">L1 Threshold</option>
@@ -67,7 +76,7 @@ Plot: <select id="plotForm" onchange="javascript:drawFullHkTimePlot('divTime');"
   <option value="clock">100MHz</option>
 </select>
 </form>
-</p>
+<br />
 
 </body></html>
 

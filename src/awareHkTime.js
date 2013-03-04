@@ -11,8 +11,13 @@
 
 
 /* Globals */
+var globCanName;
 var stationName;
 var runNumber;
+var year=2013;
+var datecode=123;
+var timesWaited=0;
+var setDatecode=0;
 var plotName;
 var startTime;
 var duration;
@@ -98,7 +103,7 @@ function actuallyDrawTheStuff(canName) {
 	++i;
     });
     
-
+    var plotCan=$("#"+canName);
     // insert checkboxes 
     var countNum=0;
     var choiceContainer = $("#choices");
@@ -115,27 +120,50 @@ function actuallyDrawTheStuff(canName) {
 
     choiceContainer.find("input").click(plotAccordingToChoices);
 
+    var options = {
+	yaxis: { },
+	xaxis: {mode: "time"},
+	lines: { show: true },
+	legend:{container: $("#divLabel")},
+	selection : { mode : "xy" }
+    }
+    var plot;	
 
     function plotAccordingToChoices() {
 
 	var data = [];
 
 	choiceContainer.find("input:checked").each(function () {
-						       var key = $(this).attr("name");
-						       if (key && datasets[key]) {
-							   data.push(datasets[key]);
-						       }
-						   });
-
+	    var key = $(this).attr("name");
+	    if (key && datasets[key]) {
+		data.push(datasets[key]);
+	    }
+	});
+	
 	if (data.length > 0) {
-	    $.plot($("#"+canName), data, {
-		yaxis: { },
-		xaxis: {mode: "time"},
-		lines: { show: true },
-		legend:{container: $("#divLabel")}
-		});
+	    plot=$.plot(plotCan, data, options);
 	}
+
     }
+    
+    
+    plotCan.bind("plotselected", function (event, ranges) {
+	options.xaxis.min=ranges.xaxis.from;
+	options.xaxis.max=ranges.xaxis.to;
+	options.yaxis.min=ranges.yaxis.from;
+	options.yaxis.max=ranges.yaxis.to;
+	plotAccordingToChoices();
+    });
+
+    plotCan.bind("plotunselected", function (event, ranges) {
+	var newxaxis= { mode: "time"};
+	options.xaxis = newxaxis;
+	var newyaxis = {};
+	options.yaxis=newyaxis;
+	plotAccordingToChoices();
+    });
+	
+  
 
     plotAccordingToChoices();
 
@@ -143,18 +171,32 @@ function actuallyDrawTheStuff(canName) {
 }
 
 
-
-
 function setTimeAndVarList(jsonObject) {
     timeList=jsonObject.timeSum.timeList;
     varList=jsonObject.timeSum.varList;
 }
 
-
+///Here are the UI thingies
 function getRunFromForm() {
     runNumber=document.getElementById("runInput").value;
     return runNumber;
 } 
+
+function getNextRun(nextFunction) {
+    runNumber=document.getElementById("runInput").value;
+    runNumber++;
+    document.getElementById("runInput").value=runNumber;
+    nextFunction();
+}
+
+function getPreviousRun(nextFunction) {
+    runNumber=document.getElementById("runInput").value;
+    runNumber--;
+    document.getElementById("runInput").value=runNumber;
+    nextFunction();
+}
+
+
 
 function getPlotNameFromForm() {
     var plotName=document.getElementById("plotForm").value;
@@ -162,14 +204,20 @@ function getPlotNameFromForm() {
 }
 
 
-function drawSimpleHkTimePlot(canName) {
-//    var runNumber=1958;
-//    var plotName="singleChannelRate";
-    runNumber=getRunFromForm();
-    plotName=getPlotNameFromForm();
-    stationName="STATION1B";
+function defaultSimpleHkTimePlot() {
+    globCanName='divTime';    
+    getRunStationDateAndPlot(simpleHkPlotDrawer);
+}
 
-    var simpleHkTimeUrl=getHkTimeName(stationName,runNumber);
+
+function drawSimpleHkTimePlot(canName) {
+    globCanName=canName;
+    getRunStationDateAndPlot(simpleHkPlotDrawer);
+}
+
+
+function simpleHkPlotDrawer() {
+    var simpleHkTimeUrl=getHkTimeName(stationName,runNumber,year,datecode);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -186,7 +234,7 @@ function drawSimpleHkTimePlot(canName) {
 	setTimeAndVarList(jsonObject);
 
 	//Actual do the drawing
-	drawSimpleHkTime(canName,plotName);
+	drawSimpleHkTime(globCanName,plotName);
     }
 
     $.ajax({
@@ -198,16 +246,19 @@ function drawSimpleHkTimePlot(canName) {
     
 }
 
+function defaultFullHkTimePlot() {
+    globCanName='divTime';    
+    getRunStationDateAndPlot(fullHkPlotDrawer);
+}
 
 
 function drawFullHkTimePlot(canName) {
-//    var run=1958;
-//    var plotName="singleChannelRate";
-    runNumber=getRunFromForm();
-    plotName=getPlotNameFromForm();
-    stationName="STATION1B";
+    globCanName=canName;
+    getRunStationDateAndPlot(fullHkPlotDrawer);
+}
 
-    var simpleHkTimeUrl=getHkTimeName(stationName,runNumber);
+function fullHkPlotDrawer() {
+    var simpleHkTimeUrl=getHkTimeName(stationName,runNumber,year,datecode);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -216,6 +267,7 @@ function drawFullHkTimePlot(canName) {
 	canContainer.append("<h1>"+stationName+" -- Run "+runNumber+"</h1>");
 	canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
 	canContainer.append("<h2> Plot "+plotName+"</h2>");
+	canContainer.append("<h2>  "+year+" "+datecode+"</h2>");
 	datasets = new Object();	
 	var choiceContainer = $("#choices");
 	choiceContainer.empty();
@@ -224,7 +276,7 @@ function drawFullHkTimePlot(canName) {
 	setTimeAndVarList(jsonObject);
 
 	//Actual do the drawing
-	fetchFullHkTime(canName,plotName);
+	fetchFullHkTime(globCanName,plotName);
     }
 
     $.ajax({
@@ -238,10 +290,10 @@ function drawFullHkTimePlot(canName) {
 
 
 function fetchFullHkTime(canName,varNameKey) {
-
+    
 
 //    var canContainer = $("#titleContainer"); 
-   var fullHkTimeUrl=getFullHkTimeName(stationName,runNumber);
+    var fullHkTimeUrl=getFullHkTimeName(stationName,runNumber,year,datecode);
 //    canContainer.append("<p>"+fullHkTimeUrl+"</p>");
     
 
@@ -256,7 +308,7 @@ function fetchFullHkTime(canName,varNameKey) {
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
-		var fullHkUrl=getFullHkName(stationName,runNumber,varName);
+		var fullHkUrl=getFullHkName(stationName,runNumber,year,datecode,varName);
 //		canContainer.append("<p>"+fullHkUrl+"</p>");	
 		countFilesNeeded++;
 
@@ -290,3 +342,35 @@ function fetchFullHkTime(canName,varNameKey) {
 	success: handleFullHkTimeJsonFile
     }); 
 }
+
+
+function getRunStationDateAndPlot(plotFunc) {
+    setDatecode=0;
+    runNumber=getRunFromForm();
+    plotName=getPlotNameFromForm();    stationName="STATION1B";
+    //var canContainer = $("#leftbar"); 
+    var runListFile=getRunListName(stationName,runNumber);
+    function handleRunList(jsonObject) {
+//	canContainer.append("<p>"+jsonObject.runList.length+"</p>");
+	for(var i=0;i<jsonObject.runList.length;i++) {
+	    if(jsonObject.runList[i][0]==runNumber) {
+		year=jsonObject.runList[i][1];
+		datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
+//		canContainer.append("<p>"+year+" "+datecode+"</p>");	
+		setDatecode=1;
+		plotFunc();
+		break;
+	    }
+	}
+    }
+    
+
+    $.ajax({
+	url: runListFile,
+	type: "GET",
+	dataType: "json",
+	success: handleRunList
+    });
+
+}
+

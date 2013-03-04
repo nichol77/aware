@@ -8,6 +8,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
+function pad4(number) {
+   
+     return (number < 1000 ? '0' : '') + number
+   
+}
 
 
 function getUrlVars() {
@@ -18,23 +23,30 @@ function getUrlVars() {
     return vars;
 }
 
-function getHkName(station, run) {
-    var name="output/"+station+"/2013/0123/run"+run+"/eventHkSummary.json"; 
+function getRunListName(station, run) {
+    var run1000=run - (run%1000);
+    var name="output/"+station+"/runList"+run1000+".json";
     return name;
 }
 
 
-function getHkTimeName(station, run) {
-    var name="output/"+station+"/2013/0123/run"+run+"/eventHkTime.json"; 
+function getHkName(station, run, year, datecode) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/eventHkSummary.json"; 
     return name;
 }
 
-function getFullHkName(station,run,hkFile) {
-    var name="output/"+station+"/2013/0123/run"+run+"/full/eventHk_"+hkFile+".json"; 
+
+function getHkTimeName(station, run, year, datecode) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/eventHkTime.json"; 
     return name;
 }
 
-function getFullHkTimeName(station,run) {
-    var name="output/"+station+"/2013/0123/run"+run+"/full/eventHk_time.json"; 
+function getFullHkName(station,run,year,datecode,hkFile) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/eventHk_"+hkFile+".json"; 
+    return name;
+}
+
+function getFullHkTimeName(station,run,year,datecode) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/eventHk_time.json"; 
     return name;
 }
