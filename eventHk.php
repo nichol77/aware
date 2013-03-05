@@ -15,8 +15,19 @@
 <script type="text/javascript">
 
   $(function() {
-setHkTypeAndCanName('eventHk','divTime','full');
-drawPlot();
+
+      var urlVars=getUrlVars();
+      var timeType='simple'; 
+      if("timeType" in urlVars) {
+	timeType=urlVars["timeType"];
+      }
+
+      //      var canContainer = $("#debugContainer");
+      //      canContainer.append("<p>"+timeType+"</p>");
+      //      canContainer.append("<p>"+urlVars["timeType"]+"</p>");
+
+      setHkTypeAndCanName('eventHk','divTime',timeType);
+      drawPlot();
   });  
 
 </script>
@@ -33,7 +44,7 @@ drawPlot();
 <DIV class=middle>
 <DIV class=content>
 
-
+<div id="debugContainer"></div>
 <div id="titleContainer"></div>
 <div id="divTime" style="width:90%; height:50%; padding: 0px; float : left;"></div>
 <div id="divLabel" style="width:10%; height:50%; padding: 0px; float : right;"></div>
@@ -49,35 +60,8 @@ drawPlot();
 
 <div class="vertical" id="leftbar">
 <?php
-virtual("/uhen/ara/monitor/leftMain.shtml");
+include("left.php");
 ?>
-<h2>Update</h2>
-<form name="runForm"   id="runForm" action="javascript:drawPlot(); javascript:void(0);">
-Station: <select id="stationForm" onchange="javascript:drawPlot();">
-  <option value="STATION1B">ARA01</option>
-  <option value="STATION2">ARA02</option>
-  <option value="STATION3">ARA03</option>
-</select> <br />
-Run: <input type="text" name="runInput" id="runInput" value="1958"  />
-<br />
-<button type="button" value="Next" onclick="javascript:getPreviousRun(drawPlot);">Previous</button>
-<button type="button" value="Next" onclick="javascript:getNextRun(drawPlot);">Next</button>
-<br />
-Plot: <select id="plotForm" onchange="javascript:drawPlot();">
-  <option value="singleChannelRate">L1 Rate</option>
-  <option value="singleChannelThreshold">L1 Threshold</option>
-  <option value="oneOfFour">L2 (1 of 4)</option>
-  <option value="twoOfFour">L2 (2 of 4)</option>
-  <option value="threeOfFour">L2 (3 of 4)</option>
-  <option value="threeOfEight">L2 (3 of 8)</option>
-  <option value="vadj">V_adj</option>
-  <option value="vdly">V_dly</option>
-  <option value="wilkinsonC">Wilkinson</option>
-  <option value="pps">PPS</option>
-  <option value="clock">100MHz</option>
-</select>
-</form>
-<br />
-
+</div>
 </body></html>
 

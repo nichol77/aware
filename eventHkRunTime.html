@@ -14,10 +14,10 @@
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.js"></script>
 <script type="text/javascript">
 
-$(function() {
-   setHkTypeAndCanName('eventHk',"divTime");
-   drawSimpleHkTimePlot();
-});  
+  $(function() {
+setHkTypeAndCanName('eventHk','divTime','simple');
+drawPlot();
+  });  
 
 </script>
 </head>
@@ -40,6 +40,7 @@ $(function() {
 <p>
   Click and drag on the background to zoom, double click to unzoom.
 </p>
+
 <p id="choices" style=""></p>
 </div>
 
@@ -51,18 +52,18 @@ $(function() {
 virtual("/uhen/ara/monitor/leftMain.shtml");
 ?>
 <h2>Update</h2>
-<form name="runForm"   id="runForm" action="javascript:drawSimpleHkTimePlot(); javascript:void(0);">
-Station: <select id="stationForm" onchange="javascript:drawSimpleHkTimePlot();">
+<form name="runForm"   id="runForm" action="javascript:drawPlot(); javascript:void(0);">
+Station: <select id="stationForm" onchange="javascript:drawPlot();">
   <option value="STATION1B">ARA01</option>
   <option value="STATION2">ARA02</option>
   <option value="STATION3">ARA03</option>
 </select> <br />
 Run: <input type="text" name="runInput" id="runInput" value="1958"  />
 <br />
-<button type="button" value="Next" onclick="javascript:getPreviousRun(drawSimpleHkTimePlot);">Previous</button>
-<button type="button" value="Next" onclick="javascript:getNextRun(drawSimpleHkTimePlot);">Next</button>
+<button type="button" value="Next" onclick="javascript:getPreviousRun(drawPlot);">Previous</button>
+<button type="button" value="Next" onclick="javascript:getNextRun(drawPlot);">Next</button>
 <br />
-Plot: <select id="plotForm" onchange="javascript:drawSimpleHkTimePlot();">
+Plot: <select id="plotForm" onchange="javascript:drawPlot();">
   <option value="singleChannelRate">L1 Rate</option>
   <option value="singleChannelThreshold">L1 Threshold</option>
   <option value="oneOfFour">L2 (1 of 4)</option>

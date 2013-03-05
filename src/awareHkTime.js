@@ -13,6 +13,7 @@
 /* Globals */
 var thisHkType;
 var globCanName;
+var thisTimeType;
 var stationName;
 var runNumber;
 var year=2013;
@@ -20,6 +21,7 @@ var datecode=123;
 var timesWaited=0;
 var setDatecode=0;
 var plotName;
+var plotLabel;
 var startTime;
 var duration;
 
@@ -29,9 +31,19 @@ var datasets = new Object();
     
 var timeArray=[];
 
-function setHkTypeAndCanName(hkType,canName) {
+function setHkTypeAndCanName(hkType,canName,timeType) {
     thisHkType=hkType;
     globCanName=canName;
+    thisTimeType=timeType;
+}
+
+function updateTimeType(timeType) {
+    thisTimeType=timeType;
+}
+
+function updateTimeTypeFromForm() {
+    thisTimeType=document.getElementById("timeForm").value;
+
 }
 
 
@@ -108,6 +120,7 @@ function actuallyDrawTheStuff() {
     });
     
     var canContainer = $("#titleContainer"); 
+    canContainer.append("<p>The plot has "+timeArray.length+" time points</p>");
 
     var plotCan=$("#"+globCanName);
     // insert checkboxes 
@@ -210,7 +223,8 @@ function getStationNameFromForm() {
 }
 
 function getPlotNameFromForm() {
-    var plotName=document.getElementById("plotForm").value;
+    plotName=document.getElementById("plotForm").value;
+    plotLabel=document.getElementById("plotForm").label;
     return plotName;
 }
 
@@ -218,17 +232,30 @@ function drawSimpleHkTimePlot() {
     getRunStationDateAndPlot(simpleHkPlotDrawer);
 }
 
+function updatePlotTitle(jsonObject) {
+    //Also update the page URL
+    var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
+    //    var currentUrl = window.location.href;
+    currentUrl=currentUrl+"?run="+runNumber+"&station="+stationName+"&plot="+plotName+"&timeType="+thisTimeType;
+    var stateObj = { foo: "bar" };
+    history.replaceState(stateObj, "page 2", currentUrl);
+
+    var canContainer = $("#titleContainer"); 
+    canContainer.empty();
+    canContainer.append("<h1>"+stationName+" -- Run "+runNumber+"</h1>");
+    canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
+    canContainer.append("<h2> Plot "+plotName+"</h2>");
+    
+}
+
+
 
 function simpleHkPlotDrawer() {
     var simpleHkTimeUrl=getHkTimeName(stationName,runNumber,year,datecode,thisHkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
-	var canContainer = $("#titleContainer"); 
-	canContainer.empty();
-	canContainer.append("<h1>"+stationName+" -- Run "+runNumber+"</h1>");
-	canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
-	canContainer.append("<h2> Plot "+plotName+"</h2>");
+	updatePlotTitle(jsonObject);
 	datasets = new Object();	
 	var choiceContainer = $("#choices");
 	choiceContainer.empty();
@@ -249,10 +276,6 @@ function simpleHkPlotDrawer() {
     
 }
 
-function defaultFullHkTimePlot() {
-    getRunStationDateAndPlot(fullHkPlotDrawer);
-}
-
 
 function drawFullHkTimePlot() {
     getRunStationDateAndPlot(fullHkPlotDrawer);
@@ -263,12 +286,7 @@ function fullHkPlotDrawer() {
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
-	var canContainer = $("#titleContainer"); 
-	canContainer.empty();
-	canContainer.append("<h1>"+stationName+" -- Run "+runNumber+"</h1>");
-	canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
-	canContainer.append("<h2> Plot "+plotName+"</h2>");
-	datasets = new Object();	
+	updatePlotTitle(jsonObject);
 	var choiceContainer = $("#choices");
 	choiceContainer.empty();
 	
@@ -380,16 +398,11 @@ function getRunStationDateAndPlot(plotFunc) {
 //Here are the plots that use the date selector
 
 function drawDateHkTimePlot() {
-    getRunListFromDateAndPlot(dateHkPlotDrawer);
-}
-
-function dateHkPlotDrawer() {
-    
+    getRunListFromDateAndPlot();
 }
 
 
-
-function getRunListFromDateAndPlot(plotFunc) {
+function getRunListFromDateAndPlot() {
 
     plotName=getPlotNameFromForm();    
     stationName=getStationNameFromForm();
@@ -412,8 +425,8 @@ function getRunListFromDateAndPlot(plotFunc) {
 	canContainer.empty();
 	canContainer.append("<h1>"+stationName+" -- Date "+dayString+"/"+monthString+"/"+year+"</h1>");
 	canContainer.append("<h2> Plot "+plotName+"</h2>");
-	datasets = new Object();	
-	timeArray = new Array();
+
+	//	timeArray.length=0;// = new Array();
 	var choiceContainer = $("#choices");
 	choiceContainer.empty();
 	
@@ -438,7 +451,7 @@ function getRunListFromDateAndPlot(plotFunc) {
     
 	}
     }
-    //		plotFunc();
+
     
     
     $.ajax({
@@ -510,4 +523,20 @@ function getRunListFromDateAndPlot(plotFunc) {
 	}
     }
 
+}
+
+
+function drawPlot() {   
+    timeArray.length=0;
+    var plotCan=$("#"+globCanName);
+    var choiceContainer = $("#choices");
+    var labelContainer= $("#divLabel");
+    plotCan.empty();
+    plotCan.append("<h2>Loading</h2>");
+    choiceContainer.empty();
+    labelContainer.empty();
+    datasets = new Object();	
+    if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
+    else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
+    else if(thisTimeType.indexOf("date")>=0) drawDateHkTimePlot();
 }
