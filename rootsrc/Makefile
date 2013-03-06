@@ -10,25 +10,22 @@ DLLSUF=so
 OBJSUF=o
 
 
-LD_ARA_UTIL=-L$(ARA_UTIL_INSTALL_DIR)/lib  -lAraEvent
-INC_ARA_UTIL=-I$(ARA_UTIL_INSTALL_DIR)/include
 
 
 #Generic and Site Specific Flags
-CXXFLAGS     += $(ROOTCFLAGS) $(FFTFLAG) $(SYSINCLUDES) $(INC_ARA_UTIL)
+CXXFLAGS     += $(ROOTCFLAGS) $(FFTFLAG) $(SYSINCLUDES) 
 LDFLAGS      += -g $(ROOTLDFLAGS) 
 
-LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS) $(LD_ARA_UTIL) $(FFTLIBS) 
+LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS)  $(FFTLIBS) 
 GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 ROOT_LIBRARY = libAwareWeb.so
 
-LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o awareDict.o
-CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h
+LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o AwareRunDatabase.o awareDict.o
+CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h AwareRunDatabase.h
 
-PROGRAM =   makeEventXmlFile makeSensorHkJsonFiles makeEventHkJsonFiles
 
-all : $(ROOT_LIBRARY) $(PROGRAM)
+all : $(ROOT_LIBRARY) 
 
 #The library
 $(ROOT_LIBRARY) : $(LIB_OBJS) 
@@ -57,9 +54,6 @@ awareDict.C: $(CLASS_HEADERS)
 	rootcint $@ -c $(INC_ANITA_UTIL) $(CLASS_HEADERS) LinkDef.h
 
 
-% :  %.$(SRCSUF) $(ROOT_LIBRARY)
-	@echo "<**Linking**> "  
-	$(LD)  $(CXXFLAGS) $(LDFLAGS) $< tinyxml2.cpp $(LIBS) $(ROOT_LIBRARY) -o $@
 
 %.$(OBJSUF) : %.$(SRCSUF)
 	@echo "<**Compiling**> "$<
@@ -69,5 +63,5 @@ awareDict.C: $(CLASS_HEADERS)
 clean:
 	@rm -f *Dict*
 	@rm -f *.${OBJSUF}
-	@rm -f $(PROGRAM)
+	@rm -f $(ROOT_LIBRARY)
 
