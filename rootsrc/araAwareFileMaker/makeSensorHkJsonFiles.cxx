@@ -25,6 +25,7 @@
 
 //AWARE Includes
 #include "AwareRunSummaryFileMaker.h"
+#include "AwareRunDatabase.h"
 
 
 AtriSensorHkData *sensorHkPtr;
@@ -65,6 +66,10 @@ int main(int argc, char **argv) {
   sensorHkTree->SetBranchAddress("run",&runNumber);
   
   sensorHkTree->GetEntry(0);
+
+
+  TTimeStamp timeStamp(sensorHkPtr->unixTime,0);
+  UInt_t dateInt=timeStamp.GetDate();
 
   //Now we set up out run list
   Long64_t numEntries=sensorHkTree->GetEntries();
@@ -125,8 +130,6 @@ int main(int argc, char **argv) {
   std::cerr << "\n";
 
 
-  TTimeStamp timeStamp(sensorHkPtr->unixTime,0);
-  UInt_t dateInt=timeStamp.GetDate();
   
   char outName[FILENAME_MAX];
   sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
@@ -139,6 +142,7 @@ int main(int argc, char **argv) {
 
   sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
-  
-  
+
+  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
+  AwareRunDatabase::updateDateList(stationName,runNumber,dateInt);
 }

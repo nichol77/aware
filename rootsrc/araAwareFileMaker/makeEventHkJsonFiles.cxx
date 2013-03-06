@@ -9,8 +9,6 @@
 
 //Includes
 #include <iostream>
-#include <fstream>
-#include <string>
 
 //AraRoot Includes
 #include "AtriEventHkData.h"
@@ -159,17 +157,16 @@ int main(int argc, char **argv) {
 
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%s/%d/%04d/run%d/full",stationName,dateInt/10000,(dateInt%10000),runNumber);
-  //  std::cout << outName << "\n";
+  sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
 
   summaryFile.writeFullJSONFiles(outName,"eventHk");
 
 
-  sprintf(outName,"output/%s/%d/%04d/run%d/eventHkSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
-  sprintf(outName,"output/%s/%d/%04d/run%d/eventHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
 
   AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
