@@ -28,7 +28,7 @@
   
   setRowsAndCols(5,4);
   fillEventDivWithWaveformContainers();
-  plotEvent();
+  drawPlot();
 });  
 
 </script>

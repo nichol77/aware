@@ -78,6 +78,9 @@ function updatePlotTitle(jsonObject) {
 }
 
 
+function drawPlot() {
+    plotEvent();
+}
 
 function plotEvent() {
     getRunStationDateAndEvent(eventPlotter);
