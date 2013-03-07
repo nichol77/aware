@@ -21,8 +21,8 @@ GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 ROOT_LIBRARY = libAwareWeb.so
 
-LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o AwareRunDatabase.o awareDict.o
-CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h AwareRunDatabase.h
+LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o AwareRunDatabase.o AwareWaveformEventFileMaker.o awareDict.o
+CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h AwareRunDatabase.h AwareWaveformEventFileMaker.h
 
 
 all : $(ROOT_LIBRARY) 

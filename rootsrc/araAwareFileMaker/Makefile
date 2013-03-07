@@ -25,7 +25,7 @@ GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 
 
-PROGRAM =    makeSensorHkJsonFiles makeEventHkJsonFiles #makeEventXmlFile
+PROGRAM =    makeSensorHkJsonFiles makeEventHkJsonFiles makeEventJsonFiles
 
 all : $(PROGRAM)
 
