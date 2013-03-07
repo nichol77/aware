@@ -96,6 +96,9 @@ function drawPlot() {
 }
 
 function plotEvent() {
+    titleContainer=$("#titleContainer");
+    titleContainer.empty();
+    titleContainer.append("<h2>Loading</h2>");
     getRunStationDateAndEvent(eventPlotter);
 }
 
