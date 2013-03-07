@@ -30,14 +30,14 @@ function setRowsAndCols(row,col) {
 
 ///Here are the UI thingies
 function getRunFromForm() {
-    runNumber=documeant.getElementById("runInput").value;
+    runNumber=document.getElementById("runInput").value;
     //runNumber=2000;
     return runNumber;
 } 
 
 function getEventNumberFromForm() {
-//    runNumber=documeant.getElementById("runInput").value;
-    eventNumber=0;
+    eventNumber=documeant.getElementById("eventInput").value;
+//    eventNumber=0;
     return eventNumber;
 } 
 
@@ -52,6 +52,21 @@ function getPreviousRun(nextFunction) {
     runNumber=document.getElementById("runInput").value;
     runNumber--;
     document.getElementById("runInput").value=runNumber;
+    nextFunction();
+}
+
+
+function getNextEvent(nextFunction) {
+    eventNumber=document.getElementById("eventInput").value;
+    eventNumber++;
+    document.getElementById("eventInput").value=eventNumber;
+    nextFunction();
+}
+
+function getPreviousEvent(nextFunction) {
+    eventNumber=document.getElementById("eventInput").value;
+    eventNumber--;
+    document.getElementById("eventInput").value=eventNumber;
     nextFunction();
 }
 
