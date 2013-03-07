@@ -31,13 +31,11 @@ function setRowsAndCols(row,col) {
 ///Here are the UI thingies
 function getRunFromForm() {
     runNumber=document.getElementById("runInput").value;
-    //runNumber=2000;
     return runNumber;
 } 
 
 function getEventNumberFromForm() {
-    eventNumber=documeant.getElementById("eventInput").value;
-//    eventNumber=0;
+    eventNumber=document.getElementById("eventInput").value;
     return eventNumber;
 } 
 
