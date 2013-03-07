@@ -5,6 +5,26 @@
 ##############################################################################
 include Makefile.arch
 
+
+
+ifdef ANITA_UTIL_INSTALL_DIR
+UTIL_LIB_DIR=${ANITA_UTIL_INSTALL_DIR}/lib
+UTIL_INC_DIR=${ANITA_UTIL_INSTALL_DIR}/include
+LD_UTIL=-L$(ANITA_UTIL_LIB_DIR)
+INC_UTIL=-I$(ANITA_UTIL_INC_DIR)
+else 
+ifdef ARA_UTIL_INSTALL_DIR
+UTIL_LIB_DIR=${ARA_UTIL_INSTALL_DIR}/lib
+UTIL_INC_DIR=${ARA_UTIL_INSTALL_DIR}/include
+LD_UTIL=-L$(ARA_UTIL_LIB_DIR)
+INC_UTIL=-I$(ARA_UTIL_INC_DIR)
+else
+UTIL_LIB_DIR=/usr/local/lib
+UTIL_INC_DIR=/usr/local/include
+endif
+endif
+
+
 SRCSUF=cxx
 DLLSUF=so
 OBJSUF=o
@@ -65,3 +85,12 @@ clean:
 	@rm -f *.${OBJSUF}
 	@rm -f $(ROOT_LIBRARY)
 
+install: $(ROOT_LIBRARY)
+	install -d $(UTIL_INC_DIR)
+	install -d $(UTIL_LIB_DIR)
+ifeq ($(PLATFORM),macosx)
+	@install -c -m 755 $(ROOT_LIBRARY) $(subst .$(DllSuf),.so,$(ROOT_LIBRARY)) $(UTIL_LIB_DIR)
+else
+	install -c -m 755 $(ROOT_LIBRARY) $(UTIL_LIB_DIR)
+endif
+	install -c -m 644 $(CLASS_HEADERS) $(UTIL_INC_DIR)
