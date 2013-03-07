@@ -30,8 +30,8 @@ function setRowsAndCols(row,col) {
 
 ///Here are the UI thingies
 function getRunFromForm() {
-//    runNumber=documeant.getElementById("runInput").value;
-    runNumber=2000;
+    runNumber=documeant.getElementById("runInput").value;
+    //runNumber=2000;
     return runNumber;
 } 
 
