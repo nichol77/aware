@@ -31,6 +31,8 @@ var datasets = new Object();
     
 var timeArray=[];
 
+
+
 function setHkTypeAndCanName(hkType,canName,timeType) {
     thisHkType=hkType;
     globCanName=canName;

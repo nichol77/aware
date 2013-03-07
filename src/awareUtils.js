@@ -55,3 +55,9 @@ function getDateRunListName(station,year,datecode) {
    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/runList.json";
    return name;
 }
+
+
+function getEventName(station, run, year, datecode, eventNumber) {
+    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/event"+eventNumber+".json"; 
+    return name;
+}

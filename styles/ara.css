@@ -1,0 +1,41 @@
+@media screen {
+   DIV.heading {
+                 /*background-image: url("head-background.png");*/
+                 background: url(../images/araTestBed1.png)  ;
+                 background-repeat: repeat-y;
+                 background-position: center;
+   }
+  DIV.heading H1 {
+                   padding-top:1em;             
+                   }
+}             
+          
+DIV.topNavigation,DIV.date {
+   margin: 0;
+   border-top: 0;
+   padding-top: 0.5ex;
+   padding-bottom: 0.5ex;
+}
+
+
+@media screen {
+   a.navigation {
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      border-width: 0.25ex;
+      border-style: solid;
+      border-top-color: #9090f0;
+      border-left-color: #9090f0;
+      border-right-color: #303070;
+      border-bottom-color: #303070;
+   }
+}
+
+DIV.left {
+   float: left;
+   padding-right: 1em;
+}
+DIV.right {
+   float: right;
+   padding-left: 1em;
+}

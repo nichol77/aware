@@ -96,19 +96,6 @@ DIV.content {
    z-index: 2;
 }
 
-DIV.news {
-   background-color: #ffffff;
-   color: #000000;
-/*   width: 80%;*/
-   margin-top: 0;
-   margin-bottom: 1.5ex;
-   padding-top: 0ex;
-   padding-right: 0.25em;
-   padding-left: 0.25em;
-   padding-bottom: 0.5ex;
-   float: left;  /* For netscape4 */
-}
-
 DIV.body {
    padding-top: 1ex;
    clear: both;
@@ -559,6 +546,7 @@ a.leftBar {
    TEXT-DECORATION: none;
    padding-left: 0.25em;
 }
+
 @media screen {
    a.leftBar {
       border-width: 0.2ex;
@@ -610,11 +598,3 @@ a.head:hover {
 a.head:active {
     TEXT-DECORATION: underline;
 }
-
-p.first { text-indent: 0em }
-
-ul { list-style-type: circle }
-ul ul { list-style-type: square; margin-left:1em; }
-ul ul ul { list-style-type: disc; margin-left:1em; }
-li.nomarker {list-style-type: none}
-dl { margin-left:1em; }
