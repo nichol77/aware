@@ -18,12 +18,18 @@ var year=2013;
 var datecode=123;
 var nRows=5;
 var nCols=4;
+var fRowLabels;
+var fColLabels;
+
+var playVar;
 
 
 
-function setRowsAndCols(row,col) {
+function setRowsAndCols(row,col,rowLabels,colLabels) {
     nRows=row;
     nCols=col;
+    fRowLabels=rowLabels;
+    fColLabels=colLabels;
 }
 
 
@@ -67,6 +73,19 @@ function getPreviousEvent(nextFunction) {
     document.getElementById("eventInput").value=eventNumber;
     nextFunction();
 }
+
+function playEvents() {
+   if(document.getElementById("playButton").value=='Play') {
+      document.getElementById("playButton").value='Stop';
+      var playInt=document.getElementById("speedSlide").value;
+      playVar=setInterval(function(){getNextEvent(drawPlot())},(10000/playInt));
+   }
+   else {
+      document.getElementById("playButton").value='Play';
+      clearInterval(playVar);
+   }
+}
+
 
 
 function getStationNameFromForm() {
@@ -140,7 +159,7 @@ function eventPlotter() {
 
 	
 	var titleContainer = $("#titleContainer"); 
-//	titleContainer.append("<p>This evnt has "+jsonObject.event.numChannels+" channels.</p>");
+	titleContainer.append("<p>This event has "+jsonObject.event.numChannels+" channels.</p>");
 	
 	var yMin = [];
 	var yMax = [];
@@ -289,15 +308,31 @@ function fillEventDivWithWaveformContainers()
 //Get hold of the divEvent object and fill it with a table of divs for the event display
   var eventDiv = $("#divEvent");
 //  eventDiv.append("<p>Boo</p>");
+  eventDiv.append("<div class=\"event-leftbar\" id=\"event-leftbar\"></div>");
+  var eventLeftbar=$("#event-leftbar");
+  eventLeftbar.append("<div class=\"event-top-corner\" id=\"event-top-corner\"></div>");
+  for(var row=0;row<nRows;row++) {
+      var divName2="event-row"+row;
+      eventLeftbar.append("<div class=\"row-label\" id=\""+divName2+"\"><h2 class=\"rowlabel\">"+fRowLabels[row]+"</h2></div>");
+  }
+
+
+  eventDiv.append("<div class=\"event-topbar\" id=\"event-topbar\"></div>");
+  var eventTopbar= $("#event-topbar");
+  for(var col=0;col<nCols;col++) {
+      var divName="event-col"+col;
+      eventTopbar.append("<div class=\"column-label\" id=\""+divName+"\"><h2 class=\"collabel\">"+fColLabels[col]+"</h2></div>");
+  }
+
   for (var i=0;i<20;i++) 
   {
-       var row=Math.floor(i/nCols);
-       var col=(i%nCols);
-       var width=24;		  
-       if(col==0) width=26;
-       var height=17;		   
-       if(row==4) height=19;
-      var contName="waveform-container"+i;
+   //     var row=Math.floor(i/nCols);
+//        var col=(i%nCols);
+//        var width=24;		  
+//        if(col==0) width=26;
+//        var height=10;		   
+//        //if(row==4) height=19;
+       var contName="waveform-container"+i;
       
       eventDiv.append("<div class=\"waveform-container\" id=\""+contName+"\"><div id=\"divChan"+i+"\" class=\"waveform-placeholder\" ></div></div>");
 

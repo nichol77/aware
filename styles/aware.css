@@ -1,8 +1,111 @@
+@media screen {
+   DIV.heading {
+                 background-repeat: repeat-y;
+                 background-position: center;
+   }
+  DIV.heading H1 {
+                   padding-top:1em;             
+                   }
+}             
+          
+DIV.topNavigation,DIV.date {
+   margin: 0;
+   border-top: 0;
+   padding-top: 0.5ex;
+   padding-bottom: 0.5ex;
+}
+
+@media screen {
+   a.navigation {
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      border-width: 0.25ex;
+      border-style: solid;
+      border-top-color: #9090f0;
+      border-left-color: #9090f0;
+      border-right-color: #303070;
+      border-bottom-color: #303070;
+   }
+}
+
+DIV.left {
+   float: left;
+   padding-right: 1em;
+}
+DIV.right {
+   float: right;
+   padding-left: 1em;
+}
+
+DIV.other {
+   margin-left: 2em;
+   vertical-align: top;
+}
+
+
+
+
+/*
+For the AWARE web event display
+*/
+
+.event-topbar {
+	width:96%;
+	height:5%;
+/*	background-color: red;	*/
+}
+
+.column-label {
+	box-sizing: border-box;
+	width: 23.5%;	
+	height:100%;
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+}
+
+
+.event-leftbar {
+	width:4%;
+	height:100%;
+/*	background-color: red;	 */
+	float:left;
+}
+
+.event-top-corner {	
+	width: 100%;
+	height: 5%;
+	float: left;
+}	
+
+
+.row-label {
+	box-sizing: border-box;
+	width: 100%;	
+	height:19%;
+	float: left;
+	padding: 100% 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+}
+	
+h2.rowlabel {
+         font-size:90%;
+	 text-align: center ;
+	 color: black;
+}
+
+h2.collabel {
+         font-size:90%;	 
+text-align: center ;
+	 color: black;
+}
 
 .waveform-container {
 	box-sizing: border-box;
-	width: 25%;
-	height: 20%;
+	width: 23%;
+	height: 19%;
 	padding: 1px 1px 1px 1px;
 	margin: 0px 0px 0px 0px;
 	border: 1px solid #ddd;
@@ -17,7 +120,7 @@
 }
 
 .double {
-    width:  100%;
+    width:  90%;
     height: 60%;
 
 }

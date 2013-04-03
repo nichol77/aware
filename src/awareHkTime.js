@@ -272,7 +272,7 @@ function simpleHkPlotDrawer() {
     $.ajax({
 	url: simpleHkTimeUrl,
 	type: "GET",
-	dataType: "json",
+	dataType: "json", 
 	success: handleHkTimeJsonFile
     }); 
     
@@ -336,6 +336,7 @@ function fetchFullHkTime(varNameKey) {
 		    url: fullHkUrl,
 		    type: "GET",
 		    dataType: "json",
+
 		    success: handleFullHkJsonFile
 		}); 
 	
@@ -359,6 +360,7 @@ function fetchFullHkTime(varNameKey) {
 	url: fullHkTimeUrl,
 	type: "GET",
 	dataType: "json",
+
 	success: handleFullHkTimeJsonFile
     }); 
 }
@@ -542,3 +544,4 @@ function drawPlot() {
     else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
     else if(thisTimeType.indexOf("date")>=0) drawDateHkTimePlot();
 }
+

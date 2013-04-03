@@ -15,7 +15,7 @@ if($_GET["station"] === null) {
 
 $run=$_GET["run"];
 if($_GET["run"] === null) {
-  $run=1999;
+  $run=2000;
  }
 
 $stationarray=array(
