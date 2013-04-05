@@ -3,7 +3,7 @@
 
 $event=$_GET["event"];
 if($_GET["event"] === null) {
-  $event=1999;
+  $event=0;
  }
 echo "<form name=\"eventForm\"   id=\"eventForm\" action=\"javascript:drawPlot(); javascript:void(0);\">";		
 
