@@ -49,7 +49,7 @@ function loadXMLDoc(filename)
 
 /* Globals */
 var thisFile;
-var stationName;
+var instrumentName;
 var runNumber;
 var otherRun;
 var otherEvent;
@@ -135,7 +135,7 @@ function parseXmlEvent(filename) {
     xmlDoc = loadXMLDoc(filename);
  
     //create data for the y-axis
-    stationName = xmlDoc.getElementsByTagName("station")[0].childNodes[0].nodeValue;
+    instrumentName = xmlDoc.getElementsByTagName("instrument")[0].childNodes[0].nodeValue;
     runNumber = xmlDoc.getElementsByTagName("run")[0].childNodes[0].nodeValue;
     eventNumber = xmlDoc.getElementsByTagName("eventNum")[0].childNodes[0].nodeValue;
     eventTime = xmlDoc.getElementsByTagName("time")[0].childNodes[0].nodeValue;
@@ -175,7 +175,7 @@ function drawOneChannel(canName,allowZoom) {
     var titleOffset=ctx.canvas.height/4;;
     var fontSize=ctx.canvas.height/5;;
     ctx.font=fontSize+"px Arial";
-    ctx.fillText(stationName,titleOffset,titleOffset);
+    ctx.fillText(instrumentName,titleOffset,titleOffset);
     ctx.fillText("Run: "+runNumber,titleOffset,2*titleOffset);
     ctx.fillText("Event: "+eventNumber,titleOffset,3*titleOffset);
     ctx.fillText("Time: "+eventTime,7*titleOffset,titleOffset); 
@@ -203,7 +203,7 @@ function drawAllChannels(allowZoom,xScale,yScale) {
     var titleOffset=ctx.canvas.height/4;;
     var fontSize=ctx.canvas.height/5;;
     ctx.font=fontSize+"px Arial";
-    ctx.fillText(stationName,titleOffset,titleOffset);
+    ctx.fillText(instrumentName,titleOffset,titleOffset);
     ctx.fillText("Run: "+runNumber,titleOffset,2*titleOffset);
     ctx.fillText("Event: "+eventNumber,titleOffset,3*titleOffset);
     ctx.fillText("Time: "+eventTime,6*titleOffset,titleOffset); 

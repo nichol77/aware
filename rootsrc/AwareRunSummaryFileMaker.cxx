@@ -6,14 +6,14 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "AwareRunSummaryFileMaker.h"
-
+#include "TSystem.h"
 #include <iostream>
 #include <fstream>
 
 
 
-AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * stationName)
-  :fRun(runNumber),fStationName(stationName)
+AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * instrumentName)
+  :fRun(runNumber),fInstrumentName(instrumentName)
 {
 
 }
@@ -65,6 +65,8 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
   if(fRawMap.size()==0) return;
   
+  std::vector<std::string> fFileList;
+
   char jsonName[FILENAME_MAX];
   sprintf(jsonName,"%s/%s_time.json",jsonDir,filePrefix);
   std::ofstream TimeFile(jsonName);
@@ -72,6 +74,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     std::cerr << "Couldn't open " << jsonName << "\n";
     return;
   }
+  fFileList.push_back(std::string(jsonName));
 
 
 
@@ -83,7 +86,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   //Start of runSum
   TimeFile << "\t\"full\":{\n";
   TimeFile << "\t\"run\" : " << fRun <<  ",\n";
-  TimeFile << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+  TimeFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
   TimeFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
   TimeFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
   TimeFile << "\t\"timeList\" : [\n";
@@ -108,12 +111,13 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
       std::cerr << "Couldn't open " << jsonName << "\n";
       continue;
     }
+    fFileList.push_back(std::string(jsonName));
       
     (*VarFile) << "{\n";
     //Start of runSum
     (*VarFile) << "\t\"full\":{\n";
     (*VarFile) << "\t\"run\" : " << fRun <<  ",\n";
-    (*VarFile) << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+    (*VarFile) << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
     (*VarFile) << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
     (*VarFile) << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
     (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
@@ -157,6 +161,13 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 	(fileIt->second)->close();
       }
     }
+
+    while(!fFileList.empty()) {      
+      char gzipString[FILENAME_MAX];
+      sprintf(gzipString,"gzip %s",fFileList.back().c_str());
+      fFileList.pop_back();
+      gSystem->Exec(gzipString);
+    }
   
   
 
@@ -182,7 +193,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     //Start of runSum
     TimeFile << "\t\"timeSum\":{\n";
     TimeFile << "\t\"run\" : " << fRun <<  ",\n";
-    TimeFile << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+    TimeFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
     TimeFile << "\t\"startTime\" : \"" << it->second.getFirstTimeString() <<  "\",\n";
   }
   else {
@@ -259,7 +270,11 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     TimeFile << "\t]\n\t}";
   }
   TimeFile << "\t]\n\t}\n}\n";
-  
+  TimeFile.close();
+
+  char gzipString[FILENAME_MAX];
+  sprintf(gzipString,"gzip %s",jsonName);
+  gSystem->Exec(gzipString);
 
 }
 
@@ -283,7 +298,7 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   //Start of runSum
   jsonFile << "\"runsum\":{\n";
   jsonFile << "\"run\" : " << fRun <<  ",\n";
-  jsonFile << "\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+  jsonFile << "\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
   jsonFile << "\"startTime\" : \"" << it->second.getFirstTimeString() <<  "\",\n";
   jsonFile << "\"duration\" : " << it->second.getDuration() <<  ",\n";
 
@@ -327,6 +342,10 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   //Closing brace
   jsonFile << "}\n";
   jsonFile.close();
+
+  char gzipString[FILENAME_MAX];
+  sprintf(gzipString,"gzip %s",jsonName);
+  gSystem->Exec(gzipString);
 }
 
 

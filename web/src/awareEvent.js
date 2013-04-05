@@ -11,7 +11,7 @@
 
 
 /* Globals */
-var stationName;
+var instrumentName;
 var runNumber;
 var eventNumber;
 var year=2013;
@@ -88,10 +88,9 @@ function playEvents() {
 
 
 
-function getStationNameFromForm() {
-//    stationName=document.getElementById("stationForm").value;
-    stationName="STATION1B";
-    return stationName;
+function getInstrumentNameFromForm() {
+    instrumentName=document.getElementById("instrumentForm").value;
+    return instrumentName;
 }
 
 
@@ -99,13 +98,13 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+runNumber+"&station="+stationName+"&event="+eventNumber;
+    currentUrl=currentUrl+"?run="+runNumber+"&instrument="+instrumentName+"&event="+eventNumber;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var titleContainer = $("#titleContainer"); 
     titleContainer.empty();
-    titleContainer.append("<h1>"+stationName+" -- Run "+runNumber+"</h1>");
+    titleContainer.append("<h1>"+instrumentName+" -- Run "+runNumber+"</h1>");
     
 }
 
@@ -118,16 +117,16 @@ function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
     titleContainer.append("<h2>Loading</h2>");
-    getRunStationDateAndEvent(eventPlotter);
+    getRunInstrumentDateAndEvent(eventPlotter);
 }
 
-function getRunStationDateAndEvent(plotFunc) {
+function getRunInstrumentDateAndEvent(plotFunc) {
     setDatecode=0;
     runNumber=getRunFromForm();
     eventNumber=getEventNumberFromForm();    
-    stationName=getStationNameFromForm();
+    instrumentName=getInstrumentNameFromForm();
     //var titleContainer = $("#leftbar"); 
-    var runListFile=getRunListName(stationName,runNumber);
+    var runListFile=getRunListName(instrumentName,runNumber);
     function handleRunList(jsonObject) {
 //	titleContainer.append("<p>"+jsonObject.runList.length+"</p>");
 	for(var i=0;i<jsonObject.runList.length;i++) {
@@ -151,7 +150,7 @@ function getRunStationDateAndEvent(plotFunc) {
 
 
 function eventPlotter() {
-    var eventUrl=getEventName(stationName,runNumber,year,datecode,eventNumber);
+    var eventUrl=getEventName(instrumentName,runNumber,year,datecode,eventNumber);
 
     function handleEventJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
