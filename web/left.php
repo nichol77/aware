@@ -24,7 +24,7 @@ $stationarray=array(
 		    "STATION3" => "ARA03",
 		    );
 
-echo 'Station: <select id="stationForm" onchange="javascript:drawPlot();">';
+echo 'Station: <select id="instrumentForm" onchange="javascript:drawPlot();">';
 foreach ($stationarray as $key => $value) {
   $pos = strpos($station,$key);
   if($pos !== false) {

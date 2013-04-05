@@ -11,7 +11,7 @@
 
 
 /* Globals */
-var stationName;
+var instrumentName;
 var runNumber;
 var startTime;
 var duration;
@@ -82,9 +82,9 @@ function setDpList(jsonObject) {
 
  
 
-function drawRunSummaryHkJSON(l1Name,threshName,station,run) {
+function drawRunSummaryHkJSON(l1Name,threshName,instrument,run) {
     
-    var dataurl=getHkName(station,run);
+    var dataurl=getHkName(instrument,run);
 
     function onDataReceived(jsonObject) {
 	setDpList(jsonObject);

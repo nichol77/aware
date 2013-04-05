@@ -23,41 +23,41 @@ function getUrlVars() {
     return vars;
 }
 
-function getRunListName(station, run) {
+function getRunListName(instrument, run) {
     var run1000=run - (run%1000);
-    var name="output/"+station+"/runList"+run1000+".json.gz";
+    var name="output/"+instrument+"/runList"+run1000+".json.gz";
     return name;
 }
 
 
-function getHkName(station, run, year, datecode, hkType) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Summary.json.gz"; 
+function getHkName(instrument, run, year, datecode, hkType) {
+    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Summary.json.gz"; 
     return name;
 }
 
 
-function getHkTimeName(station, run, year, datecode,hkType) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Time.json.gz"; 
+function getHkTimeName(instrument, run, year, datecode,hkType) {
+    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Time.json.gz"; 
     return name;
 }
 
-function getFullHkName(station,run,year,datecode,hkFile,hkType) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_"+hkFile+".json.gz"; 
+function getFullHkName(instrument,run,year,datecode,hkFile,hkType) {
+    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_"+hkFile+".json.gz"; 
     return name;
 }
 
-function getFullHkTimeName(station,run,year,datecode,hkType) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_time.json.gz"; 
+function getFullHkTimeName(instrument,run,year,datecode,hkType) {
+    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_time.json.gz"; 
     return name;
 }
 
-function getDateRunListName(station,year,datecode) {
-   var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/runList.json.gz";
+function getDateRunListName(instrument,year,datecode) {
+   var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/runList.json.gz";
    return name;
 }
 
 
-function getEventName(station, run, year, datecode, eventNumber) {
-    var name="output/"+station+"/"+year+"/"+pad4(datecode)+"/run"+run+"/event"+eventNumber+".json.gz"; 
+function getEventName(instrument, run, year, datecode, eventNumber) {
+    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/event"+eventNumber+".json.gz"; 
     return name;
 }
