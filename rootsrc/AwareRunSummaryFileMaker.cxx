@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "AwareRunSummaryFileMaker.h"
-
+#include "TSystem.h"
 #include <iostream>
 #include <fstream>
 
@@ -65,6 +65,8 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
   if(fRawMap.size()==0) return;
   
+  std::vector<std::string> fFileList;
+
   char jsonName[FILENAME_MAX];
   sprintf(jsonName,"%s/%s_time.json",jsonDir,filePrefix);
   std::ofstream TimeFile(jsonName);
@@ -72,6 +74,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     std::cerr << "Couldn't open " << jsonName << "\n";
     return;
   }
+  fFileList.push_back(std::string(jsonName));
 
 
 
@@ -108,6 +111,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
       std::cerr << "Couldn't open " << jsonName << "\n";
       continue;
     }
+    fFileList.push_back(std::string(jsonName));
       
     (*VarFile) << "{\n";
     //Start of runSum
@@ -156,6 +160,13 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 	*(fileIt->second) << " ]\n}\n}\n";
 	(fileIt->second)->close();
       }
+    }
+
+    while(!fFileList.empty()) {      
+      char gzipString[FILENAME_MAX];
+      sprintf(gzipString,"gzip %s",fFileList.back().c_str());
+      fFileList.pop_back();
+      gSystem->Exec(gzipString);
     }
   
   
@@ -259,7 +270,11 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     TimeFile << "\t]\n\t}";
   }
   TimeFile << "\t]\n\t}\n}\n";
-  
+  TimeFile.close();
+
+  char gzipString[FILENAME_MAX];
+  sprintf(gzipString,"gzip %s",jsonName);
+  gSystem->Exec(gzipString);
 
 }
 
@@ -327,6 +342,10 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   //Closing brace
   jsonFile << "}\n";
   jsonFile.close();
+
+  char gzipString[FILENAME_MAX];
+  sprintf(gzipString,"gzip %s",jsonName);
+  gSystem->Exec(gzipString);
 }
 
 
