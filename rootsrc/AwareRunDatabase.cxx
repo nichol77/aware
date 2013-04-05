@@ -11,6 +11,113 @@
 #include <fstream>
 #include <map>
 
+AwareRunDatabase::AwareRunDatabase(char *outputDir,char *instumnentName) 
+   :fOutputDirName(outputDir),fInstrumentName(instumnentName)
+{
+
+
+}
+
+void AwareRunDatabase::addRunDateToMap(int runNumber, int dateInt)
+{
+  fRunDateMap[runNumber]=dateInt;
+
+  std::map<int, std::map<int,int> >::iterator it=fDateRunMap.find(dateInt);
+  if(it!=fDateRunMap.end()) {
+    //Got this date int already
+    it->second.insert(std::pair<int,int>(runNumber,runNumber));
+  }
+  else {
+    std::map<int,int> newDateMap;
+    newDateMap.insert(std::pair<int,int>(runNumber,runNumber));
+    fDateRunMap.insert(std::pair< int, std::map< int,int > > (dateInt,newDateMap));
+  }
+
+}
+
+
+void AwareRunDatabase::writeRunAndDateList() 
+{
+  if(fRunDateMap.size()==0) return;
+  
+  //Do the runList one first
+
+  char filename[FILENAME_MAX];
+  char textVal[180];
+  {
+    std::ofstream RunList;
+    int currentRunThousand=-1;
+    Int_t firstOne=1;
+
+    for(std::map<int,int>::iterator runIt=fRunDateMap.begin();
+	runIt!=fRunDateMap.end();
+	runIt++) {
+      int runNumber=runIt->first;
+      int dateInt=runIt->second;
+      //    std::cout << "got: " << runNumber << "\t" << dateInt << "\n";
+      Int_t runThousand=1000*(runNumber/1000); 
+      if(runThousand!=currentRunThousand) {
+	//Need to open new file
+	if(RunList.is_open()) {
+	  RunList << "\n]\n}\n";
+	  RunList.close();
+	}
+	sprintf(filename,"%s/%s/runList%d.json",fOutputDirName.c_str(),fInstrumentName.c_str(),runThousand);
+	std::cout << filename << "\n";
+	RunList.open(filename);
+	if(!RunList.is_open()) {	
+	  std::cerr << "Can not open " << filename << "\n";
+	  continue;
+	}
+      
+	RunList << "{\n";
+	RunList << " \"runList\" : [\n";
+	firstOne=1;
+      }
+    
+      //    std::cout << firstOne << "\t" <<runThousand << "\n";
+      sprintf(textVal,"[%d,%d,%d]",runNumber,dateInt/10000,dateInt%10000);
+      if(!firstOne) RunList << ",";    
+      RunList << textVal;
+      firstOne=0;
+      currentRunThousand=runThousand;
+    }
+    if(RunList.is_open()) {
+      RunList << "\n]\n}\n";
+      RunList.close();
+    }   
+  }
+
+  {
+
+    for(std::map<int,std::map<int, int> >::iterator dateIt=fDateRunMap.begin();
+	dateIt!=fDateRunMap.end();
+	dateIt++) {
+      //      std::cout << dateIt->first << "\n";
+      int dateInt=dateIt->first;
+      char dateRunList[FILENAME_MAX];
+      sprintf(dateRunList,"%s/%s/%d/%04d/runList.json",fOutputDirName.c_str(),fInstrumentName.c_str(),dateInt/10000,dateInt%10000);
+      
+      std::map<Int_t, Int_t>::iterator it=dateIt->second.begin();;
+      int firstOne=1;
+      std::ofstream NewRunList(dateRunList);
+      if(!NewRunList) {
+	std::cerr << "Can not open " << dateRunList << "\n";
+      }
+      else {
+	NewRunList << "{\n";
+	NewRunList << " \"runList\" : [\n";
+	for(;it!=dateIt->second.end();it++) {
+	  if(!firstOne) NewRunList << ",\n";
+	  NewRunList << it->second;
+	  firstOne=0;
+	}
+	NewRunList << "\n]\n}\n";
+	NewRunList.close();
+      }
+    }        
+  }
+}
 
 void AwareRunDatabase::updateDateList(char *instrumentName, int runNumber, int dateInt) {
   //This file makes a simple runList JSON file in each date dir

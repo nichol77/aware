@@ -164,7 +164,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
     while(!fFileList.empty()) {      
       char gzipString[FILENAME_MAX];
-      sprintf(gzipString,"gzip %s",fFileList.back().c_str());
+      sprintf(gzipString,"gzip -f %s",fFileList.back().c_str());
       fFileList.pop_back();
       gSystem->Exec(gzipString);
     }
@@ -273,7 +273,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
   TimeFile.close();
 
   char gzipString[FILENAME_MAX];
-  sprintf(gzipString,"gzip %s",jsonName);
+  sprintf(gzipString,"gzip -f %s",jsonName);
   gSystem->Exec(gzipString);
 
 }
@@ -344,7 +344,7 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   jsonFile.close();
 
   char gzipString[FILENAME_MAX];
-  sprintf(gzipString,"gzip %s",jsonName);
+  sprintf(gzipString,"gzip -f %s",jsonName);
   gSystem->Exec(gzipString);
 }
 

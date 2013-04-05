@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
   sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
 
-  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
-  AwareRunDatabase::updateDateList(stationName,runNumber,dateInt);
+  //  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
+  //  AwareRunDatabase::updateDateList(stationName,runNumber,dateInt);
 }
 

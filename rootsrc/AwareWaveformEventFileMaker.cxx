@@ -104,6 +104,6 @@ void AwareWaveformEventFileMaker::writeFile()
 
 
   char gzipString[FILENAME_MAX];
-  sprintf(gzipString,"gzip %s",fEventFilename.c_str());
+  sprintf(gzipString,"gzip -f %s",fEventFilename.c_str());
   gSystem->Exec(gzipString);
 }

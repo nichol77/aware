@@ -145,6 +145,6 @@ int main(int argc, char **argv) {
   summaryFile.writeTimeJSONFile(outName);
 
 
-  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
-  AwareRunDatabase::updateDateList(stationName,runNumber,dateInt);
+  //  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
+  //  AwareRunDatabase::updateDateList(stationName,runNumber,dateInt);
 }

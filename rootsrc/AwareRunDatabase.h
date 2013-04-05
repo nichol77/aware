@@ -19,9 +19,19 @@
 class AwareRunDatabase 
 {
  public :
+   AwareRunDatabase(char *outputDir,char *instrumentName);
+  void addRunDateToMap(int runNumber, int dateInt);
+  void writeRunAndDateList();
+
+
   static void updateRunList(char *instrumentName, int runNumber, int dateInt);
   static void updateDateList(char *instrumentName, int runNumber, int dateInt);
   
+ private:
+  std::string fOutputDirName;
+  std::string fInstrumentName;
+  std::map<int, int> fRunDateMap;
+  std::map<int, std::map<int,int> > fDateRunMap;
 
 };
 
