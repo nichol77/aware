@@ -19,8 +19,8 @@
 class AwareRunDatabase 
 {
  public :
-  static void updateRunList(char *stationName, int runNumber, int dateInt);
-  static void updateDateList(char *stationName, int runNumber, int dateInt);
+  static void updateRunList(char *instrumentName, int runNumber, int dateInt);
+  static void updateDateList(char *instrumentName, int runNumber, int dateInt);
   
 
 };

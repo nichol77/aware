@@ -12,8 +12,8 @@
 
 
 
-AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * stationName)
-  :fRun(runNumber),fStationName(stationName)
+AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * instrumentName)
+  :fRun(runNumber),fInstrumentName(instrumentName)
 {
 
 }
@@ -83,7 +83,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   //Start of runSum
   TimeFile << "\t\"full\":{\n";
   TimeFile << "\t\"run\" : " << fRun <<  ",\n";
-  TimeFile << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+  TimeFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
   TimeFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
   TimeFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
   TimeFile << "\t\"timeList\" : [\n";
@@ -113,7 +113,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     //Start of runSum
     (*VarFile) << "\t\"full\":{\n";
     (*VarFile) << "\t\"run\" : " << fRun <<  ",\n";
-    (*VarFile) << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+    (*VarFile) << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
     (*VarFile) << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
     (*VarFile) << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
     (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
@@ -182,7 +182,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     //Start of runSum
     TimeFile << "\t\"timeSum\":{\n";
     TimeFile << "\t\"run\" : " << fRun <<  ",\n";
-    TimeFile << "\t\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+    TimeFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
     TimeFile << "\t\"startTime\" : \"" << it->second.getFirstTimeString() <<  "\",\n";
   }
   else {
@@ -283,7 +283,7 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   //Start of runSum
   jsonFile << "\"runsum\":{\n";
   jsonFile << "\"run\" : " << fRun <<  ",\n";
-  jsonFile << "\"station\" : \"" << fStationName.c_str() <<  "\",\n";
+  jsonFile << "\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
   jsonFile << "\"startTime\" : \"" << it->second.getFirstTimeString() <<  "\",\n";
   jsonFile << "\"duration\" : " << it->second.getDuration() <<  ",\n";
 

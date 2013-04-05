@@ -19,7 +19,7 @@
 class AwareRunSummaryFileMaker 
 {
  public :
-  AwareRunSummaryFileMaker(Int_t runNumber, const char *stationName);
+  AwareRunSummaryFileMaker(Int_t runNumber, const char *instrumentName);
 
   void addVariablePoint(const char *elName, const char *label, TTimeStamp timeStamp, Double_t variable);
 
@@ -34,7 +34,7 @@ class AwareRunSummaryFileMaker
 
   //Data storge
   Int_t fRun;
-  std::string fStationName;
+  std::string fInstrumentName;
   std::map<std::string,AwareVariableSummary> summaryMap;
   std::map<std::string,std::string> fLabelMap;
   

@@ -11,8 +11,8 @@
 #include <fstream>
 
 
-AwareWaveformEventFileMaker::AwareWaveformEventFileMaker(Int_t runNumber, Int_t eventNumber, const char *stationName, const char *jsonName)
- :fRun(runNumber),fEventNumber(eventNumber),fStationName(stationName),fEventFilename(jsonName)
+AwareWaveformEventFileMaker::AwareWaveformEventFileMaker(Int_t runNumber, Int_t eventNumber, const char *instrumentName, const char *jsonName)
+ :fRun(runNumber),fEventNumber(eventNumber),fInstrumentName(instrumentName),fEventFilename(jsonName)
 {
 
 
@@ -58,7 +58,7 @@ void AwareWaveformEventFileMaker::writeFile()
   }
 
   fEventFile << "{\n\"event\":{\n";
-  fEventFile <<  "\"station\": \"" << fStationName << "\",\n";
+  fEventFile <<  "\"instrument\": \"" << fInstrumentName << "\",\n";
   fEventFile <<  "\"run\": " << fRun << ",\n";
   fEventFile <<  "\"eventNumber\": " << fEventNumber << ",\n";
 

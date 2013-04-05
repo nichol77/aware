@@ -21,7 +21,7 @@
 class AwareWaveformEventFileMaker 
 {
  public :
-  AwareWaveformEventFileMaker(Int_t runNumber, Int_t eventNumber, const char *stationName, const char *jsonName);
+  AwareWaveformEventFileMaker(Int_t runNumber, Int_t eventNumber, const char *instrumentName, const char *jsonName);
 
   //Could do this with templates but can't be bothered
   void addVariableToEvent(const char *varKey, const char *varValue);
@@ -36,7 +36,7 @@ class AwareWaveformEventFileMaker
   //Data storge
   Int_t fRun;
   Int_t fEventNumber;
-  std::string fStationName;
+  std::string fInstrumentName;
   std::string fEventFilename;
 
   //Maps to hold the various JSON thingies
