@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "AwareWaveformEventFileMaker.h"
-
+#include "TSystem.h"
 #include <iostream>
 #include <fstream>
 
@@ -99,8 +99,11 @@ void AwareWaveformEventFileMaker::writeFile()
     firstChannel=0;
   }
   fEventFile << "]}}\n";
-  
-  
-
+   
   fEventFile.close();
+
+
+  char gzipString[FILENAME_MAX];
+  sprintf(gzipString,"gzip %s",fEventFilename.c_str());
+  gSystem->Exec(gzipString);
 }

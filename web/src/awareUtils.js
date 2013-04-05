@@ -25,7 +25,7 @@ function getUrlVars() {
 
 function getRunListName(instrument, run) {
     var run1000=run - (run%1000);
-    var name="output/"+instrument+"/runList"+run1000+".json.gz";
+    var name="output/"+instrument+"/runList"+run1000+".json";
     return name;
 }
 
@@ -52,7 +52,7 @@ function getFullHkTimeName(instrument,run,year,datecode,hkType) {
 }
 
 function getDateRunListName(instrument,year,datecode) {
-   var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/runList.json.gz";
+   var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/runList.json";
    return name;
 }
 
