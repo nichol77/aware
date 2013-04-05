@@ -21,7 +21,7 @@ header("Connection: keep-alive");
   $(function() {
 
       var urlVars=getUrlVars();
-      var timeType='simple'; 
+      var timeType='full'; 
       if("timeType" in urlVars) {
 	timeType=urlVars["timeType"];
       }

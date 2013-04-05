@@ -18,16 +18,6 @@
 Header set Cache-Control "max-age=290304000, public"
 </filesMatch>
 
-RewriteEngine on
-#Check to see if browser can accept gzip files.
-ReWriteCond %{HTTP:accept-encoding} x-gzip
-RewriteCond %{HTTP_USER_AGENT} !Safari
-#make sure there's no trailing .gz on the url
-ReWriteCond %{REQUEST_FILENAME} !^.+\.gz$
-#check to see if a .gz version of the file exists.
-RewriteCond %{REQUEST_FILENAME}.gz -f
-#All conditions met so add .gz to URL filename (invisibly)
-RewriteRule ^(.+) $1.gz [QSA,L] 
  
 <ifModule mod_headers.c>
     Header set Connection keep-alive

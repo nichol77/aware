@@ -6,6 +6,8 @@ header("Connection: keep-alive");
 "http://www.w3.org/TR/html4/strict.dtd"> 
 <html>
 <head>
+<meta name="viewport" 
+  content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/ara.css" type="text/css" media="screen" />
@@ -20,10 +22,14 @@ header("Connection: keep-alive");
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.resize.js.gz"></script>
+
 <script type="text/javascript">
 
   $(function() {
-  
+document.body.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+}, false);   
+
   var urlVars=getUrlVars();
   var timeType='simple'; 
   if("timeType" in urlVars) {
