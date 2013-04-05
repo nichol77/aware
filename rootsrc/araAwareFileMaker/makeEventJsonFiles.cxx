@@ -205,6 +205,10 @@ int main(int argc, char **argv) {
     }
 
     fileMaker.writeFile();
+    char gzipString[FILENAME_MAX];
+    sprintf(gzipString,"gzip %s",outName);
+    gSystem->Exec(gzipString);
+
 
     for( int i=0; i<numChannels; ++i ) {
       delete gr[i];
