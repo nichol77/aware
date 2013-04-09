@@ -43,17 +43,31 @@ function getEndRunFromForm() {
     return endRun;
 } 
 
-function getNextRun(nextFunction) {
+function getNextStartRun(nextFunction) {
     startRun=document.getElementById("runInput").value;
     startRun++;
     document.getElementById("runInput").value=startRun;
     nextFunction();
 }
 
-function getPreviousRun(nextFunction) {
+function getPreviousStartRun(nextFunction) {
     startRun=document.getElementById("runInput").value;
     startRun--;
     document.getElementById("runInput").value=startRun;
+    nextFunction();
+}
+
+function getNextEndRun(nextFunction) {
+    endRun=document.getElementById("endRunInput").value;
+    endRun++;
+    document.getElementById("runInput").value=endRun;
+    nextFunction();
+}
+
+function getPreviousEndRun(nextFunction) {
+    endRun=document.getElementById("endRunInput").value;
+    endRun--;
+    document.getElementById("runInput").value=endRun;
     nextFunction();
 }
 

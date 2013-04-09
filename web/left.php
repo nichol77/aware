@@ -45,11 +45,14 @@ echo "</select>";
 echo "<br />";
 
 
-echo "Run: <input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\"  />";
+echo "Run: ";
+echo '<button type="button" value="Previous" onclick="javascript:getPreviousStartRun(drawPlot);">-</button>';
+echo "<input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\"  />";
+echo '<button type="button" value="Next" onclick="javascript:getNextStartRun(drawPlot);">+</button>';
 echo '<br />';
-echo '<button type="button" value="Next" onclick="javascript:getPreviousRun(drawPlot);">Previous</button>';
-echo '<button type="button" value="Next" onclick="javascript:getNextRun(drawPlot);">Next</button>';
+echo '<button type="button" value="Previous" onclick="javascript:getPreviousEndRun(drawPlot);">-</button>';
 echo "End Run: <input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"$endrun\"  />";
+echo '<button type="button" value="Next" onclick="javascript:getNextEndRun(drawPlot);">+</button>';
 echo "<br />";
 echo "</form>";
 
