@@ -397,7 +397,7 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 }
 
 
-var doMultiRunPlot() {
+function doMultiRunPlot() {
     
     plotName=getPlotNameFromForm();    
     instrumentName=getInstrumentNameFromForm();
