@@ -409,29 +409,29 @@ function doMultiRunPlot() {
     canContainer.append("<p>Working"+startRun+"   "+"  "+endRun+"</p>");
 
     var runDateList = new Array();
+    var lastRunListFile;
     for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
 	var runListFile=getRunListName(instrumentName,thisRun);
-	canContainer.append("<p>Run</p>");
+	canContainer.append("<p>"+runListFile+"</p>");
 	
 	function handleRunList(jsonObject) {
 	    for(var i=0;i<jsonObject.runList.length;i++) {
-		if(jsonObject.runList[i][0]==thisRun) {
+		if(jsonObject.runList[i][0]>=startRun && jsonObject.runList[i][0]<=endRun) {
 		    year=jsonObject.runList[i][1];
 		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-		    runDateList.push(i,year,datecode);
-		    
-		    if(thisRun<endRun) thisRun++;
-		    else break;
+		    runDateList.push(i,year,datecode);		    
 		}
 	    }
 	}
-		
-	$.ajax({
-	    url: runListFile,
-	    type: "GET",
-	    dataType: "json",
-	    success: handleRunList
-	});
+	if(runListFile!=lastRunListFile) {
+	    $.ajax({
+		url: runListFile,
+		type: "GET",
+		dataType: "json",
+		success: handleRunList
+	    });
+	}
+	lastRunListFile=runListFile;
     }
 
     var countFilesNeeded=0;
