@@ -43,6 +43,7 @@ echo "Run: <input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\"
 echo '<br />';
 echo '<button type="button" value="Next" onclick="javascript:getPreviousRun(drawPlot);">Previous</button>';
 echo '<button type="button" value="Next" onclick="javascript:getNextRun(drawPlot);">Next</button>';
+echo "End Run: <input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"$run\"  />";
 echo "<br />";
 echo "</form>";
 

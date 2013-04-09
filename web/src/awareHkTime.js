@@ -20,7 +20,6 @@ var endRun;
 var year=2013;
 var datecode=123;
 var timesWaited=0;
-var setDatecode=0;
 var plotName;
 var plotLabel;
 var startTime;
@@ -40,7 +39,7 @@ function getStartRunFromForm() {
 } 
 
 function getEndRunFromForm() {
-    endRun=document.getElementById("runEndInput").value;
+    endRun=document.getElementById("endRunInput").value;
     return endRun;
 } 
 
@@ -373,7 +372,6 @@ function fetchFullHkTime(varNameKey) {
 
 
 function getRunInstrumentDateAndPlot(plotFunc) {
-    setDatecode=0;
     startRun=getStartRunFromForm();
     plotName=getPlotNameFromForm();    
     instrumentName=getInstrumentNameFromForm();
@@ -383,7 +381,6 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 	    if(jsonObject.runList[i][0]==startRun) {
 		year=jsonObject.runList[i][1];
 		datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-		setDatecode=1;
 		plotFunc();
 		break;
 	    }
@@ -406,6 +403,112 @@ var doMultiRunPlot() {
     instrumentName=getInstrumentNameFromForm();
     startRun=getStartRunFromForm();
     endRun=getEndRunFromForm();
+    if(endRun<=startRun) drawSimpleHkTimePlot();
+
+    var canContainer = $("#titleContainer"); 
+
+    var runDateList = new Array();
+    for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
+	var runListFile=getRunListName(instrumentName,thisRun);
+	
+	function handleRunList(jsonObject) {
+	    for(var i=0;i<jsonObject.runList.length;i++) {
+		if(jsonObject.runList[i][0]==thisRun) {
+		    year=jsonObject.runList[i][1];
+		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
+		    runDateList.push(run,year,datecode);
+		    
+		    if(thisRun<endRun) thisRun++;
+		    else break;
+		}
+	    }
+	}
+		
+	$.ajax({
+	    url: runListFile,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleRunList
+	});
+    }
+
+    var countFilesNeeded=0;
+    for(var i=0;i<runDateList.length;i++) {	
+	var hkFileName=getHkTimeName(instrumentName,runDateList[i][0],runDateList[i][1],runDateList[i][2],thisHkType);
+	canContainer.append("<p>"+hkFileName+" "+countFilesNeeded+"</p>");
+	countFilesNeeded++;		
+	
+	$.ajax({
+	    url: hkFileName,
+	    type: "GET",
+	    dataType: "json",
+	    success: addHkTimeFileToArrays
+	});
+	//Get simple hk files
+	//Add to some arrays
+	//Fill variables for plot   
+    }
+    
+    var countFilesGot=0;
+    function addHkTimeFileToArrays(jsonObject) {
+	countFilesGot++;
+	var varNameKey=plotName;
+	var timeList=jsonObject.timeSum.timeList;
+	var tempTimeArray = new Array();
+	var varList=jsonObject.timeSum.varList;
+	for(var index=0;index<timeList.length;index++) {
+	    var timePoint=timeList[index];
+	    timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
+	    tempTimeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
+	    //	    canContainer.append("<p>"+timeArray[timeArray.length-1]+"</p>")
+	}
+
+	//	canContainer.append("<p>"+countFilesGot+"</p>");
+	//	canContainer.append("<p>"+timeArray.length+" "+tempTimeArray.length+"</p>");
+
+	
+	for(var varIndex=0;varIndex<varList.length;varIndex++) {
+	    var varPoint=varList[varIndex];
+	    var varName = new String(varPoint.name);
+	    var varLabel = new String(varPoint.label);
+	    //	document.write(varName+"<br>");
+	    if(varName.indexOf(varNameKey)>=0) {
+		if(varName in datasets) {
+		//		canContainer.append("<p>Got"+varName+"</p>");
+		}
+		else {
+		    //	    document.write(varNameKey);
+		    ///Got a variable
+		    var dataSetsIndex=$.inArray(varName, datasets);
+		    //		canContainer.append("<p>Not got"+varName+"</p>");
+		    if(dataSetsIndex<0) {
+			
+			var dataList = new Object();
+			dataList.label=varLabel;
+			dataList.data= new Array();
+			
+			
+			datasets[varName]=dataList;
+		    }
+		}
+	    
+		var varTimeList=varPoint.timeList;	    
+		for(var index=0;index<varTimeList.length;index++) {
+		    var dataPoint=varTimeList[index];
+		    datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev 
+		    //		    canContainer.append("<p>"+index+" "+tempTimeArray[index]+" "+dataPoint.mean+"</p>");
+		}
+	    
+	    //	    canContainer.append("<p>"+varName+" "+datasets[varName].data.length+" "+timeList.length+"</p>");
+	    
+	    }
+	}
+	
+	if(countFilesNeeded==countFilesGot) {
+	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
+	    actuallyDrawTheStuff();
+	}
+    }
 
 }
 
@@ -422,9 +525,15 @@ function drawPlot() {
     plotCan.append("<h2>Loading</h2>");
     choiceContainer.empty();
     labelContainer.empty();
-    datasets = new Object();	
-    if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
-    else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
-    else if(thisTimeType.indexOf("date")>=0) drawDateHkTimePlot();
+    datasets = new Object();
+
+
+    startRun=getStartRunFromForm();
+    endRun=getEndRunFromForm();
+    if(endRun>=startRun) doMultiRunPlot(); 
+    else {
+	if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
+	else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
+    }
 }
 
