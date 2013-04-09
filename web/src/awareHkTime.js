@@ -243,7 +243,7 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+startRun+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType;
+    currentUrl=currentUrl+"?run="+startRun+"&endrun="+endRun+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
@@ -255,6 +255,25 @@ function updatePlotTitle(jsonObject) {
     
 }
 
+function handleAjaxFileError(jqXHR, exception) {
+    
+    var canContainer = $("#titleContainer"); 
+    if (jqXHR.status === 0) {
+        canContainer.append('Not connect.\n Verify Network.');
+    } else if (jqXHR.status == 404) {
+        canContainer.append('Requested page not found. [404]');
+    } else if (jqXHR.status == 500) {
+        canContainer.append('Internal Server Error [500].');
+    } else if (exception === 'parsererror') {
+        canContainer.append('Requested JSON parse failed.');
+    } else if (exception === 'timeout') {
+        canContainer.append('Time out error.');
+    } else if (exception === 'abort') {
+            canContainer.append('Ajax request aborted.');
+    } else {
+        canContainer.append('Uncaught Error.\n' + jqXHR.responseText);
+    }
+}
 
 
 function simpleHkPlotDrawer() {
@@ -274,11 +293,13 @@ function simpleHkPlotDrawer() {
 	drawSimpleHkTime(plotName);
     }
 
+
     $.ajax({
 	url: simpleHkTimeUrl,
 	type: "GET",
 	dataType: "json", 
-	success: handleHkTimeJsonFile
+	success: handleHkTimeJsonFile,
+	error: handleAjaxFileError
     }); 
     
 }
@@ -308,7 +329,8 @@ function fullHkPlotDrawer() {
 	url: simpleHkTimeUrl,
 	type: "GET",
 	dataType: "json",
-	success: handleHkTimeJsonFile
+	success: handleHkTimeJsonFile,
+	error: handleAjaxFileError
     }); 
     
 }
@@ -341,8 +363,8 @@ function fetchFullHkTime(varNameKey) {
 		    url: fullHkUrl,
 		    type: "GET",
 		    dataType: "json",
-
-		    success: handleFullHkJsonFile
+		    success: handleFullHkJsonFile,
+		    error: handleFullHkError
 		}); 
 	
 	    }	
@@ -350,6 +372,13 @@ function fetchFullHkTime(varNameKey) {
     }
 
     var countFilesGot=0;
+    function handleFullHkError() {
+	countFilesGot++; ///For now will just do this silly thing	
+	if(countFilesNeeded==countFilesGot) {
+	    actuallyDrawTheStuff();
+	}
+    }
+
     function handleFullHkJsonFile(jsonObject) { 
 	countFilesGot++;
 	addFullVariableToDataset(jsonObject);
@@ -365,8 +394,8 @@ function fetchFullHkTime(varNameKey) {
 	url: fullHkTimeUrl,
 	type: "GET",
 	dataType: "json",
-
-	success: handleFullHkTimeJsonFile
+	success: handleFullHkTimeJsonFile,
+	error: handleAjaxFileError
     }); 
 }
 
@@ -392,7 +421,8 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 	url: runListFile,
 	type: "GET",
 	dataType: "json",
-	success: handleRunList
+	success: handleRunList,
+	error: handleAjaxFileError
     });
 }
 
@@ -425,7 +455,8 @@ function doMultiRunPlot() {
 			url: hkFileName,
 			type: "GET",
 			dataType: "json",
-			success: addHkTimeFileToArrays
+			success: addHkTimeFileToArrays,
+			error: errorHkTimeFile
 		    });
 		    //Get simple hk files
 		    //Add to some arrays
@@ -446,6 +477,14 @@ function doMultiRunPlot() {
     }
 
     var countFilesGot=0;
+    function errorHkTimeFile() {
+	countFilesGot++;
+	if(countFilesNeeded==countFilesGot) {
+	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
+	    actuallyDrawTheStuff();
+	}
+    }
+
     function addHkTimeFileToArrays(jsonObject) {
 	countFilesGot++;
 	var varNameKey=plotName;
