@@ -406,11 +406,12 @@ function doMultiRunPlot() {
     if(endRun<=startRun) drawSimpleHkTimePlot();
 
     var canContainer = $("#titleContainer"); 
-    canContainer.append("<p>Working</p>");
+    canContainer.append("<p>Working"+startRun+"   "+"  "+endRun+"</p>");
 
     var runDateList = new Array();
     for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
 	var runListFile=getRunListName(instrumentName,thisRun);
+	canContainer.append("<p>Run</p>");
 	
 	function handleRunList(jsonObject) {
 	    for(var i=0;i<jsonObject.runList.length;i++) {
