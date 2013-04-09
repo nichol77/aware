@@ -406,6 +406,7 @@ function doMultiRunPlot() {
     if(endRun<=startRun) drawSimpleHkTimePlot();
 
     var canContainer = $("#titleContainer"); 
+    canContainer.append("<p>Working</p>");
 
     var runDateList = new Array();
     for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
