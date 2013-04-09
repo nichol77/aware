@@ -405,10 +405,8 @@ function doMultiRunPlot() {
     endRun=getEndRunFromForm();
     if(endRun<=startRun) drawSimpleHkTimePlot();
 
-    var canContainer = $("#titleContainer"); 
-    canContainer.append("<p>Working"+startRun+"   "+"  "+endRun+"</p>");
+//    var canContainer = $("#titleContainer"); 
 
-    var runDateList = new Array();
     var lastRunListFile;
 
     var countFilesNeeded=0;
@@ -419,11 +417,8 @@ function doMultiRunPlot() {
 	    for(var i=0;i<jsonObject.runList.length;i++) {
 		if(jsonObject.runList[i][0]>=startRun && jsonObject.runList[i][0]<=endRun) {
 		    year=jsonObject.runList[i][1];
-		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-//		    runDateList.push(jsonObject.runList[i][0],year,datecode);		    
-		    canContainer.append("<p>"+jsonObject.runList[i][0]+","+year+","+datecode+"</p>");		    
+		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string  	    
 		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],year,datecode,thisHkType);
-		    canContainer.append("<p>"+hkFileName+" "+countFilesNeeded+"</p>");
 		    countFilesNeeded++;		
 	
 		    $.ajax({
@@ -439,7 +434,7 @@ function doMultiRunPlot() {
 	    }
 	}
 	if(runListFile!=lastRunListFile) {
-	    canContainer.append("<p>"+runListFile+"</p>");
+//	    canContainer.append("<p>"+runListFile+"</p>");
 	    $.ajax({
 		url: runListFile,
 		type: "GET",
