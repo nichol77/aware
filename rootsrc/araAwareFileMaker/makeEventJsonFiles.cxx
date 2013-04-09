@@ -18,6 +18,7 @@
 #include "UsefulIcrrStationEvent.h"
 #include "UsefulAtriStationEvent.h"
 #include "AraGeomTool.h"
+#include "FFTtools.h"
 
 //AWARE includes
 #include "AwareWaveformEventFileMaker.h"
@@ -137,7 +138,7 @@ int main(int argc, char **argv) {
 
    
 
-  //    numEntries=4;
+  numEntries=4;
   for(Long64_t event=0;event<numEntries;event++) {
     if(event%starEvery==0) {
       std::cerr << "*";       
@@ -194,12 +195,16 @@ int main(int argc, char **argv) {
     
 
     for( int i=0; i<numChannels; ++i ) {
-      gr[i]=realEvPtr->getGraphFromRFChan(i);   
+      TGraph *grTemp = realEvPtr->getGraphFromRFChan(i);   
+      Double_t deltaT=grTemp->GetX()[grTemp->GetN()-1]-grTemp->GetX()[0];
+      deltaT/=(grTemp->GetN()-1);
+      gr[i]=FFTtools::getInterpolatedGraph(grTemp,deltaT);
+      delete grTemp;
       char label[10];
       //      AraAntennaInfo *antInfo = statInfo->getAntennaInfo(i);
       sprintf(label,"RF %d",i);
       if(gr[i]) {
-	//	std::cout << "make: " << eventNumber << "\t" << i << "\t" << gr[i]->GetN() << "\n";
+	//	std::cout << "make: " << eventNumber << "\t" << i << "\t" << deltaT << "\n";
 	fileMaker.addChannelToFile(gr[i],i,label);
       }      
     }

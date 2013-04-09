@@ -82,17 +82,22 @@ void AwareWaveformEventFileMaker::writeFile()
     if(!firstChannel) fEventFile << ",\n";
     fEventFile << "{\n";
     fEventFile << "\"id\": " << graphIt->first << ",\n";
-    //    fEventFile << "\"label\": \"" << labelIt->second << "\",\n";
-    fEventFile << "\"data\": [\n";
     Double_t *xVals = graphIt->second->GetX();
-    Double_t *yVals = graphIt->second->GetY();
     Int_t numPoints=graphIt->second->GetN();
+    Double_t deltaT=xVals[numPoints-1]-xVals[0];
+    deltaT/=(numPoints-1);
+
+    //    fEventFile << "\"label\": \"" << labelIt->second << "\",\n";
+    fEventFile << "\"deltaT\": " << deltaT << ",\n";
+    fEventFile << "\"data\": [\n";
+    Double_t *yVals = graphIt->second->GetY();
+
     //    std::cout << fEventNumber << "\t" << graphIt->first << "\t" << numPoints << "\n";
     for(int i=0;i<numPoints;i++) {
       if(i>0) fEventFile << ",";
       if(i%10==0) fEventFile << "\n";
       char dataPoint[20];
-      sprintf(dataPoint,"[%3.1f,%3.0f]",xVals[i],yVals[i]);
+      sprintf(dataPoint,"[%4.0f]",yVals[i]);
       fEventFile << dataPoint;
     }
     fEventFile << "]}\n";    

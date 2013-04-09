@@ -166,13 +166,19 @@ function eventPlotter() {
 	    yMin[row]=Number.MAX_VALUE;
 	    yMax[row]=-1*Number.MAX_VALUE;
 	}
+	var chanArray = new Array();
+
 	for(var chan=0; chan<jsonObject.event.numChannels; chan++) {
 	    var row=Math.floor(chan/nCols);
+
+	    var dataArray = new Array();
 	    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
-		var value=jsonObject.event.channelList[chan].data[samp][1];
+		var value=jsonObject.event.channelList[chan].data[samp];		
+		dataArray.push(samp*jsonObject.event.channelList[chan].deltaT,value);
 		if(value>yMax[row]) yMax[row]=value;
 		if(value<yMin[row]) yMin[row]=value;
 	    }
+	    chanArray.push(dataArray);
 	}
 	for(var row=0;row<nRows;row++) {
 	    if(yMax[row]>-1*yMin[row]) yMin[row]=-1*yMax[row];
@@ -185,7 +191,8 @@ function eventPlotter() {
 	    var contName="waveform-container"+chan;
 	    var grLabel="RFCHAN"+chan;  ///Need to fix this
 
-	    plotSingleChannel(divName,contName,jsonObject.event.channelList[chan].data,yMin[row],yMax[row],grLabel);
+	    //	    plotSingleChannel(divName,contName,jsonObject.event.channelList[chan].data,yMin[row],yMax[row],grLabel);
+	    plotSingleChannel(divName,contName,chanArray[chan],yMin[row],yMax[row],grLabel);
 	}
 
     }
