@@ -412,7 +412,6 @@ function doMultiRunPlot() {
     var lastRunListFile;
     for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
 	var runListFile=getRunListName(instrumentName,thisRun);
-	canContainer.append("<p>"+runListFile+"</p>");
 	
 	function handleRunList(jsonObject) {
 	    for(var i=0;i<jsonObject.runList.length;i++) {
@@ -420,10 +419,12 @@ function doMultiRunPlot() {
 		    year=jsonObject.runList[i][1];
 		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
 		    runDateList.push(i,year,datecode);		    
+		    canContainer.append("<p>"+i+","+year+","+datecode+"</p>");
 		}
 	    }
 	}
 	if(runListFile!=lastRunListFile) {
+	    canContainer.append("<p>"+runListFile+"</p>");
 	    $.ajax({
 		url: runListFile,
 		type: "GET",
