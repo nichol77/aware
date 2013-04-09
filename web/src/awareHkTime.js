@@ -410,6 +410,8 @@ function doMultiRunPlot() {
 
     var runDateList = new Array();
     var lastRunListFile;
+
+    var countFilesNeeded=0;
     for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
 	var runListFile=getRunListName(instrumentName,thisRun);
 	
@@ -418,8 +420,21 @@ function doMultiRunPlot() {
 		if(jsonObject.runList[i][0]>=startRun && jsonObject.runList[i][0]<=endRun) {
 		    year=jsonObject.runList[i][1];
 		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-		    runDateList.push(jsonObject.runList[i][0],year,datecode);		    
-		    canContainer.append("<p>"+jsonObject.runList[i][0]+","+year+","+datecode+"</p>");
+//		    runDateList.push(jsonObject.runList[i][0],year,datecode);		    
+		    canContainer.append("<p>"+jsonObject.runList[i][0]+","+year+","+datecode+"</p>");		    
+		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],year,datecode);
+		    canContainer.append("<p>"+hkFileName+" "+countFilesNeeded+"</p>");
+		    countFilesNeeded++;		
+	
+		    $.ajax({
+			url: hkFileName,
+			type: "GET",
+			dataType: "json",
+			success: addHkTimeFileToArrays
+		    });
+		    //Get simple hk files
+		    //Add to some arrays
+		    //Fill variables for plot   		    
 		}
 	    }
 	}
@@ -435,23 +450,6 @@ function doMultiRunPlot() {
 	lastRunListFile=runListFile;
     }
 
-    var countFilesNeeded=0;
-    for(var i=0;i<runDateList.length;i++) {	
-	var hkFileName=getHkTimeName(instrumentName,runDateList[i][0],runDateList[i][1],runDateList[i][2],thisHkType);
-	canContainer.append("<p>"+hkFileName+" "+countFilesNeeded+"</p>");
-	countFilesNeeded++;		
-	
-	$.ajax({
-	    url: hkFileName,
-	    type: "GET",
-	    dataType: "json",
-	    success: addHkTimeFileToArrays
-	});
-	//Get simple hk files
-	//Add to some arrays
-	//Fill variables for plot   
-    }
-    
     var countFilesGot=0;
     function addHkTimeFileToArrays(jsonObject) {
 	countFilesGot++;
