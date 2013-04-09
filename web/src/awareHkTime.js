@@ -15,7 +15,8 @@ var thisHkType;
 var globCanName;
 var thisTimeType;
 var instrumentName;
-var runNumber;
+var startRun;
+var endRun;
 var year=2013;
 var datecode=123;
 var timesWaited=0;
@@ -31,6 +32,43 @@ var datasets = new Object();
     
 var timeArray=[];
 
+
+///Here are the UI thingies
+function getStartRunFromForm() {
+    startRun=document.getElementById("runInput").value;
+    return startRun;
+} 
+
+function getEndRunFromForm() {
+    endRun=document.getElementById("runEndInput").value;
+    return endRun;
+} 
+
+function getNextRun(nextFunction) {
+    startRun=document.getElementById("runInput").value;
+    startRun++;
+    document.getElementById("runInput").value=startRun;
+    nextFunction();
+}
+
+function getPreviousRun(nextFunction) {
+    startRun=document.getElementById("runInput").value;
+    startRun--;
+    document.getElementById("runInput").value=startRun;
+    nextFunction();
+}
+
+
+function getInstrumentNameFromForm() {
+    instrumentName=document.getElementById("instrumentForm").value;
+    return instrumentName;
+}
+
+function getPlotNameFromForm() {
+    plotName=document.getElementById("plotForm").value;
+    plotLabel=document.getElementById("plotForm").label;
+    return plotName;
+}
 
 
 function setHkTypeAndCanName(hkType,canName,timeType) {
@@ -55,6 +93,7 @@ function fillFullTimeArray(jsonObject) {
 	timeArray.push(timePoint*1000); ///< Javascript needs the number in milliseconds
     }
 }
+
 
 function addFullVariableToDataset(jsonObject) {
     
@@ -197,39 +236,6 @@ function setTimeAndVarList(jsonObject) {
     varList=jsonObject.timeSum.varList;
 }
 
-///Here are the UI thingies
-function getRunFromForm() {
-    runNumber=document.getElementById("runInput").value;
-    return runNumber;
-} 
-
-function getNextRun(nextFunction) {
-    runNumber=document.getElementById("runInput").value;
-    runNumber++;
-    document.getElementById("runInput").value=runNumber;
-    nextFunction();
-}
-
-function getPreviousRun(nextFunction) {
-    runNumber=document.getElementById("runInput").value;
-    runNumber--;
-    document.getElementById("runInput").value=runNumber;
-    nextFunction();
-}
-
-
-
-function getInstrumentNameFromForm() {
-    instrumentName=document.getElementById("instrumentForm").value;
-    return instrumentName;
-}
-
-function getPlotNameFromForm() {
-    plotName=document.getElementById("plotForm").value;
-    plotLabel=document.getElementById("plotForm").label;
-    return plotName;
-}
-
 function drawSimpleHkTimePlot() {
     getRunInstrumentDateAndPlot(simpleHkPlotDrawer);
 }
@@ -238,13 +244,13 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+runNumber+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType;
+    currentUrl=currentUrl+"?run="+startRun+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var canContainer = $("#titleContainer"); 
     canContainer.empty();
-    canContainer.append("<h1>"+instrumentName+" -- Run "+runNumber+"</h1>");
+    canContainer.append("<h1>"+instrumentName+" -- Run "+startRun+"</h1>");
     canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
     canContainer.append("<h2> Plot "+plotName+"</h2>");
     
@@ -253,7 +259,7 @@ function updatePlotTitle(jsonObject) {
 
 
 function simpleHkPlotDrawer() {
-    var simpleHkTimeUrl=getHkTimeName(instrumentName,runNumber,year,datecode,thisHkType);
+    var simpleHkTimeUrl=getHkTimeName(instrumentName,startRun,year,datecode,thisHkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -284,7 +290,7 @@ function drawFullHkTimePlot() {
 }
 
 function fullHkPlotDrawer() {
-    var simpleHkTimeUrl=getHkTimeName(instrumentName,runNumber,year,datecode,thisHkType);
+    var simpleHkTimeUrl=getHkTimeName(instrumentName,startRun,year,datecode,thisHkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -313,7 +319,7 @@ function fetchFullHkTime(varNameKey) {
     
 
 //    var canContainer = $("#titleContainer"); 
-    var fullHkTimeUrl=getFullHkTimeName(instrumentName,runNumber,year,datecode,thisHkType);
+    var fullHkTimeUrl=getFullHkTimeName(instrumentName,startRun,year,datecode,thisHkType);
 //    canContainer.append("<p>"+fullHkTimeUrl+"</p>");
     
 
@@ -328,7 +334,7 @@ function fetchFullHkTime(varNameKey) {
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
-		var fullHkUrl=getFullHkName(instrumentName,runNumber,year,datecode,varName,thisHkType);
+		var fullHkUrl=getFullHkName(instrumentName,startRun,year,datecode,varName,thisHkType);
 //		canContainer.append("<p>"+fullHkUrl+"</p>");	
 		countFilesNeeded++;
 
@@ -368,18 +374,15 @@ function fetchFullHkTime(varNameKey) {
 
 function getRunInstrumentDateAndPlot(plotFunc) {
     setDatecode=0;
-    runNumber=getRunFromForm();
+    startRun=getStartRunFromForm();
     plotName=getPlotNameFromForm();    
     instrumentName=getInstrumentNameFromForm();
-    //var canContainer = $("#leftbar"); 
-    var runListFile=getRunListName(instrumentName,runNumber);
+    var runListFile=getRunListName(instrumentName,startRun);
     function handleRunList(jsonObject) {
-//	canContainer.append("<p>"+jsonObject.runList.length+"</p>");
 	for(var i=0;i<jsonObject.runList.length;i++) {
-	    if(jsonObject.runList[i][0]==runNumber) {
+	    if(jsonObject.runList[i][0]==startRun) {
 		year=jsonObject.runList[i][1];
 		datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-//		canContainer.append("<p>"+year+" "+datecode+"</p>");	
 		setDatecode=1;
 		plotFunc();
 		break;
@@ -394,140 +397,20 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 	dataType: "json",
 	success: handleRunList
     });
-
 }
 
 
-
-//Here are the plots that use the date selector
-
-function drawDateHkTimePlot() {
-    getRunListFromDateAndPlot();
-}
-
-
-function getRunListFromDateAndPlot() {
-
+var doMultiRunPlot() {
+    
     plotName=getPlotNameFromForm();    
     instrumentName=getInstrumentNameFromForm();
-    var dateString=document.getElementById("datepicker").value;
-    var firstSlash=dateString.indexOf("/");
-    var monthString=dateString.substring(0,dateString.indexOf("/"));
-    var dayString=dateString.substring(dateString.indexOf("/")+1,dateString.lastIndexOf("/"));
-    var yearString=dateString.substring(dateString.lastIndexOf("/")+1);
-    var realDateCode=monthString+dayString;
-    datecode=parseInt(realDateCode);
-    year=parseInt(yearString);
-    var dateRunListUrl=getDateRunListName(instrumentName,year,datecode);
-
-
-    var canContainer = $("#titleContainer"); 
-
-    var countFilesNeeded=0;
-    function handleDateRunList(jsonObject) {
-	
-	canContainer.empty();
-	canContainer.append("<h1>"+instrumentName+" -- Date "+dayString+"/"+monthString+"/"+year+"</h1>");
-	canContainer.append("<h2> Plot "+plotName+"</h2>");
-
-	//	timeArray.length=0;// = new Array();
-	var choiceContainer = $("#choices");
-	choiceContainer.empty();
-	
-	
-	for(var i=0;i<jsonObject.runList.length;i++) {
-	    var runNumber=jsonObject.runList[i];
-	    var hkFileName=getHkTimeName(instrumentName,runNumber,year,datecode,thisHkType);
-	    //	    canContainer.append("<p>"+hkFileName+" "+countFilesNeeded+"</p>");
-	    countFilesNeeded++;
-	    
-	    
-
-	    $.ajax({
-		    url: hkFileName,
-			type: "GET",
-			dataType: "json",
-			success: addHkTimeFileToArrays
-			});
-	    //Get simple hk files
-	    //Add to some arrays
-	    //Fill variables for plot
-    
-	}
-    }
-
-    
-    
-    $.ajax({
-	    url: dateRunListUrl,
-		type: "GET",
-		dataType: "json",
-		success: handleDateRunList
-		});
-    
-
-    var countFilesGot=0;
-    function addHkTimeFileToArrays(jsonObject) {
-	countFilesGot++;
-	var varNameKey=plotName;
-	var timeList=jsonObject.timeSum.timeList;
-	var tempTimeArray = new Array();
-	var varList=jsonObject.timeSum.varList;
-	for(var index=0;index<timeList.length;index++) {
-	    var timePoint=timeList[index];
-	    timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
-	    tempTimeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
-	    //	    canContainer.append("<p>"+timeArray[timeArray.length-1]+"</p>")
-	}
-
-	//	canContainer.append("<p>"+countFilesGot+"</p>");
-	//	canContainer.append("<p>"+timeArray.length+" "+tempTimeArray.length+"</p>");
-
-	
-	for(var varIndex=0;varIndex<varList.length;varIndex++) {
-	    var varPoint=varList[varIndex];
-	    var varName = new String(varPoint.name);
-	    var varLabel = new String(varPoint.label);
-	    //	document.write(varName+"<br>");
-	    if(varName.indexOf(varNameKey)>=0) {
-		if(varName in datasets) {
-		//		canContainer.append("<p>Got"+varName+"</p>");
-		}
-		else {
-		    //	    document.write(varNameKey);
-		    ///Got a variable
-		    var dataSetsIndex=$.inArray(varName, datasets);
-		    //		canContainer.append("<p>Not got"+varName+"</p>");
-		    if(dataSetsIndex<0) {
-			
-			var dataList = new Object();
-			dataList.label=varLabel;
-			dataList.data= new Array();
-			
-			
-			datasets[varName]=dataList;
-		    }
-		}
-	    
-		var varTimeList=varPoint.timeList;	    
-		for(var index=0;index<varTimeList.length;index++) {
-		    var dataPoint=varTimeList[index];
-		    datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev 
-		    //		    canContainer.append("<p>"+index+" "+tempTimeArray[index]+" "+dataPoint.mean+"</p>");
-		}
-	    
-	    //	    canContainer.append("<p>"+varName+" "+datasets[varName].data.length+" "+timeList.length+"</p>");
-	    
-	    }
-	}
-	
-	if(countFilesNeeded==countFilesGot) {
-	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
-	    actuallyDrawTheStuff();
-	}
-    }
+    startRun=getStartRunFromForm();
+    endRun=getEndRunFromForm();
 
 }
+
+
+
 
 
 function drawPlot() {   
