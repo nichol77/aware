@@ -422,7 +422,7 @@ function doMultiRunPlot() {
 		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
 //		    runDateList.push(jsonObject.runList[i][0],year,datecode);		    
 		    canContainer.append("<p>"+jsonObject.runList[i][0]+","+year+","+datecode+"</p>");		    
-		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],year,datecode);
+		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],year,datecode,thisHkType);
 		    canContainer.append("<p>"+hkFileName+" "+countFilesNeeded+"</p>");
 		    countFilesNeeded++;		
 	
