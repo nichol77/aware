@@ -416,7 +416,7 @@ function doMultiRunPlot() {
 		if(jsonObject.runList[i][0]==thisRun) {
 		    year=jsonObject.runList[i][1];
 		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-		    runDateList.push(run,year,datecode);
+		    runDateList.push(i,year,datecode);
 		    
 		    if(thisRun<endRun) thisRun++;
 		    else break;
