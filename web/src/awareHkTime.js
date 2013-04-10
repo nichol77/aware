@@ -160,6 +160,10 @@ function drawSimpleHkTime(varNameKey) {
 	
     }
 
+
+    var canContainer = $("#titleContainer"); 
+    canContainer.append("<p>In drawSimpleHkTime</p>");
+
     actuallyDrawTheStuff();
 }
 
@@ -389,6 +393,9 @@ function fetchFullHkTime(varNameKey) {
     function handleFullHkError() {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
+
+	    var canContainer = $("#titleContainer"); 
+	    canContainer.append("<p>In handleFullHkError</p>");
 	    actuallyDrawTheStuff();
 	}
     }
@@ -398,6 +405,8 @@ function fetchFullHkTime(varNameKey) {
 	addFullVariableToDataset(jsonObject);
 //	canContainer.append("<p>"+countFilesNeeded+ "    "+countFilesGot+"</p>");	
 	if(countFilesNeeded==countFilesGot) {
+	    var canContainer = $("#titleContainer"); 
+	    canContainer.append("<p>In handleFullHkJsonFile</p>");
 	    actuallyDrawTheStuff();
 	}
 	
@@ -495,6 +504,9 @@ function doMultiRunPlot() {
 	countFilesGot++;
 	if(countFilesNeeded==countFilesGot) {
 	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
+
+	    var canContainer = $("#titleContainer"); 
+	    canContainer.append("<p>In errorHkTimeFile</p>");
 	    actuallyDrawTheStuff();
 	}
     }
@@ -555,6 +567,9 @@ function doMultiRunPlot() {
 	
 	if(countFilesNeeded==countFilesGot) {
 	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
+
+	    var canContainer = $("#titleContainer"); 
+	    canContainer.append("<p>In addHkTimeFileToArrays</p>");
 	    actuallyDrawTheStuff();
 	}
     }
