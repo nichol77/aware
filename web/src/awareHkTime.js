@@ -161,8 +161,8 @@ function drawSimpleHkTime(varNameKey) {
     }
 
 
-    var canContainer = $("#titleContainer"); 
-    canContainer.append("<p>In drawSimpleHkTime</p>");
+//    var canContainer = $("#titleContainer"); 
+//    canContainer.append("<p>In drawSimpleHkTime</p>");
 
     actuallyDrawTheStuff();
 }
@@ -394,8 +394,8 @@ function fetchFullHkTime(varNameKey) {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
 
-	    var canContainer = $("#titleContainer"); 
-	    canContainer.append("<p>In handleFullHkError</p>");
+//	    var canContainer = $("#titleContainer"); 
+//	    canContainer.append("<p>In handleFullHkError</p>");
 	    actuallyDrawTheStuff();
 	}
     }
@@ -405,8 +405,8 @@ function fetchFullHkTime(varNameKey) {
 	addFullVariableToDataset(jsonObject);
 //	canContainer.append("<p>"+countFilesNeeded+ "    "+countFilesGot+"</p>");	
 	if(countFilesNeeded==countFilesGot) {
-	    var canContainer = $("#titleContainer"); 
-	    canContainer.append("<p>In handleFullHkJsonFile</p>");
+//	    var canContainer = $("#titleContainer"); 
+//	    canContainer.append("<p>In handleFullHkJsonFile</p>");
 	    actuallyDrawTheStuff();
 	}
 	
@@ -507,8 +507,8 @@ function doMultiRunPlot() {
 	if(countFilesNeeded==countFilesGot) {
 	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
 
-	    var canContainer = $("#titleContainer"); 
-	    canContainer.append("<p>In errorHkTimeFile</p>");
+//	    var canContainer = $("#titleContainer"); 
+//	    canContainer.append("<p>In errorHkTimeFile</p>");
 	    actuallyDrawTheStuff();
 	}
     }
@@ -570,8 +570,8 @@ function doMultiRunPlot() {
 	if(countFilesNeeded==countFilesGot) {
 	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
 
-	    var canContainer = $("#titleContainer"); 
-	    canContainer.append("<p>In addHkTimeFileToArrays</p>");
+//	    var canContainer = $("#titleContainer"); 
+//	    canContainer.append("<p>In addHkTimeFileToArrays</p>");
 	    actuallyDrawTheStuff();
 	}
     }
@@ -587,6 +587,8 @@ function drawPlot() {
     var plotCan=$("#"+globCanName);
     var choiceContainer = $("#choices");
     var labelContainer= $("#divLabel");
+    var titleContainer=$("#titleContainer"); 
+    titleContainer.empty();
     plotCan.empty();
     plotCan.append("<h2>Loading</h2>");
     choiceContainer.empty();
