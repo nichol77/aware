@@ -459,7 +459,6 @@ function doMultiRunPlot() {
     if(endRun<=startRun) {
 	return drawSimpleHkTimePlot();	
     }
-    updatePlotTitle();
 
 
     var lastRunListFile;
@@ -515,6 +514,7 @@ function doMultiRunPlot() {
 
     function addHkTimeFileToArrays(jsonObject) {
 	countFilesGot++;
+	if(countFilesGot==1) updatePlotTitle(jsonObject);
 	var varNameKey=plotName;
 	var timeList=jsonObject.timeSum.timeList;
 	var tempTimeArray = new Array();
