@@ -48,13 +48,13 @@ echo "<br />";
 echo "Run: ";
 echo '<br />';
 echo '<button type="button" value="Previous" onclick="javascript:getPreviousStartRun(drawPlot);">-</button>';
-echo "<input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\" onchange=\"javascript::drawPlot();\"  />";
+echo "<input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\" onchange=\"javascript:drawPlot();\"  />";
 echo '<button type="button" value="Next" onclick="javascript:getNextStartRun(drawPlot);">+</button>';
 
 echo "End Run:";
 echo '<br />';
 echo '<button type="button" value="Previous" onclick="javascript:getPreviousEndRun(drawPlot);">-</button>';
-echo "<input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"$endrun\" onchange=\"javascript::drawPlot();\"  />";
+echo "<input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"$endrun\" onchange=\"javascript:drawPlot();\"  />";
 echo '<button type="button" value="Next" onclick="javascript:getNextEndRun(drawPlot);">+</button>';
 echo "<br />";
 echo "</form>";
