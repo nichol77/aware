@@ -456,9 +456,11 @@ function doMultiRunPlot() {
     instrumentName=getInstrumentNameFromForm();
     startRun=getStartRunFromForm();
     endRun=getEndRunFromForm();
-    if(endRun<=startRun) drawSimpleHkTimePlot();
+    if(endRun<=startRun) {
+	return drawSimpleHkTimePlot();	
+    }
 
-//    var canContainer = $("#titleContainer"); 
+
 
     var lastRunListFile;
 
@@ -594,7 +596,7 @@ function drawPlot() {
 
     startRun=getStartRunFromForm();
     endRun=getEndRunFromForm();
-    if(endRun>=startRun) doMultiRunPlot(); 
+    if(endRun>startRun) doMultiRunPlot(); 
     else {
 	if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
 	else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
