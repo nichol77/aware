@@ -60,14 +60,14 @@ function getPreviousStartRun(nextFunction) {
 function getNextEndRun(nextFunction) {
     endRun=document.getElementById("endRunInput").value;
     endRun++;
-    document.getElementById("runInput").value=endRun;
+    document.getElementById("endRunInput").value=endRun;
     nextFunction();
 }
 
 function getPreviousEndRun(nextFunction) {
     endRun=document.getElementById("endRunInput").value;
     endRun--;
-    document.getElementById("runInput").value=endRun;
+    document.getElementById("endRunInput").value=endRun;
     nextFunction();
 }
 
@@ -459,7 +459,7 @@ function doMultiRunPlot() {
     if(endRun<=startRun) {
 	return drawSimpleHkTimePlot();	
     }
-
+    updatePlotTitle();
 
 
     var lastRunListFile;
