@@ -170,12 +170,15 @@ function eventPlotter() {
 
 	for(var chan=0; chan<jsonObject.event.numChannels; chan++) {
 	    var row=Math.floor(chan/nCols);
-	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
+//	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
 	    var dataArray = new Array();
 	    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
-		
+		var time=(samp*jsonObject.event.channelList[chan].deltaT);
 		var value=jsonObject.event.channelList[chan].data[samp];		
-		dataArray.push(samp*jsonObject.event.channelList[chan].deltaT,value);
+		dataArray.push(time,value);
+		if(chan==0) {
+		    titleContainer.append("<p>"+time +","+value+"</p>");
+		}
 		if(value>yMax[row]) yMax[row]=value;
 		if(value<yMin[row]) yMin[row]=value;
 	    }
