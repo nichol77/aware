@@ -160,11 +160,11 @@ function eventPlotter() {
 	var titleContainer = $("#titleContainer"); 
 	titleContainer.append("<p>This event has "+jsonObject.event.numChannels+" channels.</p>");
 	
-	var yMin = [];
-	var yMax = [];
+	var yMin = new Array();
+	var yMax = new Array();
 	for(var row=0;row<nRows;row++) {
-	    yMin[row]=Number.MAX_VALUE;
-	    yMax[row]=-1*Number.MAX_VALUE;
+	    yMin.push(4096);
+	    yMax.push(0);
 	}
 	var chanArray = new Array();
 
@@ -173,14 +173,13 @@ function eventPlotter() {
 //	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
 	    var dataArray = new Array();
 	    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
-		var time=(samp*jsonObject.event.channelList[chan].deltaT);
-		var value=jsonObject.event.channelList[chan].data[samp];		
-		dataArray.push(time,value);
-		if(chan==0) {
-		    titleContainer.append("<p>"+time +","+value+"</p>");
-		}
+		//The Number is important for the logical tests below
+		var time=Number((samp*jsonObject.event.channelList[chan].deltaT));
+		var value=Number(jsonObject.event.channelList[chan].data[samp]);		
+		dataArray.push([time,value]);
 		if(value>yMax[row]) yMax[row]=value;
 		if(value<yMin[row]) yMin[row]=value;
+		
 	    }
 	    chanArray.push(dataArray);
 	}
@@ -218,11 +217,11 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
     var showLabel=false;
     
     var titleContainer = $("#titleContainer"); 
-//    titleContainer.append("<p>"+divContName+"</p>");
-//    titleContainer.append("<p>The plot has "+dataArray.length+" time points</p>");
-  //  titleContainer.append("<p>"+yMin+" "+yMax+"</p>");
+    //    titleContainer.append("<p>"+divContName+"</p>");
+    //    titleContainer.append("<p>The plot has "+dataArray.length+" time points</p>");
+    //    titleContainer.append("<p>"+yMin+" "+yMax+"</p>");
     //    titleContainer.append("<p>First point "+dataArray[0][0] +","+dataArray[0][1]+"</p>");
-    //  titleContainer.append("<p>Last point "+dataArray[dataArray.length-1][0] +","+dataArray[dataArray.length-1][1]+"</p>");
+    //    titleContainer.append("<p>Last point "+dataArray[dataArray.length-1][0] +","+dataArray[dataArray.length-1][1]+"</p>");
     var plotCan=$("#"+divChanName);
     var plotCont=$("#"+divContName);
 //    plotCont.append("<p>Boo</p>");

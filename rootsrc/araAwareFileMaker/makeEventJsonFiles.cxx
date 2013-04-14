@@ -18,6 +18,7 @@
 #include "UsefulIcrrStationEvent.h"
 #include "UsefulAtriStationEvent.h"
 #include "AraGeomTool.h"
+#include "AraEventCalibrator.h"
 #include "FFTtools.h"
 
 //AWARE includes
@@ -117,7 +118,7 @@ int main(int argc, char **argv) {
   eventTree->GetEntry(0);
 
   char stationName[20];
-
+  int stationId=2;
 
   AraGeomTool *fGeomTool = AraGeomTool::Instance();
 
@@ -129,6 +130,7 @@ int main(int argc, char **argv) {
   else {
     timeStamp=TTimeStamp(rawAtriEvPtr->unixTime);
     sprintf(stationName,"%s",fGeomTool->getStationName(rawAtriEvPtr->getStationId()));
+    stationId=rawAtriEvPtr->getStationId();
   }   
   UInt_t dateInt=timeStamp.GetDate();
 
@@ -136,9 +138,34 @@ int main(int argc, char **argv) {
   sprintf(dirName,"output/%s/%d/%04d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(dirName,kTRUE);
 
-   
+  //Pedestal fun
+  if(argc>2) {
+    std::ifstream PedList(argv[2]);    
+    int pedRun,lastPedRun=-1;
+    char pedFileName[FILENAME_MAX];
+    char lastPedFileName[FILENAME_MAX];
+    while(PedList >> pedRun >> pedFileName) {
+      if(pedRun>runNumber) {
+	//Take the last guy
+	if(lastPedRun==-1) {
+	  lastPedRun=pedRun;
+	  strncpy(lastPedFileName,pedFileName,FILENAME_MAX);
+	}	  
+	break;
+      }
+      lastPedRun=pedRun;
+      strncpy(lastPedFileName,pedFileName,FILENAME_MAX);
+    }
+    //Got the pedestal run
 
-  numEntries=4;
+    AraEventCalibrator::Instance()->setAtriPedFile(lastPedFileName, stationId);
+
+    
+  }
+
+
+
+  //  numEntries=4;
   for(Long64_t event=0;event<numEntries;event++) {
     if(event%starEvery==0) {
       std::cerr << "*";       
