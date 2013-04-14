@@ -9,6 +9,17 @@ SRCSUF=cxx
 DLLSUF=so
 OBJSUF=o
 
+#Toggles the FFT functions on and off
+USE_FFT_TOOLS=1
+
+ifdef USE_FFT_TOOLS
+FFTLIBS = -lRootFftwWrapper -lfftw3
+FFTFLAG = -DUSE_FFT_TOOLS
+else
+FFTLIBS =
+FFTFLAG =
+endif
+
 
 LD_ARA_UTIL=-L$(ARA_UTIL_INSTALL_DIR)/lib  -lAraEvent
 INC_ARA_UTIL=-I$(ARA_UTIL_INSTALL_DIR)/include
@@ -25,7 +36,7 @@ GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 
 
-PROGRAM =    makeSensorHkJsonFiles makeEventHkJsonFiles makeEventJsonFiles updateRunList
+PROGRAM =    makeSensorHkJsonFiles makeEventHkJsonFiles makeEventJsonFiles makeHeaderJsonFiles updateRunList
 
 all : $(PROGRAM)
 

@@ -22,7 +22,6 @@
 #include "TTimeStamp.h"
 #include "TSystem.h"
 
-
 //AWARE Includes
 #include "AwareRunSummaryFileMaker.h"
 #include "AwareRunDatabase.h"
