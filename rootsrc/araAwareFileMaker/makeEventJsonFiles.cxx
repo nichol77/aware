@@ -22,6 +22,7 @@
 
 //AWARE includes
 #include "AwareWaveformEventFileMaker.h"
+#include "AwareRunSummaryFileMaker.h"
 
 //Include FFTtools.h if you want to ask the correlation, etc. tools
 
@@ -31,6 +32,8 @@
 #include "TGraph.h"
 #include "TTimeStamp.h"
 #include "TSystem.h"
+
+#include <map>
 
 RawIcrrStationEvent *rawIcrrEvPtr;
 RawAtriStationEvent *rawAtriEvPtr;
@@ -162,7 +165,15 @@ int main(int argc, char **argv) {
     
   }
 
-
+  
+  AwareRunSummaryFileMaker summaryFile(runNumber,stationName);
+   
+  std::map <Int_t, Double_t> fEventCountMap;
+  std::map <Int_t, Double_t> fEventNumberMap;
+  std::map <Int_t, Double_t> fRFEventCountMap;
+  std::map <Int_t, Double_t> fSoftEventCountMap;
+  std::map <Int_t, Double_t> fCalEventCountMap;
+  std::map <Int_t, Double_t> fRMSMap[20];
 
   //  numEntries=4;
   for(Long64_t event=0;event<numEntries;event++) {
@@ -194,16 +205,11 @@ int main(int argc, char **argv) {
       triggerTime=rawAtriEvPtr->timeStamp;
     }
     TTimeStamp timeStamp(unixTime,0);
-    //    std::cout << "Run: "<< realEvPtr->
-     
-    //Now you can do whatever analysis you want
-    //e.g.
-    //    AraStationId_t stationId=rawEvPtr->getStationId();
-    //    std::cout << "Station Id: " << int(stationId) << "\n";
-    //    std::cout << "Station Name: " << fGeomTool->getStationName(rawEvPtr->getStationId()) << "\n";
 
-    AraStationInfo *statInfo=fGeomTool->getStationInfo(rawEvPtr->getStationId());
-    
+    int isSoftTrig=0;
+    if(rawAtriEvPtr->numReadoutBlocks<80) isSoftTrig=1;
+    int isCalPulser=0;
+    if(rawAtriEvPtr->isCalpulserEvent()) isCalPulser=1;
 
     char outName[FILENAME_MAX];
     sprintf(outName,"output/%s/%d/%04d/run%d/event%d.json",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber);
@@ -218,10 +224,12 @@ int main(int argc, char **argv) {
 
     TGraph *gr[100]={0};
 
+    Double_t rmsValues[20];
     
 
     for( int i=0; i<numChannels; ++i ) {
       TGraph *grTemp = realEvPtr->getGraphFromRFChan(i);   
+      rmsValues[i]=grTemp->GetRMS(2);
       Double_t deltaT=grTemp->GetX()[grTemp->GetN()-1]-grTemp->GetX()[0];
       deltaT/=(grTemp->GetN()-1);
       gr[i]=FFTtools::getInterpolatedGraph(grTemp,deltaT);
@@ -237,13 +245,111 @@ int main(int argc, char **argv) {
 
     fileMaker.writeFile();
 
+    std::map <Int_t, Double_t>::iterator mainIt=fEventCountMap.find(unixTime/60);
+    if(mainIt==fEventCountMap.end()) {
+      //Not got this time yet
+      fEventCountMap[unixTime/60]=1;
+      fEventNumberMap[unixTime/60]=eventNumber;
+      if(isSoftTrig) {
+	fRFEventCountMap[unixTime/60]=0;
+	fSoftEventCountMap[unixTime/60]=1;
+	fCalEventCountMap[unixTime/60]=0;
+      }
+      else  {
+	fSoftEventCountMap[unixTime/60]=0;
+	fRFEventCountMap[unixTime/60]=1;
+	if(isCalPulser) {
+	  fCalEventCountMap[unixTime/60]=1;
+	}
+	fCalEventCountMap[unixTime/60]=0;
+      }
+      for(int i=0;i<20;i++) {
+	fRMSMap[i][unixTime/60]=rmsValues[i];
+      }
+    }
+    else {
+      //Already got this one
+      fEventCountMap[unixTime/60]++;
+      fEventNumberMap[unixTime/60]+=eventNumber;
+      if(isSoftTrig) {
+	fSoftEventCountMap[unixTime/60]+=1;
+      }
+      else {
+	fRFEventCountMap[unixTime/60]+=1;
+	if(isCalPulser) {
+	  fCalEventCountMap[unixTime/60]+=1;
+	}
+      }
+      
+      for(int i=0;i<20;i++) {
+	fRMSMap[i][unixTime/60]+=rmsValues[i];
+      }
+    }
+      
 
     for( int i=0; i<numChannels; ++i ) {
       delete gr[i];
     }
+
+    //Plots to make:
+    //Raw event rate   /// done this one
+    //RF event rate /// done this one
+    //Software trigger event rate  ///done this one
+    //CalPulser event rate //done this one
+    //Channel RMS?
+    //Power spectrum fun?    
   }
   std::cerr << "\n";
 
+  //Now loop over thingies add them to the thingy and do the thingy
+  
+  std::map <Int_t, Double_t>::iterator mainIt=fEventCountMap.begin();
+  double lastEventNumber=-1;
+  for(;mainIt!=fEventCountMap.end();mainIt++) {
+    int sec=mainIt->first;
+    double numEvents=mainIt->second;
+    double rawEventAvg=fEventNumberMap[sec]/numEvents;
+    double estEventRate=numEvents/60;
+    if(lastEventNumber>=0) {
+      estEventRate=(rawEventAvg-lastEventNumber)/60;
+    }
+    lastEventNumber=rawEventAvg;
+
+
+    double rfEventAvg=fRFEventCountMap[sec]/numEvents;
+    double softEventAvg=fSoftEventCountMap[sec]/numEvents;
+    double calEventAvg=fCalEventCountMap[sec]/numEvents;   
+    double avgRms[20]={0};   
+    for(int i=0;i<20;i++) {
+      avgRms[i]=fRMSMap[i][sec]/numEvents;
+    }    
+    //Summary file fun
+    char elementName[180];
+    char elementLabel[180];
+    summaryFile.addVariablePoint("rawEventRate","Event Rate",sec*60,numEvents/60);
+    summaryFile.addVariablePoint("eventRate","Event Rate",sec*60,estEventRate);
+    summaryFile.addVariablePoint("softEventRate","Soft Event Rate",sec*60,softEventAvg/60);
+    summaryFile.addVariablePoint("rfEventRate","RF Event Rate",sec*60,rfEventAvg/60);
+    summaryFile.addVariablePoint("calEventRate","Cal. Event Rate",sec*60,calEventAvg/60);
+
+    for( int i=0; i<20; ++i ) {
+      sprintf(elementName,"rms_%d",i);
+      sprintf(elementLabel,"RF %d",i+1);
+      summaryFile.addVariablePoint(elementName,elementLabel,sec*60,avgRms[i]);
+    }
+  }
+  
+  
+  char outName[FILENAME_MAX];
+  sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
+  gSystem->mkdir(outName,kTRUE);
+
+  summaryFile.writeFullJSONFiles(outName,"header");
+  sprintf(outName,"output/%s/%04d/%04d/run%d/headerSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  summaryFile.writeSummaryJSONFile(outName);
+
+  sprintf(outName,"output/%s/%04d/%04d/run%d/headerTime.json",stationName,dateInt/dateInt,10000%runNumber,10000);
+  summaryFile.writeTimeJSONFile(outName);
   
  
 

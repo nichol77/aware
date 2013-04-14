@@ -17,6 +17,7 @@
 #include "UsefulIcrrStationEvent.h"
 #include "UsefulAtriStationEvent.h"
 #include "AraGeomTool.h"
+#include "AraEventCalibrator.h"
 #include "FFTtools.h"
 
 //AWARE includes
@@ -119,7 +120,7 @@ int main(int argc, char **argv) {
   eventTree->GetEntry(0);
 
   char stationName[20];
-
+  int stationId=2;
 
   AraGeomTool *fGeomTool = AraGeomTool::Instance();
 
@@ -131,12 +132,38 @@ int main(int argc, char **argv) {
   else {
     timeStamp=TTimeStamp(rawAtriEvPtr->unixTime);
     sprintf(stationName,"%s",fGeomTool->getStationName(rawAtriEvPtr->getStationId()));
+    stationId=rawAtriEvPtr->getStationId();
   }   
   UInt_t dateInt=timeStamp.GetDate();
 
   char dirName[FILENAME_MAX];
   sprintf(dirName,"output/%s/%d/%04d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(dirName,kTRUE);
+
+ //Pedestal fun
+  if(argc>2) {
+    std::ifstream PedList(argv[2]);    
+    int pedRun,lastPedRun=-1;
+    char pedFileName[FILENAME_MAX];
+    char lastPedFileName[FILENAME_MAX];
+    while(PedList >> pedRun >> pedFileName) {
+      if(pedRun>runNumber) {
+	//Take the last guy
+	if(lastPedRun==-1) {
+	  lastPedRun=pedRun;
+	  strncpy(lastPedFileName,pedFileName,FILENAME_MAX);
+	}	  
+	break;
+      }
+      lastPedRun=pedRun;
+      strncpy(lastPedFileName,pedFileName,FILENAME_MAX);
+    }
+    //Got the pedestal run
+
+    AraEventCalibrator::Instance()->setAtriPedFile(lastPedFileName, stationId);
+
+    
+  }
 
   
   AwareRunSummaryFileMaker summaryFile(runNumber,stationName);
@@ -184,13 +211,40 @@ int main(int argc, char **argv) {
     int isCalPulser=0;
     if(rawAtriEvPtr->isCalpulserEvent()) isCalPulser=1;
 
+
+    char outName[FILENAME_MAX];
+    sprintf(outName,"output/%s/%d/%04d/run%d/event%d.json",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber);
+
+    AwareWaveformEventFileMaker fileMaker(runNumber,eventNumber,stationName,outName);
+
+
+    Int_t numChannels=realEvPtr->getNumRFChannels();
+    
+    fileMaker.addVariableToEvent("time",timeStamp.AsString("sl"));
+    fileMaker.addVariableToEvent("triggerTime",triggerTime);
+
+    TGraph *gr[100]={0};
+
     Double_t rmsValues[20];
-    for( int i=0; i<20; ++i ) {
+    
+
+    for( int i=0; i<numChannels; ++i ) {
       TGraph *grTemp = realEvPtr->getGraphFromRFChan(i);   
       rmsValues[i]=grTemp->GetRMS(2);
+      Double_t deltaT=grTemp->GetX()[grTemp->GetN()-1]-grTemp->GetX()[0];
+      deltaT/=(grTemp->GetN()-1);
+      gr[i]=FFTtools::getInterpolatedGraph(grTemp,deltaT);
       delete grTemp;
+      char label[10];
+      //      AraAntennaInfo *antInfo = statInfo->getAntennaInfo(i);
+      sprintf(label,"RF %d",i);
+      if(gr[i]) {
+	//	std::cout << "make: " << eventNumber << "\t" << i << "\t" << deltaT << "\n";
+	fileMaker.addChannelToFile(gr[i],i,label);
+      }      
     }
 
+    fileMaker.writeFile();
 
     std::map <Int_t, Double_t>::iterator mainIt=fEventCountMap.find(unixTime/60);
     if(mainIt==fEventCountMap.end()) {
@@ -233,6 +287,11 @@ int main(int argc, char **argv) {
       }
     }
       
+
+    for( int i=0; i<numChannels; ++i ) {
+      delete gr[i];
+    }
+
     //Plots to make:
     //Raw event rate   /// done this one
     //RF event rate /// done this one
