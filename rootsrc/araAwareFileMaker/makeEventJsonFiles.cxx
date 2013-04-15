@@ -216,6 +216,9 @@ int main(int argc, char **argv) {
     if(rawAtriEvPtr->isCalpulserEvent()) isCalPulser=1;
 
     char outName[FILENAME_MAX];
+    sprintf(outName,"output/%s/%d/%04d/run%d/events%d",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000));
+    gSystem->mkdir(outName,kTRUE);
+
     sprintf(outName,"output/%s/%d/%04d/run%d/events%d/event%d.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000),eventNumber);
     //    std::cout << outName << "\n";
 
