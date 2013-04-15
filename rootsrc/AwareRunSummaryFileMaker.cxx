@@ -9,6 +9,11 @@
 #include "TSystem.h"
 #include <iostream>
 #include <fstream>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 
 
@@ -65,18 +70,21 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
   if(fRawMap.size()==0) return;
   
-  std::vector<std::string> fFileList;
+  //  std::vector<std::string> fFileList;
 
   char jsonName[FILENAME_MAX];
-  sprintf(jsonName,"%s/%s_time.json",jsonDir,filePrefix);
-  std::ofstream TimeFile(jsonName);
-  if(!TimeFile) {
-    std::cerr << "Couldn't open " << jsonName << "\n";
-    return;
-  }
-  fFileList.push_back(std::string(jsonName));
+  sprintf(jsonName,"%s/%s_time.json.gz",jsonDir,filePrefix);
 
+  boost::iostreams::filtering_ostream TimeFile;
+  TimeFile.push(boost::iostreams::gzip_compressor());
+  TimeFile.push(boost::iostreams::file_sink(jsonName));
+  //Need to add a check the file is open
 
+//   std::ofstream TimeFile(jsonName);
+//   if(!TimeFile) {
+//     std::cerr << "Couldn't open " << jsonName << "\n";
+//     return;
+//   }
 
 
   //For now we will justr take the time from the first variable in the map;
@@ -93,7 +101,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
 
   
-  std::map<std::string, std::ofstream*> fJsonFileMap;
+  std::map<std::string, boost::iostreams::filtering_ostream*> fJsonFileMap;
   
   //For now get the first time point in the raw map
   std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();  
@@ -105,13 +113,16 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   //Now open the output files
   for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
      labelIt=fLabelMap.find(subMapIt->first);
-     sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
-     std::ofstream *VarFile = new std::ofstream(jsonName);
-    if(!(*VarFile)) {
-      std::cerr << "Couldn't open " << jsonName << "\n";
-      continue;
-    }
-    fFileList.push_back(std::string(jsonName));
+     sprintf(jsonName,"%s/%s_%s.json.gz",jsonDir,filePrefix,subMapIt->first.c_str());
+     boost::iostreams::filtering_ostream *VarFile = new boost::iostreams::filtering_ostream();
+     VarFile->push(boost::iostreams::gzip_compressor());
+     VarFile->push(boost::iostreams::file_sink(jsonName));
+     //std::ofstream(jsonName);
+     //    if(!(*VarFile)) {
+     //      std::cerr << "Couldn't open " << jsonName << "\n";
+     //      continue;
+     //    }
+     //     fFileList.push_back(std::string(jsonName));
       
     (*VarFile) << "{\n";
     //Start of runSum
@@ -123,7 +134,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
     (*VarFile) << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
     (*VarFile) << "\t\"timeList\" : [\n";
-    fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
+    fJsonFileMap.insert( std::pair <std::string, boost::iostreams::filtering_ostream*> (subMapIt->first, VarFile) );
   }
 
  
@@ -137,7 +148,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     //Now the variable files
     subMapIt=fRawMapIt->second.begin();
     for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-      std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);  
+      std::map<std::string, boost::iostreams::filtering_ostream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);  
 
       if(fileIt!=fJsonFileMap.end()) {	
 	//	std::cout << subMapIt->first.c_str() << "\n";
@@ -150,24 +161,24 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     firstInArray=0;
   }  
   TimeFile << " ]\n}\n}\n";
-  TimeFile.close();
+  TimeFile.flush();
   
   fRawMapIt=fRawMap.begin();
   subMapIt=fRawMapIt->second.begin();
     for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-      std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);      
+      std::map<std::string, boost::iostreams::filtering_ostream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);      
       if(fileIt!=fJsonFileMap.end()) {	
 	*(fileIt->second) << " ]\n}\n}\n";
-	(fileIt->second)->close();
+	(fileIt->second)->flush();
       }
     }
 
-    while(!fFileList.empty()) {      
-      char gzipString[FILENAME_MAX];
-      sprintf(gzipString,"gzip -f %s",fFileList.back().c_str());
-      fFileList.pop_back();
-      gSystem->Exec(gzipString);
-    }
+//     while(!fFileList.empty()) {      
+//       char gzipString[FILENAME_MAX];
+//       sprintf(gzipString,"gzip -f %s",fFileList.back().c_str());
+//       fFileList.pop_back();
+//       gSystem->Exec(gzipString);
+//     }
   
   
 
@@ -176,11 +187,16 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
 {
 
-  std::ofstream TimeFile(jsonName);
-  if(!TimeFile) {
-    std::cerr << "Couldn't open " << jsonName << "\n";
-    return;
-  }
+
+  boost::iostreams::filtering_ostream TimeFile;
+  TimeFile.push(boost::iostreams::gzip_compressor());
+  TimeFile.push(boost::iostreams::file_sink(jsonName));
+
+  //  std::ofstream TimeFile(jsonName);
+  //  if(!TimeFile) {
+  //    std::cerr << "Couldn't open " << jsonName << "\n";
+  //    return;
+  //  }
 
   std::map<std::string,std::string>::iterator labelIt;
 
@@ -198,7 +214,7 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
   }
   else {
     //No data time to quit
-    TimeFile.close();
+    TimeFile.flush();
     unlink(jsonName);
     return;
   }
@@ -270,11 +286,11 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     TimeFile << "\t]\n\t}";
   }
   TimeFile << "\t]\n\t}\n}\n";
-  TimeFile.close();
+  TimeFile.flush();
 
-  char gzipString[FILENAME_MAX];
-  sprintf(gzipString,"gzip -f %s",jsonName);
-  gSystem->Exec(gzipString);
+//   char gzipString[FILENAME_MAX];
+//   sprintf(gzipString,"gzip -f %s",jsonName);
+//   gSystem->Exec(gzipString);
 
 }
 
@@ -282,12 +298,17 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
 
 void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
 {
-  //Start new document
-  std::ofstream jsonFile(jsonName);
-  if(!jsonName) {
-    std::cerr << "Error opening " << jsonName << "\n";
-    return ;
-  }
+  //Start new JSON file
+
+  boost::iostreams::filtering_ostream jsonFile;
+  jsonFile.push(boost::iostreams::gzip_compressor());
+  jsonFile.push(boost::iostreams::file_sink(jsonName));
+
+//   std::ofstream jsonFile(jsonName);
+//   if(!jsonName) {
+//     std::cerr << "Error opening " << jsonName << "\n";
+//     return ;
+//   }
 
 
   std::map<std::string,std::string>::iterator labelIt;
@@ -341,11 +362,11 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
   jsonFile << "}\n";
   //Closing brace
   jsonFile << "}\n";
-  jsonFile.close();
+  jsonFile.flush();
 
-  char gzipString[FILENAME_MAX];
-  sprintf(gzipString,"gzip -f %s",jsonName);
-  gSystem->Exec(gzipString);
+//   char gzipString[FILENAME_MAX];
+//   sprintf(gzipString,"gzip -f %s",jsonName);
+//   gSystem->Exec(gzipString);
 }
 
 

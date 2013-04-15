@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
 
 
     char outName[FILENAME_MAX];
-    sprintf(outName,"output/%s/%d/%04d/run%d/event%d.json",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber);
+    sprintf(outName,"output/%s/%d/%04d/run%d/event%d.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber);
 
     AwareWaveformEventFileMaker fileMaker(runNumber,eventNumber,stationName,outName);
 
@@ -346,10 +346,10 @@ int main(int argc, char **argv) {
   gSystem->mkdir(outName,kTRUE);
 
   summaryFile.writeFullJSONFiles(outName,"header");
-  sprintf(outName,"output/%s/%04d/%04d/run%d/headerSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/headerSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/headerTime.json",stationName,dateInt/dateInt,10000%runNumber,10000);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/headerTime.json.gz",stationName,dateInt/dateInt,10000%runNumber,10000);
   summaryFile.writeTimeJSONFile(outName);
   
  

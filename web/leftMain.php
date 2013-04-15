@@ -7,7 +7,7 @@
 
 
 <a class=
-"leftBar" title="Headers" href="headers.php"
+"leftBar" title="Headers" href="header.php"
 accesskey="C">Headers</a>
 <span class="spacer">&nbsp;&nbsp;</span>
 

@@ -163,12 +163,12 @@ int main(int argc, char **argv) {
   summaryFile.writeFullJSONFiles(outName,"eventHk");
 
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
 
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
 
   //  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);

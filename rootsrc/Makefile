@@ -36,7 +36,7 @@ OBJSUF=o
 CXXFLAGS     += $(ROOTCFLAGS) $(FFTFLAG) $(SYSINCLUDES) 
 LDFLAGS      += -g $(ROOTLDFLAGS) 
 
-LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS)  $(FFTLIBS) 
+LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS)  $(FFTLIBS) -lboost_iostreams
 GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 ROOT_LIBRARY = libAwareWeb.so

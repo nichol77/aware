@@ -9,6 +9,12 @@
 #include "TSystem.h"
 #include <iostream>
 #include <fstream>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
 
 
 AwareWaveformEventFileMaker::AwareWaveformEventFileMaker(Int_t runNumber, Int_t eventNumber, const char *instrumentName, const char *jsonName)
@@ -51,11 +57,15 @@ void AwareWaveformEventFileMaker::addChannelToFile(TGraph *grChannel, Int_t grId
 
 void AwareWaveformEventFileMaker::writeFile()
 {
-  std::ofstream fEventFile(fEventFilename.c_str());
-  if(!fEventFile.is_open()) {
-    std::cerr << "Event file not open\n";
-    return;
-  }
+   //  std::ofstream fEventFile(fEventFilename.c_str());
+  //  if(!fEventFile.is_open()) {
+     ///    std::cerr << "Event file not open\n";
+    //    return;
+    //  }
+   boost::iostreams::filtering_ostream fEventFile;
+   fEventFile.push(boost::iostreams::gzip_compressor());
+   fEventFile.push(boost::iostreams::file_sink(fEventFilename.c_str()));
+
 
   fEventFile << "{\n\"event\":{\n";
   fEventFile <<  "\"instrument\": \"" << fInstrumentName << "\",\n";
@@ -105,10 +115,10 @@ void AwareWaveformEventFileMaker::writeFile()
   }
   fEventFile << "]}}\n";
    
-  fEventFile.close();
+  fEventFile.flush();
 
 
-  char gzipString[FILENAME_MAX];
-  sprintf(gzipString,"gzip -f %s",fEventFilename.c_str());
-  gSystem->Exec(gzipString);
+  //  char gzipString[FILENAME_MAX];
+  //  sprintf(gzipString,"gzip -f %s",fEventFilename.c_str());
+  //  gSystem->Exec(gzipString);
 }

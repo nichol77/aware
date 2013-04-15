@@ -35,12 +35,12 @@
 
 #include <map>
 
-RawIcrrStationEvent *rawIcrrEvPtr;
-RawAtriStationEvent *rawAtriEvPtr;
-RawAraStationEvent *rawEvPtr;
-UsefulIcrrStationEvent *realIcrrEvPtr;
-UsefulAtriStationEvent *realAtriEvPtr;
-UsefulAraStationEvent *realEvPtr;
+RawIcrrStationEvent *rawIcrrEvPtr=0;
+RawAtriStationEvent *rawAtriEvPtr=0;
+RawAraStationEvent *rawEvPtr=0;
+UsefulIcrrStationEvent *realIcrrEvPtr=0;
+UsefulAtriStationEvent *realAtriEvPtr=0;
+UsefulAraStationEvent *realEvPtr=0;
 
 void usage(char **argv) 
 {  
@@ -140,6 +140,8 @@ int main(int argc, char **argv) {
   sprintf(dirName,"output/%s/%d/%04d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(dirName,kTRUE);
 
+  std::cout << "Making: " << dirName << "\n";
+
   //Pedestal fun
   if(argc>2) {
     std::ifstream PedList(argv[2]);    
@@ -175,7 +177,7 @@ int main(int argc, char **argv) {
   std::map <Int_t, Double_t> fCalEventCountMap;
   std::map <Int_t, Double_t> fRMSMap[20];
 
-  //  numEntries=4;
+  //  numEntries=200;
   for(Long64_t event=0;event<numEntries;event++) {
     if(event%starEvery==0) {
       std::cerr << "*";       
@@ -191,6 +193,7 @@ int main(int argc, char **argv) {
     Double_t triggerTime=0;
 
     if(isIcrrEvent){
+      if(realIcrrEvPtr) delete realIcrrEvPtr;
       realIcrrEvPtr = new UsefulIcrrStationEvent(rawIcrrEvPtr, AraCalType::kLatestCalib);
       realEvPtr=realIcrrEvPtr;
       eventNumber=rawIcrrEvPtr->head.eventNumber;
@@ -198,7 +201,8 @@ int main(int argc, char **argv) {
       triggerTime=rawIcrrEvPtr->getRubidiumTriggerTimeInSec();
     }
     else if(isAtriEvent){
-      realAtriEvPtr = new UsefulAtriStationEvent(rawAtriEvPtr, AraCalType::kFirstCalib);
+      if(realAtriEvPtr) delete realAtriEvPtr;
+      realAtriEvPtr = new UsefulAtriStationEvent(rawAtriEvPtr, AraCalType::kLatestCalib);
       realEvPtr=realAtriEvPtr;
       eventNumber=rawAtriEvPtr->eventNumber;
       unixTime=rawAtriEvPtr->unixTime;
@@ -212,13 +216,14 @@ int main(int argc, char **argv) {
     if(rawAtriEvPtr->isCalpulserEvent()) isCalPulser=1;
 
     char outName[FILENAME_MAX];
-    sprintf(outName,"output/%s/%d/%04d/run%d/event%d.json",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber);
+    sprintf(outName,"output/%s/%d/%04d/run%d/events%d/event%d.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000),eventNumber);
+    //    std::cout << outName << "\n";
 
-    AwareWaveformEventFileMaker fileMaker(runNumber,eventNumber,stationName,outName);
 
 
     Int_t numChannels=realEvPtr->getNumRFChannels();
-    
+
+    AwareWaveformEventFileMaker fileMaker(runNumber,eventNumber,stationName,outName);    
     fileMaker.addVariableToEvent("time",timeStamp.AsString("sl"));
     fileMaker.addVariableToEvent("triggerTime",triggerTime);
 
@@ -244,6 +249,11 @@ int main(int argc, char **argv) {
     }
 
     fileMaker.writeFile();
+
+    for( int i=0; i<numChannels; ++i ) {
+      delete gr[i];
+    }
+
 
     std::map <Int_t, Double_t>::iterator mainIt=fEventCountMap.find(unixTime/60);
     if(mainIt==fEventCountMap.end()) {
@@ -287,10 +297,6 @@ int main(int argc, char **argv) {
     }
       
 
-    for( int i=0; i<numChannels; ++i ) {
-      delete gr[i];
-    }
-
     //Plots to make:
     //Raw event rate   /// done this one
     //RF event rate /// done this one
@@ -326,7 +332,7 @@ int main(int argc, char **argv) {
     //Summary file fun
     char elementName[180];
     char elementLabel[180];
-    summaryFile.addVariablePoint("rawEventRate","Event Rate",sec*60,numEvents/60);
+    summaryFile.addVariablePoint("rawEventRate","Raw Event Rate",sec*60,numEvents/60);
     summaryFile.addVariablePoint("eventRate","Event Rate",sec*60,estEventRate);
     summaryFile.addVariablePoint("softEventRate","Soft Event Rate",sec*60,softEventAvg/60);
     summaryFile.addVariablePoint("rfEventRate","RF Event Rate",sec*60,rfEventAvg/60);
@@ -345,10 +351,10 @@ int main(int argc, char **argv) {
   gSystem->mkdir(outName,kTRUE);
 
   summaryFile.writeFullJSONFiles(outName,"header");
-  sprintf(outName,"output/%s/%04d/%04d/run%d/headerSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/headerSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/headerTime.json",stationName,dateInt/dateInt,10000%runNumber,10000);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/headerTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
   
  

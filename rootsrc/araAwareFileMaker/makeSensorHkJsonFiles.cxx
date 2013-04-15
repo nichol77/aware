@@ -136,11 +136,11 @@ int main(int argc, char **argv) {
 
   summaryFile.writeFullJSONFiles(outName,"sensorHk");
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkSummary.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkTime.json",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
 
 

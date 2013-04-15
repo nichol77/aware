@@ -9,6 +9,8 @@ SRCSUF=cxx
 DLLSUF=so
 OBJSUF=o
 
+SYSLIBS=-L /home/rjn/thirdParty/lib/ -l profiler
+
 #Toggles the FFT functions on and off
 USE_FFT_TOOLS=1
 
@@ -21,7 +23,7 @@ FFTFLAG =
 endif
 
 
-LD_ARA_UTIL=-L$(ARA_UTIL_INSTALL_DIR)/lib  -lAraEvent
+LD_ARA_UTIL=-L$(ARA_UTIL_INSTALL_DIR)/lib  -lAraEvent  
 INC_ARA_UTIL=-I$(ARA_UTIL_INSTALL_DIR)/include
 
 AWARE_INCLUDES = -I../
