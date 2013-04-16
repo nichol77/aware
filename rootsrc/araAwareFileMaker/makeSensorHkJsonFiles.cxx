@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
 
   TTimeStamp timeStamp(sensorHkPtr->unixTime,0);
   UInt_t dateInt=timeStamp.GetDate();
+  UInt_t firstTime=timeStamp.GetSec();
 
   //Now we set up out run list
   Long64_t numEntries=sensorHkTree->GetEntries();
@@ -142,6 +143,12 @@ int main(int argc, char **argv) {
 
   sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
+
+
+  sprintf(outName,"output/%s/lastSensorHk",stationName);
+  AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
+  sprintf(outName,"output/%s/lastRun",stationName);
+  AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 
   //  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);

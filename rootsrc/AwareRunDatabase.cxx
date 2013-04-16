@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <utime.h>      
+#include <sys/stat.h>
 
 AwareRunDatabase::AwareRunDatabase(char *outputDir,char *instumnentName) 
    :fOutputDirName(outputDir),fInstrumentName(instumnentName)
@@ -222,4 +224,33 @@ void AwareRunDatabase::updateRunList(char *instrumentName, int runNumber, int da
     NewRunList << "\n]\n}\n";
     NewRunList.close();
   }
+}
+
+
+int AwareRunDatabase::updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime)
+{
+   //Touch File  
+   struct utimbuf ut;
+   ut.actime=unixTime;  
+   ut.modtime=unixTime;   
+   struct stat buf;  
+   int retVal2=stat(touchFile,&buf);  
+   if(retVal2==0) {    
+      if(buf.st_mtime<ut.modtime) {  
+	 std::ofstream Touch(touchFile);    
+	 Touch << run << "\n";
+	 Touch.close();    	 
+	 utime(touchFile,&ut);      
+	 return 1;
+      }  
+   }  
+   else {
+      //Maybe file doesn't exist    
+      std::ofstream Touch(touchFile);   
+      Touch << run << "\n"; 
+      Touch.close();    
+      utime(touchFile,&ut);    
+      return 1;
+   }      
+   return 0;
 }

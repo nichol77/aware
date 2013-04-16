@@ -26,6 +26,8 @@ class AwareRunDatabase
 
   static void updateRunList(char *instrumentName, int runNumber, int dateInt);
   static void updateDateList(char *instrumentName, int runNumber, int dateInt);
+  static int  updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime);
+
   
  private:
   std::string fOutputDirName;

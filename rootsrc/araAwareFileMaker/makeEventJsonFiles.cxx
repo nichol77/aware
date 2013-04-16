@@ -23,6 +23,7 @@
 //AWARE includes
 #include "AwareWaveformEventFileMaker.h"
 #include "AwareRunSummaryFileMaker.h"
+#include "AwareRunDatabase.h"
 
 //Include FFTtools.h if you want to ask the correlation, etc. tools
 
@@ -135,6 +136,7 @@ int main(int argc, char **argv) {
     stationId=rawAtriEvPtr->getStationId();
   }   
   UInt_t dateInt=timeStamp.GetDate();
+  UInt_t firstTime=timeStamp.GetSec();
 
   char dirName[FILENAME_MAX];
   sprintf(dirName,"output/%s/%d/%04d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
@@ -361,5 +363,9 @@ int main(int argc, char **argv) {
   summaryFile.writeTimeJSONFile(outName);
   
  
+  sprintf(outName,"output/%s/lastEvent",stationName);
+  AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
+  sprintf(outName,"output/%s/lastRun",stationName);
+  AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 }
