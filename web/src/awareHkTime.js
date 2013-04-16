@@ -200,7 +200,8 @@ function actuallyDrawTheStuff() {
     var options = {
 	yaxis: { },
 	xaxis: {mode: "time"},
-	lines: { show: true },
+	lines: { show: false },
+	points: { show: true },
 	legend:{container: $("#divLabel")},
 	selection : { mode : "xy" }
     }
@@ -595,13 +596,9 @@ function drawPlot() {
     labelContainer.empty();
     datasets = new Object();
 
-
-    startRun=getStartRunFromForm();
-    endRun=getEndRunFromForm();
-    if(endRun>startRun) doMultiRunPlot(); 
-    else {
-	if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
-	else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
-    }
+    if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
+    else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
+    else if(thisTimeType.indexOf("multiRun")>=0) doMultiRunPlot();
+	    
 }
 

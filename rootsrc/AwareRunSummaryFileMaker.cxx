@@ -70,7 +70,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
   if(fRawMap.size()==0) return;
   
-  //  std::vector<std::string> fFileList;
+  std::vector<std::string> fFileList;
 
   char jsonName[FILENAME_MAX];
   sprintf(jsonName,"%s/%s_time.json.gz",jsonDir,filePrefix);
@@ -101,7 +101,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
 
   
-  std::map<std::string, boost::iostreams::filtering_ostream*> fJsonFileMap;
+  std::map<std::string, std::ofstream*> fJsonFileMap;
   
   //For now get the first time point in the raw map
   std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();  
@@ -113,16 +113,13 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   //Now open the output files
   for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
      labelIt=fLabelMap.find(subMapIt->first);
-     sprintf(jsonName,"%s/%s_%s.json.gz",jsonDir,filePrefix,subMapIt->first.c_str());
-     boost::iostreams::filtering_ostream *VarFile = new boost::iostreams::filtering_ostream();
-     VarFile->push(boost::iostreams::gzip_compressor());
-     VarFile->push(boost::iostreams::file_sink(jsonName));
-     //std::ofstream(jsonName);
-     //    if(!(*VarFile)) {
-     //      std::cerr << "Couldn't open " << jsonName << "\n";
-     //      continue;
-     //    }
-     //     fFileList.push_back(std::string(jsonName));
+     sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
+     std::ofstream *VarFile = new std::ofstream(jsonName);
+     if(!(*VarFile)) {
+	std::cerr << "Couldn't open " << jsonName << "\n";
+	continue;
+     }
+     fFileList.push_back(std::string(jsonName));
       
     (*VarFile) << "{\n";
     //Start of runSum
@@ -134,7 +131,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
     (*VarFile) << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
     (*VarFile) << "\t\"timeList\" : [\n";
-    fJsonFileMap.insert( std::pair <std::string, boost::iostreams::filtering_ostream*> (subMapIt->first, VarFile) );
+    fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
   }
 
  
@@ -148,16 +145,14 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     //Now the variable files
     subMapIt=fRawMapIt->second.begin();
     for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-      std::map<std::string, boost::iostreams::filtering_ostream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);  
+       std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);  
 
       if(fileIt!=fJsonFileMap.end()) {	
-	//	std::cout << subMapIt->first.c_str() << "\n";
-	if(!firstInArray) *(fileIt->second) << ",\n";
-	*(fileIt->second) <<  subMapIt->second;
+	 //	 std::cout << subMapIt->first.c_str() << "\n";
+	 if(!firstInArray) *(fileIt->second) << ",\n";
+	 *(fileIt->second) <<  subMapIt->second;
       }
-    }
-
-
+    }    
     firstInArray=0;
   }  
   TimeFile << " ]\n}\n}\n";
@@ -165,20 +160,21 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   
   fRawMapIt=fRawMap.begin();
   subMapIt=fRawMapIt->second.begin();
-    for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-      std::map<std::string, boost::iostreams::filtering_ostream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);      
-      if(fileIt!=fJsonFileMap.end()) {	
+  for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
+     std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);      
+     if(fileIt!=fJsonFileMap.end()) {	
+	//	std::cout << subMapIt->first.c_str() << "\n";
 	*(fileIt->second) << " ]\n}\n}\n";
-	(fileIt->second)->flush();
-      }
-    }
+	(fileIt->second)->close();
+     }
+  }
 
-//     while(!fFileList.empty()) {      
-//       char gzipString[FILENAME_MAX];
-//       sprintf(gzipString,"gzip -f %s",fFileList.back().c_str());
-//       fFileList.pop_back();
-//       gSystem->Exec(gzipString);
-//     }
+    while(!fFileList.empty()) {      
+      char gzipString[FILENAME_MAX];
+      sprintf(gzipString,"gzip -f %s",fFileList.back().c_str());
+      fFileList.pop_back();
+      gSystem->Exec(gzipString);
+    }
   
   
 

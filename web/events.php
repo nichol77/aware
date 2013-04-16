@@ -69,7 +69,7 @@ document.body.addEventListener('touchmove', function(event) {
 
 <div class="vertical" id="leftbar">
 <?php
-include("left.php");
+include("leftEvent.php");
 ?>
 </div>
 </body></html>

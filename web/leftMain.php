@@ -6,10 +6,6 @@
 <span class="spacer">&nbsp;&nbsp;</span>
 
 
-<a class=
-"leftBar" title="Headers" href="header.php"
-accesskey="C">Headers</a>
-<span class="spacer">&nbsp;&nbsp;</span>
 
 <a class=
 "leftBar" title="Events" href="events.php"
@@ -18,13 +14,9 @@ accesskey="C">Events</a>
 
 
 <a class=
-"leftBar" title="Housekeeping" href="eventHk.php"
+"leftBar" title="Housekeeping" href="awareHk.php"
 accesskey="C">Housekeeping</a>
 <span class="spacer">&nbsp;&nbsp;</span>
 
-<a class=
-"leftBar" title="Environment" href="sensorHk.php"
-accesskey="C">Environment</a>
-<span class="spacer">&nbsp;&nbsp;</span>
 
 </p>
