@@ -94,6 +94,10 @@ function getPlotNameFromForm() {
     return plotName;
 }
 
+function getMaxPointsToShow() {
+    return document.getElementById("fullMaxForm").value;; //For now fix this will make it tuneable later
+}
+
 
 function setHkTypeAndCanName(hkType,canName,timeType) {
     thisHkType=hkType;
@@ -130,10 +134,37 @@ function addFullVariableToDataset(jsonObject) {
     dataList.data= new Array();
 
 //    canContainer.append("<p>");
-    var varTimeList=varPoint.timeList;	    
-    for(var index=0;index<varTimeList.length;index++) {
+    var maxPointsToShow=getMaxPointsToShow();
+
+    var varTimeList=varPoint.timeList;
+    var plotEvery=1;
+    if(varTimeList.length>maxPointsToShow) {
+	//Need to do some data decimation
+	plotEvery=Math.ceil(varTimeList.length/maxPointsToShow);
+    }
+
+    for(var index=0;index<varTimeList.length;index+=plotEvery) {
+	var timePoint=timeArray[index];
 	var dataPoint=varTimeList[index];
-	dataList.data.push([timeArray[index],dataPoint,0]); ///< No stdDev for full files
+	var stdDev=0;
+	if(plotEvery>1) {	    
+	    var dp2=0;
+	    var deltaT=0;
+	    var count=0;
+	    for(var index2=index;index2<index+plotEvery && index2<varTimeList.length;index2++) {
+		count++;
+		dataPoint+=varTimeList[index2];
+		deltaT+=(timeArray[index2]-timeArray[index]);
+		dp2+=(varTimeList[index2]*varTimeList[index2]);
+	    }
+	    dataPoint/=count;
+	    deltaT/=count;
+	    timePoint+=deltaT;
+	    dp2/=count;
+	    stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
+	}	
+
+	dataList.data.push([timePoint,dataPoint,stdDev]); ///< No stdDev for full files
 //	canContainer.append("{"+timeArray[index]+","+dataPoint+"},");
     }
 //    canContainer.append("</p>");
@@ -181,15 +212,17 @@ function drawSimpleHkTime(varNameKey) {
 
 function actuallyDrawTheStuff() {
     var i = 0;
+    var numPoints=0;
     $.each(datasets, function(key, val) {
-	val.color = i;
-//	var point={ show: true, radius: 0,  errorbars: "y", yerr: {show:true}  }
-//	val.points = point;
-	++i;
-    });
+	       numPoints=val.data.length;
+	       val.color = i;
+	       //	var point={ show: true, radius: 0,  errorbars: "y", yerr: {show:true}  }
+	       //	val.points = point;
+	       ++i;
+	   });
     
     var canContainer = $("#titleContainer"); 
-    canContainer.append("<p>The plot has "+timeArray.length+" time points</p>");
+    canContainer.append("<p>The plot shows "+numPoints+" of "+timeArray.length+" time points</p>");
 
     var plotCan=$("#"+globCanName);
     // insert checkboxes 
@@ -451,7 +484,7 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 		break;
 	    }
 	}
-	if(gotRun==0 && thisTimeType.indexOf("simple")>=0) {
+	if(gotRun==0 ) {// && thisTimeType.indexOf("simple")>=0) {
 	    var plotCan=$("#"+globCanName);
 	    plotCan.empty();
 	    plotCan.append("<h2>Don't have data for run "+startRun+"</h2>");

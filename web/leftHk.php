@@ -103,7 +103,7 @@ foreach ($timeTypearray as $key => $value) {
 }
 echo "</select>";
 echo "<br />";
-
+echo '<div id="fullMaxDiv"></div>';
 
 
 echo "Run: ";

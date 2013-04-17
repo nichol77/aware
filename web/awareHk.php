@@ -149,9 +149,17 @@ header("Connection: keep-alive");
 	   timeType = $(this).val();
 	   if(timeType == "multiRun") {
 	     $('#endRunDiv').show();
+	     $('#fullMaxDiv').hide();
 	   }
 	   else {
 	     $('#endRunDiv').hide();
+	     if(timeType == "full") {
+	       $('#fullMaxDiv').show();
+	     }
+	     else {
+	       $('#fullMaxDiv').hide();
+	     }
+	       
 	   }
 
 
@@ -163,9 +171,15 @@ header("Connection: keep-alive");
       drawEndRun();
       $('#endRunDiv').hide();
       
+      $('#fullMaxDiv').append("Max Plot Points:<br />");
+      $('#fullMaxDiv').append("<input type=\"text\" name=\"fullMaxForm\" id=\"fullMaxForm\" value=\"100\" onchange=\"javascript:drawPlot();\"  />");
+      $('#fullMaxDiv').hide();
+      
 
       if(timeType == "multiRun")
 	$('#endRunDiv').show();
+      if(timeType == "full")
+	$('#fullMaxDiv').show();
 
     updateLastRun();
     updateHkType(hkType);
