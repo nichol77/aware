@@ -161,11 +161,14 @@ int main(int argc, char **argv) {
   sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
 
+  std::cout << "Making: " << outName << "\n";
+
   summaryFile.writeFullJSONFiles(outName,"eventHk");
 
 
   sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
+  std::cout << "Writing: " << outName << "\n";
 
 
 

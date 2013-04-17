@@ -38,9 +38,20 @@ function getStartRunFromForm() {
     return startRun;
 } 
 
+function setStartRunOnForm(thisRun) {
+    startRun=thisRun;
+    document.getElementById("runInput").value=thisRun;
+} 
+
 function getEndRunFromForm() {
     endRun=document.getElementById("endRunInput").value;
     return endRun;
+} 
+
+
+function setEndRunOnForm(thisRun) {
+    endRun=thisRun;
+    document.getElementById("endRunInput").value=thisRun;
 } 
 
 function getNextStartRun(nextFunction) {
@@ -262,7 +273,7 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+startRun+"&endrun="+endRun+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType;
+    currentUrl=currentUrl+"?run="+startRun+"&endrun="+endRun+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType+"&hkType="+thisHkType;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
@@ -430,14 +441,22 @@ function getRunInstrumentDateAndPlot(plotFunc) {
     instrumentName=getInstrumentNameFromForm();
     var runListFile=getRunListName(instrumentName,startRun);
     function handleRunList(jsonObject) {
+	var gotRun=0;
 	for(var i=0;i<jsonObject.runList.length;i++) {
 	    if(jsonObject.runList[i][0]==startRun) {
 		year=jsonObject.runList[i][1];
 		datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
+		gotRun=1;
 		plotFunc();
 		break;
 	    }
 	}
+	if(gotRun==0 && thisTimeType.indexOf("simple")>=0) {
+	    var plotCan=$("#"+globCanName);
+	    plotCan.empty();
+	    plotCan.append("<h2>Don't have data for run "+startRun+"</h2>");
+	}
+	
     }
     
 

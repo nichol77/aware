@@ -21,18 +21,24 @@ header("Connection: keep-alive");
   $(function() {
 
       var urlVars=getUrlVars();
-      var timeType='full'; 
+      var timeType='simple'; 
       if("timeType" in urlVars) {
 	timeType=urlVars["timeType"];
       }
 
-      var hkType='eventHk';
+      var hkType='sensorHk';
       if("hkType" in urlVars) {
 	hkType=urlVars["hkType"];
       }
 
 
-      var run=2000;
+      var instrument='STATION2';
+      if("instrument" in urlVars) {
+	instrument=urlVars["instrument"];
+      }
+
+      var run=Number($('#lastRun').text());
+      $('#lastRun').hide();
       if("run" in urlVars) {
 	run=urlVars["run"];
       }
@@ -41,6 +47,8 @@ header("Connection: keep-alive");
       if("endrun" in urlVars) {
 	endrun=urlVars["endrun"];
       }
+
+      
 
       setHkTypeAndCanName(hkType,'divTime',timeType);
 
@@ -64,7 +72,7 @@ header("Connection: keep-alive");
 	{sym:"tdaCurrent",desc:"TDA Current",hkCode:"sensorHk"},
 	{sym:"tdaVoltage",desc:"TDA Voltage",hkCode:"sensorHk"},
 	{sym:"tdaTemp",desc:"TDA Temperature",hkCode:"sensorHk"},
-	{sym:"Rate",desc:"Event Rate",hkCode:"header"},
+	{sym:"eventRate",desc:"Event Rate",hkCode:"header"},
 	{sym:"rms",desc:"RMS",hkCode:"header"}];
 
 
@@ -79,8 +87,34 @@ header("Connection: keep-alive");
       function updateHkType(thisHkType) {
 	hkType=thisHkType;
 	setHkTypeAndCanName(hkType,'divTime',timeType);
-	   var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
-	   fillPlotForm(tempArray);
+	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
+	fillPlotForm(tempArray);
+      }
+
+      function updateLastRun() {
+	var tempString="output/"+instrument+"/lastRun";
+	if(hkType == "eventHk") 
+	  var tempString="output/"+instrument+"/lastEventHk";
+	if(hkType == "sensorHk")
+	  var tempString="output/"+instrument+"/lastSensorHk";
+	if(hkType == "header")
+	  var tempString="output/"+instrument+"/lastEvent";
+
+	function actuallyUpdateLastRun(runString) {
+	  setStartRunOnForm(Number(runString));
+	  setEndRunOnForm(Number(runString));
+	  drawPlot();
+	}
+
+
+	$.ajax({
+	  url: tempString,
+	      type: "GET",
+	      dataType: "text", 
+	      success: actuallyUpdateLastRun
+	      }); 
+	
+
       }
 
       $('#hkTypeForm').change(function() {
@@ -88,10 +122,19 @@ header("Connection: keep-alive");
 	   updateHkType(selectedValue);
 	   drawPlot();
       });
+      
+
 
       $('#plotForm').change(function() {
 				  drawPlot();
 				});				
+      
+
+      $('#instrumentForm').change(function() {
+				    instrument=$(this).val();
+				    updateLastRun();
+				  });				
+      
 
       function drawEndRun() {
 	$('#endRunDiv').append("End Run<br />");
@@ -105,10 +148,10 @@ header("Connection: keep-alive");
       $('#timeForm').change(function() {			      
 	   timeType = $(this).val();
 	   if(timeType == "multiRun") {
-	     drawEndRun();
+	     $('#endRunDiv').show();
 	   }
 	   else {
-	     $('#endRunDiv').empty();
+	     $('#endRunDiv').hide();
 	   }
 
 
@@ -116,11 +159,16 @@ header("Connection: keep-alive");
 	   drawPlot();
 			    });
 
+
+      drawEndRun();
+      $('#endRunDiv').hide();
+      
+
       if(timeType == "multiRun")
-	drawEndRun();
+	$('#endRunDiv').show();
 
-
-      updateHkType(hkType);
+    updateLastRun();
+    updateHkType(hkType);
 
       drawPlot();
   });  
