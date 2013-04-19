@@ -155,10 +155,18 @@ int main(int argc, char **argv) {
   }
   std::cerr << "\n";
 
-
+  char outputDir[FILENAME_MAX];
+  char *outputDirEnv=getenv("AWARE_OUTPUT_DIR");
+  if(outputDirEnv==NULL) {
+    sprintf(outputDir,"/unix/ara/data/aware/output");
+  }
+  else {
+    strncpy(outputDir,outputDirEnv,FILENAME_MAX);
+  }
+    
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/full",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
 
   std::cout << "Making: " << outName << "\n";
@@ -166,18 +174,18 @@ int main(int argc, char **argv) {
   summaryFile.writeFullJSONFiles(outName,"eventHk");
 
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/eventHkSummary.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
   std::cout << "Writing: " << outName << "\n";
 
 
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/eventHkTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/eventHkTime.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
 
-  sprintf(outName,"output/%s/lastEventHk",stationName);
+  sprintf(outName,"%s/%s/lastEventHk",outputDir,stationName);
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
-  sprintf(outName,"output/%s/lastRun",stationName);
+  sprintf(outName,"%s/%s/lastRun",outputDir,stationName);
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 

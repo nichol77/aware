@@ -130,24 +130,33 @@ int main(int argc, char **argv) {
   std::cerr << "\n";
 
 
+  char outputDir[FILENAME_MAX];
+  char *outputDirEnv=getenv("AWARE_OUTPUT_DIR");
+  if(outputDirEnv==NULL) {
+    sprintf(outputDir,"/unix/ara/data/aware/output");
+  }
+  else {
+    strncpy(outputDir,outputDirEnv,FILENAME_MAX);
+  }
+    
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/full",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
 
   summaryFile.writeFullJSONFiles(outName,"sensorHk");
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/sensorHkSummary.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/sensorHkTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/sensorHkTime.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
 
 
-  sprintf(outName,"output/%s/lastSensorHk",stationName);
+  sprintf(outName,"%s/%s/lastSensorHk",outputDir,stationName);
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
-  sprintf(outName,"output/%s/lastRun",stationName);
+  sprintf(outName,"%s/%s/lastRun",outputDir,stationName);
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 

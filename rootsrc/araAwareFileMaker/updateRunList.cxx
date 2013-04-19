@@ -26,21 +26,35 @@
 
 void usage(char **argv) 
 {  
-  std::cout << "Usage\n" << argv[0] << " <output dir> <instrument name>\n";
+  std::cout << "Usage\n" << argv[0] << "  <instrument name>\n";
   std::cout << "e.g.\n" << argv[0] << " /tmp/here STATION1B\n";  
 }
 
 
 int main(int argc, char**argv) {   
-  if(argc<3) {
+  if(argc<2) {
     usage(argv);
     return -1;
   }
 
-  AwareRunDatabase runDb(argv[1],argv[2]);
+
+  char outputDir[FILENAME_MAX];
+  char *outputDirEnv=getenv("AWARE_OUTPUT_DIR");
+  if(outputDirEnv==NULL) {
+    sprintf(outputDir,"/unix/ara/data/aware/output");
+  }
+  else {
+    strncpy(outputDir,outputDirEnv,FILENAME_MAX);
+  }
+    
+
+
+  AwareRunDatabase runDb(outputDir,argv[1]);
+
+  
 
   char instDir[FILENAME_MAX];
-  sprintf(instDir,"%s/%s",argv[1],argv[2]);
+  sprintf(instDir,"%s/%s",outputDir,argv[1]);
   
   char thisDir[FILENAME_MAX];
   

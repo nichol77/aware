@@ -138,8 +138,21 @@ int main(int argc, char **argv) {
   UInt_t dateInt=timeStamp.GetDate();
   UInt_t firstTime=timeStamp.GetSec();
 
+
+
+  char outputDir[FILENAME_MAX];
+  char *outputDirEnv=getenv("AWARE_OUTPUT_DIR");
+  if(outputDirEnv==NULL) {
+    sprintf(outputDir,"/unix/ara/data/aware/output");
+  }
+  else {
+    strncpy(outputDir,outputDirEnv,FILENAME_MAX);
+  }
+    
+
+
   char dirName[FILENAME_MAX];
-  sprintf(dirName,"output/%s/%d/%04d/run%d/",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(dirName,"%s/%s/%d/%04d/run%d/",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(dirName,kTRUE);
 
   std::cout << "Making: " << dirName << "\n";
@@ -218,10 +231,10 @@ int main(int argc, char **argv) {
     if(rawAtriEvPtr->isCalpulserEvent()) isCalPulser=1;
 
     char outName[FILENAME_MAX];
-    sprintf(outName,"output/%s/%d/%04d/run%d/events%d",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000));
+    sprintf(outName,"%s/%s/%d/%04d/run%d/events%d",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000));
     gSystem->mkdir(outName,kTRUE);
 
-    sprintf(outName,"output/%s/%d/%04d/run%d/events%d/event%d.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000),eventNumber);
+    sprintf(outName,"%s/%s/%d/%04d/run%d/events%d/event%d.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber,eventNumber-(eventNumber%1000),eventNumber);
     //    std::cout << outName << "\n";
 
 
@@ -352,20 +365,20 @@ int main(int argc, char **argv) {
   
   
   char outName[FILENAME_MAX];
-  sprintf(outName,"output/%s/%04d/%04d/run%d/full",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/full",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   gSystem->mkdir(outName,kTRUE);
 
   summaryFile.writeFullJSONFiles(outName,"header");
-  sprintf(outName,"output/%s/%04d/%04d/run%d/headerSummary.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/headerSummary.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeSummaryJSONFile(outName);
 
-  sprintf(outName,"output/%s/%04d/%04d/run%d/headerTime.json.gz",stationName,dateInt/10000,dateInt%10000,runNumber);
+  sprintf(outName,"%s/%s/%04d/%04d/run%d/headerTime.json.gz",outputDir,stationName,dateInt/10000,dateInt%10000,runNumber);
   summaryFile.writeTimeJSONFile(outName);
   
  
-  sprintf(outName,"output/%s/lastEvent",stationName);
+  sprintf(outName,"%s/%s/lastEvent",outputDir,stationName);
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
-  sprintf(outName,"output/%s/lastRun",stationName);
+  sprintf(outName,"%s/%s/lastRun",outputDir,stationName);
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 }
