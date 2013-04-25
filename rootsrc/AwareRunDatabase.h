@@ -24,8 +24,8 @@ class AwareRunDatabase
   void writeRunAndDateList();
 
 
-  static void updateRunList(char *instrumentName, int runNumber, int dateInt);
-  static void updateDateList(char *instrumentName, int runNumber, int dateInt);
+  static void updateRunList(char *outputDir,char *instrumentName, int runNumber, int dateInt);
+  static void updateDateList(char *outputDir,char *instrumentName, int runNumber, int dateInt);
   static int  updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime);
 
   

@@ -189,7 +189,7 @@ int main(int argc, char **argv) {
   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 
-  //  AwareRunDatabase::updateRunList(stationName,runNumber,dateInt);
-  //  AwareRunDatabase::updateDateList(stationName,runNumber,dateInt);
+  AwareRunDatabase::updateRunList(outputDir,stationName,runNumber,dateInt);
+  AwareRunDatabase::updateDateList(outputDir,stationName,runNumber,dateInt);
 }
 

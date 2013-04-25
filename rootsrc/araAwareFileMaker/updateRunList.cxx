@@ -27,7 +27,7 @@
 void usage(char **argv) 
 {  
   std::cout << "Usage\n" << argv[0] << "  <instrument name>\n";
-  std::cout << "e.g.\n" << argv[0] << " /tmp/here STATION1B\n";  
+  std::cout << "e.g.\n" << argv[0] << " STATION1B\n";  
 }
 
 

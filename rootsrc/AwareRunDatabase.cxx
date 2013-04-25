@@ -79,7 +79,7 @@ void AwareRunDatabase::writeRunAndDateList()
     
       //    std::cout << firstOne << "\t" <<runThousand << "\n";
       sprintf(textVal,"[%d,%d,%d]",runNumber,dateInt/10000,dateInt%10000);
-      if(!firstOne) RunList << ",";    
+      if(!firstOne) RunList << ",\n";    
       RunList << textVal;
       firstOne=0;
       currentRunThousand=runThousand;
@@ -121,7 +121,7 @@ void AwareRunDatabase::writeRunAndDateList()
   }
 }
 
-void AwareRunDatabase::updateDateList(char *instrumentName, int runNumber, int dateInt) {
+void AwareRunDatabase::updateDateList(char *outputDir,char *instrumentName, int runNumber, int dateInt) {
   //This file makes a simple runList JSON file in each date dir
   //  {
   //  "runList" : [ 
@@ -129,7 +129,7 @@ void AwareRunDatabase::updateDateList(char *instrumentName, int runNumber, int d
   //    run2, run...., runN];
   //  }
   char dateRunList[FILENAME_MAX];
-  sprintf(dateRunList,"output/%s/%d/%04d/runList.json",instrumentName,dateInt/10000,dateInt%10000);
+  sprintf(dateRunList,"%s/%s/%d/%04d/runList.json",outputDir,instrumentName,dateInt/10000,dateInt%10000);
   std::map <Int_t,Int_t> runNumberList;
   runNumberList[runNumber]=runNumber;
   std::ifstream RunList(dateRunList);
@@ -170,7 +170,7 @@ void AwareRunDatabase::updateDateList(char *instrumentName, int runNumber, int d
 }
 
 
-void AwareRunDatabase::updateRunList(char *instrumentName, int runNumber, int dateInt) {
+void AwareRunDatabase::updateRunList(char *outputDir,char *instrumentName, int runNumber, int dateInt) {
 
 
   ///This code updates the runList
@@ -183,7 +183,7 @@ void AwareRunDatabase::updateRunList(char *instrumentName, int runNumber, int da
   
   Int_t runThousand=1000*(runNumber/1000);
   char runList[FILENAME_MAX];
-  sprintf(runList,"output/%s/runList%d.json",instrumentName,runThousand);
+  sprintf(runList,"%s/%s/runList%d.json",outputDir,instrumentName,runThousand);
   std::ifstream RunList(runList);
   if(!RunList) {
     std::cerr << "Can not open " << runList << "\n";
