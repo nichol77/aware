@@ -15,6 +15,7 @@ header("Connection: keep-alive");
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
+<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script type="text/javascript">
 
@@ -149,7 +150,7 @@ header("Connection: keep-alive");
 	   timeType = $(this).val();
 	   if(timeType == "multiRun") {
 	     $('#endRunDiv').show();
-	     $('#fullMaxDiv').hide();
+	     $('#fullMaxDiv').show();
 	   }
 	   else {
 	     $('#endRunDiv').hide();
@@ -157,7 +158,7 @@ header("Connection: keep-alive");
 	       $('#fullMaxDiv').show();
 	     }
 	     else {
-	       $('#fullMaxDiv').hide();
+	       $('#fullMaxDiv').show();
 	     }
 	       
 	   }

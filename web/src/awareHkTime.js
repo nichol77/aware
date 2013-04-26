@@ -137,40 +137,103 @@ function addFullVariableToDataset(jsonObject) {
     var maxPointsToShow=getMaxPointsToShow();
 
     var varTimeList=varPoint.timeList;
-    var plotEvery=1;
-    if(varTimeList.length>maxPointsToShow) {
-	//Need to do some data decimation
-	plotEvery=Math.ceil(varTimeList.length/maxPointsToShow);
-    }
 
-    for(var index=0;index<varTimeList.length;index+=plotEvery) {
+    for(var index=0;index<varTimeList.length;index++) {
 	var timePoint=timeArray[index];
 	var dataPoint=varTimeList[index];
-	var stdDev=0;
-	if(plotEvery>1) {	    
-	    var dp2=0;
-	    var deltaT=0;
-	    var count=0;
-	    for(var index2=index;index2<index+plotEvery && index2<varTimeList.length;index2++) {
-		count++;
-		dataPoint+=varTimeList[index2];
-		deltaT+=(timeArray[index2]-timeArray[index]);
-		dp2+=(varTimeList[index2]*varTimeList[index2]);
-	    }
-	    dataPoint/=count;
-	    deltaT/=count;
-	    timePoint+=deltaT;
-	    dp2/=count;
-	    stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
-	}	
 
-	dataList.data.push([timePoint,dataPoint,stdDev]); ///< No stdDev for full files
+	dataList.data.push([timePoint,dataPoint]); ///< No stdDev for full files
 //	canContainer.append("{"+timeArray[index]+","+dataPoint+"},");
     }
 //    canContainer.append("</p>");
     datasets[ varName ]=dataList;
-
 }
+
+function timeSortData(a,b) {
+    return a[0]-b[0];
+}
+
+function numberSort(a,b) {
+    return a - b;
+}
+
+function sortDataSets() {
+
+    $.each(datasets, function(key, val) {
+	       val.data.sort(timeSortData);
+	   }
+	   );
+}
+
+
+function getDataForPlot(fullDataset,xaxisMin,xaxisMax) {
+    //Here the fullDataset has every single point, the return of this does not
+    smallDataset = new Object();
+
+
+    var maxPointsToShow=getMaxPointsToShow();
+    var doZoom=0;
+    if(xaxisMax>xaxisMin) doZoom=1;
+    var firstTimeIndex=-1;
+    var lastTimeIndex=-1;
+    var fullTimePoints=new Array();
+    var plotEvery=1;
+    $.each(fullDataset, function(key, val) {
+	       if(fullTimePoints.length==0) {
+		   for(var index=0;index<val.data.length;index++) {
+		       if(!doZoom || (val.data[index][0]>=xaxisMin && val.data[index][0]<=xaxisMax)) {
+			   if(firstTimeIndex==-1) firstTimeIndex=index;
+			   lastTimeIndex=index;
+			   fullTimePoints.push(val.data[index][0]);
+		       }
+		   }
+		   //		   canContainer.append("<p>doZoom="+doZoom+" "+firstTimeIndex+" "+lastTimeIndex+"</p>");
+		   if(fullTimePoints.length>maxPointsToShow) {
+		       //Need to do some data decimation
+		       plotEvery=Math.ceil(fullTimePoints.length/maxPointsToShow);
+		   }		   
+	       }
+
+	       var varName=key;
+	       var dataList = new Object();
+	       dataList.label=val.label;
+	       dataList.color=val.color;
+	       dataList.data= new Array();	       	       
+	       for(var index=firstTimeIndex;index<=lastTimeIndex;index+=plotEvery) {		  
+		   var timePoint=fullTimePoints[index-firstTimeIndex];
+		   var dataPoint=val.data[index][1];
+		   var stdDev=0;
+		   if(plotEvery>1) {	    
+		       var dp2=0;
+		       var deltaT=0;
+		       var count=1;
+		       for(var index2=index+1;index2<index+plotEvery && index2<=lastTimeIndex;index2++) {
+			   count++;
+			   dataPoint+=val.data[index2][1];
+			   deltaT+=(fullTimePoints[index2-firstTimeIndex]-fullTimePoints[index-firstTimeIndex]);
+			   dp2+=(val.data[index2][1]*val.data[index2][1]);
+		       }
+		       dataPoint/=count;
+		       deltaT/=count;
+		       timePoint+=deltaT;
+		       dp2/=count;
+		       stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
+		   }	
+
+		   dataList.data.push([timePoint,dataPoint,stdDev]); ///< No stdDev for full files
+	       }
+	       smallDataset[ varName ]=dataList; 
+	       
+	   }
+	   );
+    
+
+    return smallDataset;
+	       
+    
+}
+
+
 
 
 function drawSimpleHkTime(varNameKey) {
@@ -203,7 +266,7 @@ function drawSimpleHkTime(varNameKey) {
     }
 
 
-//    var canContainer = $("#titleContainer"); 
+
 //    canContainer.append("<p>In drawSimpleHkTime</p>");
 
     actuallyDrawTheStuff();
@@ -211,6 +274,9 @@ function drawSimpleHkTime(varNameKey) {
 
 
 function actuallyDrawTheStuff() {
+    //Step one is to time sort
+    sortDataSets();
+
     var i = 0;
     var numPoints=0;
     $.each(datasets, function(key, val) {
@@ -221,7 +287,9 @@ function actuallyDrawTheStuff() {
 	       ++i;
 	   });
     
+
     var canContainer = $("#titleContainer"); 
+    if(numPoints>getMaxPointsToShow()) numPoints=getMaxPointsToShow();
     canContainer.append("<p>The plot shows "+numPoints+" of "+timeArray.length+" time points</p>");
 
     var plotCan=$("#"+globCanName);
@@ -247,18 +315,29 @@ function actuallyDrawTheStuff() {
 	lines: { show: false },
 	points: { show: true },
 	legend:{container: $("#divLabel")},
-	selection : { mode : "xy" }
+	selection : { mode : "xy" },
+	canvas : true,
     }
     var plot;	
 
     function plotAccordingToChoices() {
 
 	var data = [];
+	var xmin=0;
+	var xmax=0;
+	if("min" in options.xaxis) {
+	    xmin=options.xaxis.min;
+	    xmax=options.xaxis.max;
+	}
+	var smallData=getDataForPlot(datasets,xmin,xmax);
+	
+
+
 
 	choiceContainer.find("input:checked").each(function () {
 	    var key = $(this).attr("name");
-	    if (key && datasets[key]) {
-		data.push(datasets[key]);
+	    if (key && smallData[key]) {
+		data.push(smallData[key]);
 	    }
 	});
 	
@@ -268,13 +347,22 @@ function actuallyDrawTheStuff() {
 
     }
     
+    var lastMin=0;
+    var lastMax=0;
     
     plotCan.bind("plotselected", function (event, ranges) {
 	options.xaxis.min=ranges.xaxis.from;
 	options.xaxis.max=ranges.xaxis.to;
 	options.yaxis.min=ranges.yaxis.from;
 	options.yaxis.max=ranges.yaxis.to;
-	plotAccordingToChoices();
+	//	canContainer.append("plotselected");
+	if(lastMin!=options.yaxis.min || lastMax!=options.yaxis.max) {
+	    lastMin=options.yaxis.min;
+	    lastMax=options.yaxis.max;	
+
+
+	    plotAccordingToChoices();
+	}
     });
 
     plotCan.bind("plotunselected", function (event, ranges) {
@@ -282,11 +370,15 @@ function actuallyDrawTheStuff() {
 	options.xaxis = newxaxis;
 	var newyaxis = {};
 	options.yaxis=newyaxis;
-	plotAccordingToChoices();
+	//	canContainer.append("plotunselected");
+	if(lastMin!=0 || lastMax!=0) {
+	    lastMin=0;
+	    lastMax=0;
+	    plotAccordingToChoices();
+	}
     });
 	
   
-
     plotAccordingToChoices();
 
 
