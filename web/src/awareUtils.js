@@ -63,3 +63,9 @@ function getEventName(instrument, run, year, datecode, eventNumber) {
 }
 
 
+function getEventListName(instrument, run, year, datecode) {
+    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/eventList.json"; 
+    return name;
+}
+
+

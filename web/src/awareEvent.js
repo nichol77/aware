@@ -14,6 +14,9 @@
 var instrumentName;
 var runNumber;
 var eventNumber;
+var eventList;
+var eventEntry;
+var gotEventListForRun;
 var year=2013;
 var datecode=123;
 var nRows=5;
@@ -40,9 +43,9 @@ function getRunFromForm() {
     return runNumber;
 } 
 
-function getEventNumberFromForm() {
-    eventNumber=document.getElementById("eventInput").value;
-    return eventNumber;
+function getEventIdFromForm() {
+    eventId=document.getElementById("eventInput").value;
+    return eventId;
 } 
 
 function getNextRun(nextFunction) {
@@ -61,16 +64,16 @@ function getPreviousRun(nextFunction) {
 
 
 function getNextEvent(nextFunction) {
-    eventNumber=document.getElementById("eventInput").value;
-    eventNumber++;
-    document.getElementById("eventInput").value=eventNumber;
+    eventId=getEventIdFromForm();
+    eventId++;
+    document.getElementById("eventInput").value=eventId;
     nextFunction();
 }
 
 function getPreviousEvent(nextFunction) {
-    eventNumber=document.getElementById("eventInput").value;
-    eventNumber--;
-    document.getElementById("eventInput").value=eventNumber;
+    eventId=document.getElementById("eventInput").value;
+    eventId--;
+    document.getElementById("eventInput").value=eventId;
     nextFunction();
 }
 
@@ -117,13 +120,12 @@ function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
     titleContainer.append("<h2>Loading</h2>");
-    getRunInstrumentDateAndEvent(eventPlotter);
+    getRunInstrumentDateAndEvent(getEventNumberAndPlot);
 }
 
 function getRunInstrumentDateAndEvent(plotFunc) {
     setDatecode=0;
-    runNumber=getRunFromForm();
-    eventNumber=getEventNumberFromForm();    
+    runNumber=getRunFromForm();  
     instrumentName=getInstrumentNameFromForm();
     //var titleContainer = $("#leftbar"); 
     var runListFile=getRunListName(instrumentName,runNumber);
@@ -134,7 +136,7 @@ function getRunInstrumentDateAndEvent(plotFunc) {
 		year=jsonObject.runList[i][1];
 		datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
 //		titleContainer.append("<p>"+year+" "+datecode+"</p>");	
-		plotFunc();
+		plotFunc(eventPlotter);
 		break;
 	    }
 	}
@@ -147,6 +149,40 @@ function getRunInstrumentDateAndEvent(plotFunc) {
 	success: handleRunList
     });
 }
+
+function getEventNumberAndPlot(plotFunc) {
+    var eventId=getEventIdFromForm();
+    var eventListFile=getEventListName(instrumentName,runNumber,year,datecode);
+
+
+    function handleEventList(jsonObject) {
+	for(var i=0;i<jsonObject.eventList.length;i++) {
+	    eventList.push(jsonObject.eventList[i]);
+	}
+	
+	eventNumber=eventList[eventId];
+	plotFunc();
+    
+    }
+
+    if(gotEventListForRun!=runNumber) {
+	eventList = new Array();
+
+	$.ajax({
+	    url: eventListFile,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleEventList
+	});	
+    }
+    else {
+	eventNumber=eventList[eventId];
+	plotFunc();	
+    }
+
+
+}
+
 
 
 function eventPlotter() {
