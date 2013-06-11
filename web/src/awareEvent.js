@@ -51,6 +51,10 @@ function reduceWaveformSamples(channelData,maxSamples) {
 	newArray.push([v2Array[i][0],sqrt(v2Array[i][1])]);
     }
     newArray.sort(timeSortData);
+    var titleContainer = $("#titleContainer"); 
+    for(var i=0;i<newArray.length;i++) {
+	titleContainer.append("<p>"+i+" "+newArray[i][0]+" "+newArray[i][1]+"</p>");
+    }
     return newArray;
 }
 
