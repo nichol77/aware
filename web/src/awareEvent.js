@@ -44,13 +44,17 @@ function reduceWaveformSamples(channelData,maxSamples) {
     var newArray = new Array();
 
     for(var i=0;i<inputPoints;i++) {
-	v2Array.push([channelData[i][0],channelData[i][1]*channelData[i][1]],channelData[i][1]);   
+	v2Array.push([channelData[i][0],channelData[i][1]*channelData[i][1],channelData[i][1]]);   
     }
     v2Array.sort(voltageSortData);
     for(var i=0;i<maxSamples;i++) {
 	newArray.push([v2Array[i][0],v2Array[i][2]]);
     }
     newArray.sort(timeSortData);
+    var titleContainer = $("#titleContainer"); 
+    for(var i=0;i<newArray.length;i++) {
+	titleContainer.append("<p>"+i+" "+newArray[i][0]+" "+newArray[i][1]+"</p>");
+    }
     return newArray;
 }
 
@@ -135,7 +139,6 @@ function updatePlotTitle(jsonObject) {
     var titleContainer = $("#titleContainer"); 
     titleContainer.empty();
     titleContainer.append("<h1>"+instrumentName+" -- Run "+runNumber+"</h1>");
-    titleContainer.append("<h1>Event "+eventNumber+"</h1>");
     
 }
 
