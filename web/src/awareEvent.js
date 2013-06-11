@@ -44,11 +44,11 @@ function reduceWaveformSamples(channelData,maxSamples) {
     var newArray = new Array();
 
     for(var i=0;i<inputPoints;i++) {
-	v2Array.push([channelData[i][0],channelData[i][1]*channelData[i][1]]);   
+	v2Array.push([channelData[i][0],channelData[i][1]*channelData[i][1]],channelData[i][1]);   
     }
     v2Array.sort(voltageSortData);
     for(var i=0;i<maxSamples;i++) {
-	newArray.push([v2Array[i][0],Math.sqrt(v2Array[i][1])]);
+	newArray.push([v2Array[i][0],v2Array[i][2]]);
     }
     newArray.sort(timeSortData);
     var titleContainer = $("#titleContainer"); 
