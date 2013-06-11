@@ -9,13 +9,13 @@ include("leftMain.php");
 
 $station=$_GET["station"];
 if($_GET["station"] === null) {
-  $station=STATION1B;
+  $station=STATION2;
  }
 
 
 $run=$_GET["run"];
 if($_GET["run"] === null) {
-  $run=2000;
+  $run=1868;
  }
 
 
