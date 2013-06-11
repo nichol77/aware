@@ -376,9 +376,9 @@ int main(int argc, char **argv) {
   summaryFile.writeTimeJSONFile(outName);
   
  
-  sprintf(outName,"%s/%s/lastEvent",outputDir,stationName);
-  AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
-  sprintf(outName,"%s/%s/lastRun",outputDir,stationName);
-  AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
+//   sprintf(outName,"%s/%s/lastEvent",outputDir,stationName);
+//   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
+//   sprintf(outName,"%s/%s/lastRun",outputDir,stationName);
+//   AwareRunDatabase::updateTouchFile(outName,runNumber,firstTime);
 
 }

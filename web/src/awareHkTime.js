@@ -197,7 +197,10 @@ function getDataForPlot(fullDataset,xaxisMin,xaxisMax) {
 	       var varName=key;
 	       var dataList = new Object();
 	       dataList.label=val.label;
-	       dataList.color=val.color;
+	       if("color" in val) 
+		   dataList.color=val.color;
+	       if("points" in val)
+		   dataList.points=val.points;
 	       dataList.data= new Array();	       	       
 	       for(var index=firstTimeIndex;index<=lastTimeIndex;index+=plotEvery) {		  
 		   var timePoint=fullTimePoints[index-firstTimeIndex];
@@ -282,8 +285,6 @@ function actuallyDrawTheStuff() {
     $.each(datasets, function(key, val) {
 	       numPoints=val.data.length;
 	       val.color = i;
-	       //	var point={ show: true, radius: 0,  errorbars: "y", yerr: {show:true}  }
-	       //	val.points = point;
 	       ++i;
 	   });
     
@@ -313,7 +314,7 @@ function actuallyDrawTheStuff() {
 	yaxis: { },
 	xaxis: {mode: "time"},
 	lines: { show: false },
-	points: { show: true },
+	points: { show: true   },
 	legend:{container: $("#divLabel")},
 	selection : { mode : "xy" },
 	canvas : true,

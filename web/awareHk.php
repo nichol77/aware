@@ -60,6 +60,7 @@ header("Connection: keep-alive");
 	{sym:"twoOfFour",desc:"L2 (2 of 4)",hkCode:"eventHk"},
 	{sym:"threeOfFour",desc:"L2 (3 of 4)",hkCode:"eventHk"},
 	{sym:"threeOfEight",desc:"L3 (3 of 8)",hkCode:"eventHk"},
+	{sym:"l4Scaler",desc:"L4",hkCode:"eventHk"},
 	{sym:"vadj",desc:"V_adj",hkCode:"eventHk"},
 	{sym:"vdly",desc:"V_dly",hkCode:"eventHk"},
 	{sym:"wilkinsonC",desc:"Wilkinson",hkCode:"eventHk"},
