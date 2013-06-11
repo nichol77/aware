@@ -20,21 +20,21 @@ class AwareRunDatabase
 {
  public :
    AwareRunDatabase(char *outputDir,char *instrumentName);
-  void addRunDateToMap(int runNumber, int dateInt);
-  void writeRunAndDateList();
-
-
-  static void updateRunList(char *outputDir,char *instrumentName, int runNumber, int dateInt);
-  static void updateDateList(char *outputDir,char *instrumentName, int runNumber, int dateInt);
-  static int  updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime);
-
-  
+   void addRunDateToMap(int runNumber, int dateInt);
+   void writeRunAndDateList();
+   
+   
+   static void updateRunList(char *outputDir,char *instrumentName, int runNumber, int dateInt);
+   static void updateDateList(char *outputDir,char *instrumentName, int runNumber, int dateInt);
+   static int  updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime);
+   
+   
  private:
-  std::string fOutputDirName;
-  std::string fInstrumentName;
-  std::map<int, int> fRunDateMap;
-  std::map<int, std::map<int,int> > fDateRunMap;
-
+   std::string fOutputDirName;
+   std::string fInstrumentName;
+   std::map<int, int> fRunDateMap;
+   std::map<int, std::map<int,int> > fDateRunMap;
+   
 };
 
 #endif //AWARERUNDATABASE

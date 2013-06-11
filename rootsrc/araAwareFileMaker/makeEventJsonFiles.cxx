@@ -24,6 +24,7 @@
 #include "AwareWaveformEventFileMaker.h"
 #include "AwareRunSummaryFileMaker.h"
 #include "AwareRunDatabase.h"
+#include "AwareEventDatabase.h"
 
 //Include FFTtools.h if you want to ask the correlation, etc. tools
 
@@ -181,7 +182,7 @@ int main(int argc, char **argv) {
 
     
   }
-
+  AwareEventDatabase eventDb(outputDir,stationName,dateInt,runNumber);
   
   AwareRunSummaryFileMaker summaryFile(runNumber,stationName);
    
@@ -267,6 +268,7 @@ int main(int argc, char **argv) {
     }
 
     fileMaker.writeFile();
+    eventDb.addEventToList(eventNumber);
 
     for( int i=0; i<numChannels; ++i ) {
       delete gr[i];
@@ -324,6 +326,9 @@ int main(int argc, char **argv) {
     //Power spectrum fun?    
   }
   std::cerr << "\n";
+
+  //The event list
+  eventDb.writeEventList();
 
   //Now loop over thingies add them to the thingy and do the thingy
   
