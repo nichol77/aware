@@ -43,9 +43,9 @@ function getRunFromForm() {
     return runNumber;
 } 
 
-function getEventIdFromForm() {
-    eventId=document.getElementById("eventInput").value;
-    return eventId;
+function getEventIndexFromForm() {
+    eventIndex=document.getElementById("eventInput").value;
+    return eventIndex;
 } 
 
 function getNextRun(nextFunction) {
@@ -64,16 +64,16 @@ function getPreviousRun(nextFunction) {
 
 
 function getNextEvent(nextFunction) {
-    eventId=getEventIdFromForm();
-    eventId++;
-    document.getElementById("eventInput").value=eventId;
+    eventIndex=getEventIndexFromForm();
+    eventIndex++;
+    document.getElementById("eventInput").value=eventIndex;
     nextFunction();
 }
 
 function getPreviousEvent(nextFunction) {
-    eventId=document.getElementById("eventInput").value;
-    eventId--;
-    document.getElementById("eventInput").value=eventId;
+    eventIndex=document.getElementById("eventInput").value;
+    eventIndex--;
+    document.getElementById("eventInput").value=eventIndex;
     nextFunction();
 }
 
@@ -101,7 +101,7 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+runNumber+"&instrument="+instrumentName+"&event="+eventNumber;
+    currentUrl=currentUrl+"?run="+runNumber+"&instrument="+instrumentName+"&eventNumber="+eventNumber+"&eventIndex="+eventIndex;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
@@ -151,7 +151,7 @@ function getRunInstrumentDateAndEvent(plotFunc) {
 }
 
 function getEventNumberAndPlot(plotFunc) {
-    var eventId=getEventIdFromForm();
+    var eventIndex=getEventIndexFromForm();
     var eventListFile=getEventListName(instrumentName,runNumber,year,datecode);
 
 
@@ -160,7 +160,7 @@ function getEventNumberAndPlot(plotFunc) {
 	    eventList.push(jsonObject.eventList[i]);
 	}
 	
-	eventNumber=eventList[eventId];
+	eventNumber=eventList[eventIndex];
 	plotFunc();
     
     }
@@ -176,7 +176,7 @@ function getEventNumberAndPlot(plotFunc) {
 	});	
     }
     else {
-	eventNumber=eventList[eventId];
+	eventNumber=eventList[eventIndex];
 	plotFunc();	
     }
 
