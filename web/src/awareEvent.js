@@ -27,6 +27,32 @@ var fColLabels;
 var playVar;
 
 
+function timeSortData(a,b) {
+    return a[0]-b[0];
+}
+
+function voltageSortData(a,b) {
+    return b[1]-a[1];
+}
+
+
+function reduceWaveformSamples(channelData,maxSamples) {
+    //channel data is an array of [time,voltage] numbers
+    //this function will return a similar array which has been trimmed
+    var inputPoints=channelData.length;
+    var v2Array = new Array();
+    var newArray = new Array();
+
+    for(var i=0;i<inputPoints;i++) {
+	v2Array.push([channelData[i][0],channelData[i][1]*channelData[i][1]]);   
+    }
+    v2Array.sort(voltageSortData);
+    for(var i=0;i<maxSamples;i++) {
+	newArray.push([v2Array[i][0],sqrt(v2Array[i][1])]);
+    }
+    newArray.sort(timeSortData);
+}
+
 
 function setRowsAndCols(row,col,rowLabels,colLabels) {
     nRows=row;
@@ -246,6 +272,7 @@ function eventPlotter() {
 }
 
 
+
 function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) {
   
     var showXaxis=false;
@@ -264,7 +291,10 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
  
     var plotWidth=plotCont.width();
     var plotHeight=plotCont.height();
-//    titleContainer.append("<p>"+plotWidth+"</p>");
+    titleContainer.append("<p>"+plotWidth+"</p>");
+    
+
+
 
     plotCont.on('dblclick', function() {
 	$(this).toggleClass('double');
