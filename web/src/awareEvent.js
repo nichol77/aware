@@ -48,7 +48,7 @@ function reduceWaveformSamples(channelData,maxSamples) {
     }
     v2Array.sort(voltageSortData);
     for(var i=0;i<maxSamples;i++) {
-	newArray.push([v2Array[i][0],sqrt(v2Array[i][1])]);
+	newArray.push([v2Array[i][0],Math.sqrt(v2Array[i][1])]);
     }
     newArray.sort(timeSortData);
     var titleContainer = $("#titleContainer"); 
