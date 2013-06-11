@@ -51,6 +51,7 @@ function reduceWaveformSamples(channelData,maxSamples) {
 	newArray.push([v2Array[i][0],sqrt(v2Array[i][1])]);
     }
     newArray.sort(timeSortData);
+    return newArray;
 }
 
 
@@ -332,7 +333,13 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 
     var plot;
     function doThePlot() {
-	titleContainer.append("<p>Double? "+plotCont.hasClass('double')+"</p>");
+//	titleContainer.append("<p>Double? "++"</p>");
+	if(!plotCont.hasClass('double')) {
+	    //Do the data reduction
+	    subDataArray=reduceWaveformSamples(dataArray,64);
+	    dataObject.data=subDataArray;	    
+	}
+
 
 	if(showLabel) {
 	    dataObject.label=grLabel;
