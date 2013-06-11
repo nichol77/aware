@@ -291,9 +291,9 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
  
     var plotWidth=plotCont.width();
     var plotHeight=plotCont.height();
-    titleContainer.append("<p>"+plotWidth+"</p>");
+    //titleContainer.append("<p>"+plotWidth+"</p>");
     
-
+    var subDataArray=dataArray;
 
 
     plotCont.on('dblclick', function() {
@@ -311,7 +311,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 
     var dataObject = {
 	color : 6,
-	data: dataArray,
+	data: subDataArray,
 	label: ""
     }
 
@@ -332,6 +332,8 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 
     var plot;
     function doThePlot() {
+	titleContainer.append("<p>Double? "+plotCont.hasClass('double')+"</p>");
+
 	if(showLabel) {
 	    dataObject.label=grLabel;
 	}
