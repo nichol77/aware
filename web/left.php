@@ -9,19 +9,19 @@ include("leftMain.php");
 
 $station=$_GET["station"];
 if($_GET["station"] === null) {
-  $station=STATION1B;
+  $station=STATION2;
  }
 
 
 $run=$_GET["run"];
 if($_GET["run"] === null) {
-  $run=2000;
+  $run=1868;
  }
 
 
 $endrun=$_GET["endrun"];
 if($_GET["endrun"] === null) {
-  $endrun=2000;
+  $endrun=1868;
  }
 
 $hkType=$_GET["hkType"];
