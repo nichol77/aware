@@ -390,6 +390,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 	plot=$.plot(plotCan, [dataObject],options);
     }
 
+    plotCan.unbind("plotselected");
     plotCan.bind("plotselected", function (event, ranges) {
 	options.xaxis.min=ranges.xaxis.from;
 	options.xaxis.max=ranges.xaxis.to;
@@ -398,6 +399,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 	doThePlot();
     });
 
+    plotCan.unbind("plotunselected");
     plotCan.bind("plotunselected", function (event, ranges) {
 	delete options.xaxis.min;
 	delete options.xaxis.max;
