@@ -146,7 +146,10 @@ function updatePlotTitle(jsonObject) {
 
     var titleContainer = $("#titleContainer"); 
     titleContainer.empty();
-    titleContainer.append("<h1>"+instrumentName+" -- Run "+runNumber+"</h1>");
+    titleContainer.append("<h1>"+instrumentName+" -- Run "+jsonObject.event.run+"</h1>");
+    titleContainer.append("<h2>Event: "+jsonObject.event.eventNumber+"</h2>");
+    titleContainer.append("<h2>Time: "+jsonObject.event.time+"</h2>");
+    titleContainer.append("<h2>Trigger: "+jsonObject.event.triggerTime+"</h2>");
     
 }
 
@@ -233,7 +236,7 @@ function eventPlotter() {
 
 	
 	var titleContainer = $("#titleContainer"); 
-	titleContainer.append("<p>This event has "+jsonObject.event.numChannels+" channels.</p>");
+//	titleContainer.append("<p>This event has "+jsonObject.event.numChannels+" channels.</p>");
 	
 	var yMin = new Array();
 	var yMax = new Array();
