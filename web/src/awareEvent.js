@@ -36,14 +36,22 @@ function voltageSortData(a,b) {
 }
 
 
-function reduceWaveformSamples(channelData,maxSamples) {
+function reduceWaveformSamples(channelData,evenSamples,maxV2Samples) {
     //channel data is an array of [time,voltage] numbers
     //this function will return a similar array which has been trimmed
     var inputPoints=channelData.length;
+    if(inputPoints<=evenSamples+maxV2Samples) return channelData;
+
     var v2Array = new Array();
     var newArray = new Array();
+    
+    var sampleEvery = Integer(inputPoints/evenSamples);
+    if(sampleEvery==0) sampleEvery++;
 
     for(var i=0;i<inputPoints;i++) {
+	if(i%sampleEvery==0) {
+	    newArray.push([channelData[i][0],channelData[i][1]]);
+	}
 	v2Array.push([channelData[i][0],channelData[i][1]*channelData[i][1],channelData[i][1]]);   
     }
     v2Array.sort(voltageSortData);
@@ -340,7 +348,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 //	titleContainer.append("<p>Double? "++"</p>");
 	if(!plotCont.hasClass('double')) {
 	    //Do the data reduction
-	    subDataArray=reduceWaveformSamples(dataArray,64);
+	    subDataArray=reduceWaveformSamples(dataArray,64,64);
 	    dataObject.data=subDataArray;	    
 	}
 
