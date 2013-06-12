@@ -245,7 +245,7 @@ function eventPlotter() {
 
 	for(var chan=0; chan<jsonObject.event.numChannels; chan++) {
 	    var row=Math.floor(chan/nCols);
-	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
+//	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
 	    var dataArray = new Array();
 	    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
 		//The Number is important for the logical tests below
