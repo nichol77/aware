@@ -147,9 +147,7 @@ function updatePlotTitle(jsonObject) {
     var titleContainer = $("#titleContainer"); 
     titleContainer.empty();
     titleContainer.append("<h1>"+instrumentName+" -- Run "+jsonObject.event.run+"</h1>");
-    titleContainer.append("<h2>Event: "+jsonObject.event.eventNumber+"</h2>");
-    titleContainer.append("<h2>Time: "+jsonObject.event.time+"</h2>");
-    titleContainer.append("<h2>Trigger: "+jsonObject.event.triggerTime+"</h2>");
+    titleContainer.append("<h2>Event: "+jsonObject.event.eventNumber+" -- Time: "+jsonObject.event.time+" -- Trigger: "+jsonObject.event.triggerTime+"</h2>");
     
 }
 
