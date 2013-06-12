@@ -310,7 +310,8 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 
 
     plotCont.on('dblclick', function() {
-	$(this).toggleClass('double');
+	titleContainer.append("<p>"+divContName+"<\p>");
+	plotCont.toggleClass('double');
 	if(showXaxis==true) showXaxis=false;
 	else showXaxis=true;
 	if(showYaxis==true) showYaxis=false;
