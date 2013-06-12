@@ -45,7 +45,7 @@ function reduceWaveformSamples(channelData,evenSamples,maxV2Samples) {
     var v2Array = new Array();
     var newArray = new Array();
     
-    var sampleEvery = Integer(inputPoints/evenSamples);
+    var sampleEvery = Math.floor(inputPoints/evenSamples);
     if(sampleEvery==0) sampleEvery++;
 
     for(var i=0;i<inputPoints;i++) {
