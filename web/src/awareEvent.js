@@ -161,8 +161,8 @@ function plotEvent() {
     titleContainer.empty();
     titleContainer.append("<h2>Loading</h2>");
 
-    var plotCont=$("#"+"waveform-container0");
-    plotCont.empty();
+    var plotCan=$("#"+"divChan0");
+    plotCan.empty();
     getRunInstrumentDateAndEvent(getEventNumberAndPlot);
 }
 
