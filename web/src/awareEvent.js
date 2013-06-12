@@ -160,9 +160,12 @@ function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
     titleContainer.append("<h2>Loading</h2>");
-
-    var plotCan=$("#"+"divChan0");
-    plotCan.empty();
+    
+    for (var i=0;i<20;i++) 
+    {
+	var plotCan=$("#"+"divChan"+i);
+	plotCan.empty();
+    }
     getRunInstrumentDateAndEvent(getEventNumberAndPlot);
 }
 
