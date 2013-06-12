@@ -160,6 +160,9 @@ function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
     titleContainer.append("<h2>Loading</h2>");
+
+    var plotCont=$("#"+"waveform-container0");
+    plotCont.empty();
     getRunInstrumentDateAndEvent(getEventNumberAndPlot);
 }
 
