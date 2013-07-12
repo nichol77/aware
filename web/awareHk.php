@@ -7,6 +7,7 @@ header("Connection: keep-alive");
 <html>
 <head>
 <link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen" />
+<link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default" />
 <title>Event Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
 <script type="text/javascript" src="src/awareUtils.js.gz"></script>
@@ -21,6 +22,12 @@ header("Connection: keep-alive");
 
   $(function() {
 
+      $.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	return results[1] || 0;
+      }
+
+
       var urlVars=getUrlVars();
       var timeType='simple'; 
       if("timeType" in urlVars) {
@@ -28,8 +35,8 @@ header("Connection: keep-alive");
       }
 
       var hkType='sensorHk';
-      if("hkType" in urlVars) {
-	hkType=urlVars["hkType"];
+      if($.urlParam('hkType')) {
+	hkType=$.urlParam('hkType');
       }
 
 
@@ -175,7 +182,7 @@ header("Connection: keep-alive");
       
       $('#fullMaxDiv').append("Max Plot Points:<br />");
       $('#fullMaxDiv').append("<input type=\"text\" name=\"fullMaxForm\" id=\"fullMaxForm\" value=\"100\" onchange=\"javascript:drawPlot();\"  />");
-      $('#fullMaxDiv').hide();
+     
       
 
       if(timeType == "multiRun")

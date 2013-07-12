@@ -2,7 +2,7 @@
 <?php
 include("leftMain.php");
 ?>
-<h2 class="navigation">Update Plot</h2>
+<h2 class="navigation">Update Plo2t</h2>
 <p class="navigation">
 <form name="runForm"   id="runForm" action="javascript:drawPlot(); javascript:void(0);">       
 <?php
@@ -107,7 +107,7 @@ echo "<br />";
 
 
 
-echo "Run: ";
+echo "Rung: ";
 echo '<br />';
 echo '<button type="button" value="Previous" onclick="javascript:getPreviousStartRun(drawPlot);">-</button>';
 echo "<input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\" onchange=\"javascript:drawPlot();\"  />";
