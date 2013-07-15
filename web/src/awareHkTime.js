@@ -744,6 +744,7 @@ function drawPlot() {
     if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
     else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
     else if(thisTimeType.indexOf("multiRun")>=0) doMultiRunPlot();
+    else if(thisTimeType.indexOf("timeRange")>=0) doMultiRunPlot();
 	    
 }
 

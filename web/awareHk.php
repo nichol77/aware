@@ -8,11 +8,13 @@ header("Connection: keep-alive");
 <head>
 <link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" />
+<link rel="StyleSheet" href="styles/calendar.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default" />
 <title>Event Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
-<script type="text/javascript" src="src/awareUtils.js.gz"></script>
-<script type="text/javascript" src="src/awareHkTime.js.gz"></script>
+<script type="text/javascript" src="src/awareUtils.js"></script>
+<script type="text/javascript" src="src/awareHkTime.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
+<script type="text/javascript" src="src/jquerytools/jquery.tools.min.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
@@ -48,10 +50,12 @@ header("Connection: keep-alive");
 	instrument=urlVars["instrument"];
       }
 
-      var run=Number($('#lastRun').text());
+      var run=2047;//Number($('#lastRun').text());
+      var runAlreadySet=false;
       $('#lastRun').hide();
       if("run" in urlVars) {
 	run=urlVars["run"];
+	runAlreadySet=true;
       }
 
       var endrun=run;
@@ -126,7 +130,6 @@ header("Connection: keep-alive");
 	      success: actuallyUpdateLastRun
 	      }); 
 	
-
       }
 
       $('#hkTypeForm').change(function() {
@@ -144,32 +147,52 @@ header("Connection: keep-alive");
 
       $('#instrumentForm').change(function() {
 				    instrument=$(this).val();
+				    runAlreadySet=false;
 				    updateLastRun();
 				  });				
       
 
-      function drawEndRun() {
+
+
+    
+
+
+      function drawLeftFormParts() {
 	$('#endRunDiv').append("End Run<br />");
 	$('#endRunDiv').append('<button type="button" value="Previous" onclick="javascript:getPreviousEndRun(drawPlot);">-</button>');
 	$('#endRunDiv').append("<input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"\" onchange=\"javascript:drawPlot();\"  />");
 	$('#endRunDiv').append('<button type="button" value="Next" onclick="javascript:getNextEndRun(drawPlot);">+</button>');
-	document.getElementById("endRunInput").value=(endrun);
-	
+	document.getElementById("endRunInput").value=(endrun);	
+
+	$('#timeRangeDiv').append("Time Range:<br />");
+	$('#timeRangeDiv').append("Start:<input type=\"date\" name=\"startDate\" id=\"startDate\" value=\"Date\";\"  /><br/>");
+	//	$('#timeRangeDiv').append("<input type=\"time\" name=\"startTime\" id=\"startTime\" value=\"00:00\";\"  /><br/>");
+	$('#timeRangeDiv').append("End:<input type=\"date\" name=\"endDate\" id=\"endDate\" value=\"Date\";\"  /><br/>");
+//	$('#timeRangeDiv').append("<input type=\"time\" name=\"endTime\" id=\"endTime\" value=\"23:59\";\"  />");
+	$('#timeRangeDiv').append('<button type="button" id=\"setRunRange\" value="Get Data">Run Range</button>');
+
       }
 
       $('#timeForm').change(function() {			      
 	   timeType = $(this).val();
-	   if(timeType == "multiRun") {
+	   if(timeType == "timeRange") {
+	     $('#endRunDiv').show();
+	     $('#timeRangeDiv').show();	     
+	   }
+	   else if(timeType == "multiRun") {
 	     $('#endRunDiv').show();
 	     $('#fullMaxDiv').show();
+	     $('#timeRangeDiv').hide();
 	   }
 	   else {
 	     $('#endRunDiv').hide();
 	     if(timeType == "full") {
 	       $('#fullMaxDiv').show();
+	       $('#timeRangeDiv').hide();
 	     }
 	     else {
 	       $('#fullMaxDiv').show();
+	       $('#timeRangeDiv').hide();
 	     }
 	       
 	   }
@@ -180,21 +203,117 @@ header("Connection: keep-alive");
 			    });
 
 
-      drawEndRun();
+      drawLeftFormParts();
+      setEndRunOnForm(endrun);
+
+
+      $('#setRunRange').bind('click', function() {
+
+	var startDate=document.getElementById("startDate").value;
+	var startYear=startDate.split("/")[0];
+	var startMonth=startDate.split("/")[1];
+	var startDay=startDate.split("/")[2];
+	var startDatecode=startMonth+startDay;
+	var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);
+
+	var endDate=document.getElementById("endDate").value;
+	var endYear=endDate.split("/")[0];
+	var endMonth=endDate.split("/")[1];
+	var endDay=endDate.split("/")[2];
+	var endDatecode=endMonth+endDay;
+	var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
+
+	//	$("#debugContainer").append(startDateRunListUrl);
+//	$("#debugContainer").append(endDateRunListUrl);
+	
+
+	var numGot=0;
+	function handleStartDateRunList(jsonObject) {
+	  for(var i=0;i<jsonObject.runList.length;i++) {
+	    var thisRun=jsonObject.runList[i];
+	    setStartRunOnForm(Number(thisRun));	    
+	    break;
+	  }
+	  numGot++;
+	  if(numGot==2) drawPlot();
+	}
+
+	function handleEndDateRunList(jsonObject) {
+	  for(var i=0;i<jsonObject.runList.length;i++) {
+	    var thisRun=jsonObject.runList[i];
+	    setEndRunOnForm(Number(thisRun));	    
+	  }
+	  numGot++;
+	  if(numGot==2) drawPlot();
+	}
+	
+	function handleFailure() {
+	  numGot++;
+	  if(numGot==2) drawPlot();
+	}
+	   	   
+	
+	$.ajax({
+	  url: startDateRunListUrl,
+	      type: "GET",
+	      dataType: "json",
+	      success: handleStartDateRunList,
+	      error: handleFailure
+	      });
+	
+	$.ajax({
+	  url: endDateRunListUrl,
+	      type: "GET",
+	      dataType: "json",
+	      success: handleEndDateRunList,
+	      error: handleFailure
+	      });
+	
+	
+	
+			     });
+
+
       $('#endRunDiv').hide();
+      $('#timeRangeDiv').hide();
       
       $('#fullMaxDiv').append("Max Plot Points:<br />");
       $('#fullMaxDiv').append("<input type=\"text\" name=\"fullMaxForm\" id=\"fullMaxForm\" value=\"100\" onchange=\"javascript:drawPlot();\"  />");
      
+
+      $(":date").dateinput({ trigger: true, format: 'yyyy/mm/dd', max: -1 })
+	
+	// use the same callback for two different events. possible with bind
+	$(":date").bind("onShow onHide", function()  {
+			  $(this).parent().toggleClass("active");
+			});
+      
+      // when first date input is changed
+      $(":date:first").data("dateinput").change(function() {
+						  // we use it's value for the seconds input min option
+						  $(":date:last").data("dateinput").setMin(this.getValue(), true);
+						});
+
+
+      // when first date input is changed
+      $(":date:last").data("dateinput").change(function() {
+						  // we use it's value for the seconds input min option
+						  $(":date:first").data("dateinput").setMax(this.getValue(), true);
+						});
       
 
+      
+
+      $('#fullMaxDiv').show();
       if(timeType == "multiRun")
 	$('#endRunDiv').show();
-      if(timeType == "full")
-	$('#fullMaxDiv').show();
+      if(timeType == "timeRange") {
+	$('#endRunDiv').show();
+	$('#timeRangeDiv').show();	  
+      }
 
-    updateLastRun();
-    updateHkType(hkType);
+      if(!runAlreadySet) updateLastRun();
+      updateHkType(hkType);
 
       drawPlot();
   });  

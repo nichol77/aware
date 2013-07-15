@@ -88,6 +88,7 @@ $timeTypearray = array(
 		       "simple" => "Simple",
 		       "full" => "Full",
 		       "multiRun" => "Multiple Runs",
+		       "timeRange" => "Time Range",
 		       );
 
 
@@ -114,6 +115,7 @@ echo "<input type=\"text\" name=\"runInput\" id=\"runInput\" value=\"$run\" onch
 echo '<button type="button" value="Next" onclick="javascript:getNextStartRun(drawPlot);">+</button>';
 ?>
 <div id="endRunDiv"></div>
+<div id="timeRangeDiv"></div>
 
 <span id="lastRun">
 <?php
