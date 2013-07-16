@@ -34,25 +34,26 @@ header("Connection: keep-alive");
 
 
       var urlVars=getUrlVars();
-      var timeType='simple'; 
+
+      
+      var timeType=document.getElementById("timeForm").value;
       if("timeType" in urlVars) {
 	timeType=urlVars["timeType"];
       }
 
-      var hkType='sensorHk';
+      var hkType=document.getElementById("hkTypeForm").value;
       if($.urlParam('hkType')) {
 	hkType=$.urlParam('hkType');
       }
 
 
-      var instrument='STATION2';
+      var instrument=document.getElementById("instrumentForm").value;
       if("instrument" in urlVars) {
 	instrument=urlVars["instrument"];
       }
 
-      var run=2047;//Number($('#lastRun').text());
+      var run=document.getElementById("runForm").value;
       var runAlreadySet=false;
-      $('#lastRun').hide();
       if("run" in urlVars) {
 	run=urlVars["run"];
 	runAlreadySet=true;
@@ -63,6 +64,7 @@ header("Connection: keep-alive");
 	endrun=urlVars["endrun"];
       }
 
+      updateLastRun(false);
       
 
       setHkTypeAndCanName(hkType,'divTime',timeType);
@@ -107,7 +109,7 @@ header("Connection: keep-alive");
 	fillPlotForm(tempArray);
       }
 
-      function updateLastRun() {
+      function updateLastRun(setStartToLast) {
 	var tempString="output/"+instrument+"/lastRun";
 	if(hkType == "eventHk") 
 	  var tempString="output/"+instrument+"/lastEventHk";
@@ -117,9 +119,12 @@ header("Connection: keep-alive");
 	  var tempString="output/"+instrument+"/lastEvent";
 
 	function actuallyUpdateLastRun(runString) {
-	  setStartRunOnForm(Number(runString));
-	  setEndRunOnForm(Number(runString));
-	  drawPlot();
+	  setLastRun(Number(runString));
+	  if(setStartToLast) {
+	    setStartRunOnForm(Number(runString));
+	    setEndRunOnForm(Number(runString));
+	    drawPlot();
+	  }
 	}
 
 
@@ -148,7 +153,7 @@ header("Connection: keep-alive");
       $('#instrumentForm').change(function() {
 				    instrument=$(this).val();
 				    runAlreadySet=false;
-				    updateLastRun();
+				    updateLastRun(true);
 				  });				
       
 
@@ -159,9 +164,9 @@ header("Connection: keep-alive");
 
       function drawLeftFormParts() {
 	$('#endRunDiv').append("End Run<br />");
-	$('#endRunDiv').append('<button type="button" value="Previous" onclick="javascript:getPreviousEndRun(drawPlot);">-</button>');
+	$('#endRunDiv').append('<button type="button" id="prevEndRunButton" value="Previous" onclick="javascript:getPreviousEndRun(drawPlot);">-</button>');
 	$('#endRunDiv').append("<input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"\" onchange=\"javascript:drawPlot();\"  />");
-	$('#endRunDiv').append('<button type="button" value="Next" onclick="javascript:getNextEndRun(drawPlot);">+</button>');
+	$('#endRunDiv').append('<button type="button" id="nextEndRunButton" value="Next" onclick="javascript:getNextEndRun(drawPlot);">+</button>');
 	document.getElementById("endRunInput").value=(endrun);	
 
 	$('#timeRangeDiv').append("Time Range:<br />");
@@ -312,8 +317,9 @@ header("Connection: keep-alive");
 	$('#timeRangeDiv').show();	  
       }
 
-      if(!runAlreadySet) updateLastRun();
       updateHkType(hkType);
+      if(!runAlreadySet) updateLastRun(true);
+
 
       drawPlot();
   });  

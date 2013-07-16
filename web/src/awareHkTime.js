@@ -15,6 +15,7 @@ var thisHkType;
 var globCanName;
 var thisTimeType;
 var instrumentName;
+var lastRun;
 var startRun;
 var endRun;
 var year=2013;
@@ -33,52 +34,101 @@ var timeArray=[];
 
 
 ///Here are the UI thingies
+function setLastRun(thisRun) {
+    lastRun=thisRun;
+}
+
+
 function getStartRunFromForm() {
     startRun=document.getElementById("runInput").value;
+    if(startRun>=lastRun) {
+	startRun=lastRun;
+	setStartRunOnForm(startRun);
+    }
     return startRun;
 } 
 
-function setStartRunOnForm(thisRun) {
-    startRun=thisRun;
-    document.getElementById("runInput").value=thisRun;
+function setStartRunOnForm(thisRun) { 
+    if(thisRun<=lastRun) {
+	startRun=thisRun;
+    }
+    else {
+	startRun=lastRun;
+    }
+    document.getElementById("runInput").value=startRun;
+    if(startRun>=lastRun) {
+	$('#nextRunButton').hide();	
+    }
+    else {
+	$('#nextRunButton').show();	
+    }
+	
 } 
 
 function getEndRunFromForm() {
     endRun=document.getElementById("endRunInput").value;
+    if(endRun>=lastRun) {
+	endRun=lastRun;
+	setEndRunOnForm(endRun);
+    }
     return endRun;
 } 
 
 
 function setEndRunOnForm(thisRun) {
+    if(thisRun<=lastRun) {
+	if(endRun>=startRun) {
+	    endRun=thisRun;
+	}
+	else {
+	    endRun=startRun;
+	}
+    }
+    else {
+	endRun=lastRun;
+    }
     endRun=thisRun;
     document.getElementById("endRunInput").value=thisRun;
+    if(endRun>=lastRun) {
+	$('#nextEndRunButton').hide();	
+    }
+    else {
+	$('#nextEndRunButton').show();	
+    }
+    if(endRun>startRun) {
+	$('#prevEndRunButton').show();
+    }
+    else {
+	$('#prevEndRunButton').hide();
+    }
+
 } 
 
 function getNextStartRun(nextFunction) {
     startRun=document.getElementById("runInput").value;
     startRun++;
-    document.getElementById("runInput").value=startRun;
+    setStartRunOnForm(startRun);
     nextFunction();
 }
 
 function getPreviousStartRun(nextFunction) {
     startRun=document.getElementById("runInput").value;
     startRun--;
-    document.getElementById("runInput").value=startRun;
+    setStartRunOnForm(startRun);
     nextFunction();
 }
 
 function getNextEndRun(nextFunction) {
     endRun=document.getElementById("endRunInput").value;
     endRun++;
-    document.getElementById("endRunInput").value=endRun;
+    setEndRunOnForm(endRun);
     nextFunction();
 }
 
 function getPreviousEndRun(nextFunction) {
     endRun=document.getElementById("endRunInput").value;
     endRun--;
-    document.getElementById("endRunInput").value=endRun;
+    setEndRunOnForm(endRun);
     nextFunction();
 }
 

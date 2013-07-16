@@ -31,40 +31,40 @@ function getRunListName(instrument, run) {
 
 
 function getHkName(instrument, run, year, datecode, hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Summary.json.gz"; 
+    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/"+hkType+"Summary.json.gz"; 
     return name;
 }
 
 
 function getHkTimeName(instrument, run, year, datecode,hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/"+hkType+"Time.json.gz"; 
+    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/"+hkType+"Time.json.gz"; 
     return name;
 }
 
 function getFullHkName(instrument,run,year,datecode,hkFile,hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_"+hkFile+".json.gz"; 
+    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/full/"+hkType+"_"+hkFile+".json.gz"; 
     return name;
 }
 
 function getFullHkTimeName(instrument,run,year,datecode,hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/full/"+hkType+"_time.json.gz"; 
+    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/full/"+hkType+"_time.json.gz"; 
     return name;
 }
 
 function getDateRunListName(instrument,year,datecode) {
-   var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/runList.json";
+   var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/runList.json";
    return name;
 }
 
 
 function getEventName(instrument, run, year, datecode, eventNumber) {
-   var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/events"+(eventNumber-(eventNumber%1000))+"/event"+eventNumber+".json.gz"; 
+   var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/events"+(eventNumber-(eventNumber%1000))+"/event"+eventNumber+".json.gz"; 
     return name;
 }
 
 
 function getEventListName(instrument, run, year, datecode) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(datecode)+"/run"+run+"/eventList.json"; 
+    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/eventList.json"; 
     return name;
 }
 
