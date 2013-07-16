@@ -8,6 +8,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
+function capitaliseFirstLetter(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
 function pad4(number) {
    
      return (number < 1000 ? '0' : '') + number

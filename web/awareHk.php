@@ -10,7 +10,7 @@ header("Connection: keep-alive");
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/calendar.css" type="text/css" media="screen" />
 <link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default" />
-<title>Event Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+<title>AWARE Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
 <script type="text/javascript" src="src/awareUtils.js"></script>
 <script type="text/javascript" src="src/awareHkTime.js"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
@@ -69,31 +69,6 @@ header("Connection: keep-alive");
 
       setHkTypeAndCanName(hkType,'divTime',timeType);
 
-      var plotFormArray =[			  
-	{sym:"singleChannelRate",desc:"L1 Rate",hkCode:"eventHk"},
-	{sym:"singleChannelThreshold",desc:"L1 Threshold",hkCode:"eventHk"},
-	{sym:"oneOfFour",desc:"L2 (1 of 4)",hkCode:"eventHk"},
-	{sym:"twoOfFour",desc:"L2 (2 of 4)",hkCode:"eventHk"},
-	{sym:"threeOfFour",desc:"L2 (3 of 4)",hkCode:"eventHk"},
-	{sym:"threeOfEight",desc:"L3 (3 of 8)",hkCode:"eventHk"},
-	{sym:"l4Scaler",desc:"L4",hkCode:"eventHk"},
-	{sym:"vadj",desc:"V_adj",hkCode:"eventHk"},
-	{sym:"vdly",desc:"V_dly",hkCode:"eventHk"},
-	{sym:"wilkinsonC",desc:"Wilkinson",hkCode:"eventHk"},
-	{sym:"pps",desc:"PPS",hkCode:"eventHk"},
-	{sym:"clock",desc:"100MHz",hkCode:"eventHk"},
-	{sym:"atriCurrent",desc:"ATRI Current",hkCode:"sensorHk"},
-	{sym:"atriVoltage",desc:"ATRI Voltage",hkCode:"sensorHk"},
-	{sym:"ddaCurrent",desc:"DDA Current",hkCode:"sensorHk"},
-	{sym:"ddaVoltage",desc:"DDA Voltage",hkCode:"sensorHk"},
-	{sym:"ddaTemp",desc:"DDA Temperature",hkCode:"sensorHk"},
-	{sym:"tdaCurrent",desc:"TDA Current",hkCode:"sensorHk"},
-	{sym:"tdaVoltage",desc:"TDA Voltage",hkCode:"sensorHk"},
-	{sym:"tdaTemp",desc:"TDA Temperature",hkCode:"sensorHk"},
-	{sym:"eventRate",desc:"Event Rate",hkCode:"header"},
-	{sym:"rms",desc:"RMS",hkCode:"header"}];
-
-
 
       function fillPlotForm(array) {
 	$('#plotForm').empty();
@@ -105,18 +80,27 @@ header("Connection: keep-alive");
       function updateHkType(thisHkType) {
 	hkType=thisHkType;
 	setHkTypeAndCanName(hkType,'divTime',timeType);
-	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
-	fillPlotForm(tempArray);
+	
+	function actuallyUpdateHkType(plotFormArray) {
+	  var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
+	  fillPlotForm(tempArray);
+	  drawPlot();	   
+	}
+	
+
+	$.ajax({
+	  url: "config/plotTypeList.json",
+	      type: "GET",
+	      dataType: "json", 
+	      success: actuallyUpdateHkType
+	      }); 
+
       }
 
       function updateLastRun(setStartToLast) {
-	var tempString="output/"+instrument+"/lastRun";
-	if(hkType == "eventHk") 
-	  var tempString="output/"+instrument+"/lastEventHk";
-	if(hkType == "sensorHk")
-	  var tempString="output/"+instrument+"/lastSensorHk";
-	if(hkType == "header")
-	  var tempString="output/"+instrument+"/lastEvent";
+	//	var tempString="output/"+instrument+"/lastRun";
+	var tempString="output/"+instrument+"/last"+capitaliseFirstLetter(hkType);
+
 
 	function actuallyUpdateLastRun(runString) {
 	  setLastRun(Number(runString));
@@ -140,7 +124,6 @@ header("Connection: keep-alive");
       $('#hkTypeForm').change(function() {
 	   var selectedValue = $(this).val();
 	   updateHkType(selectedValue);
-	   drawPlot();
       });
       
 
@@ -321,7 +304,7 @@ header("Connection: keep-alive");
       if(!runAlreadySet) updateLastRun(true);
 
 
-      drawPlot();
+      //      drawPlot();
   });  
 
 </script>
@@ -333,7 +316,7 @@ header("Connection: keep-alive");
 
 
 <DIV class="heading">
-<h1>Event Housekeeping</h1>
+<h1>AWARE Housekeeping</h1>
 </DIV>
 <DIV class=middle>
 <DIV class=content>
