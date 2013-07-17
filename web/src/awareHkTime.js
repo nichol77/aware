@@ -37,7 +37,7 @@ function setLastRun(thisRun) {
 function getTimestampFromDateStringTimeString(dateString,timeString) {
     //    $('#debugContainer').append("<p>"+dateString+" -- "+timeString+"</p>");
     var year=dateString.split("/")[0];
-    var month=dateString.split("/")[1];
+    var month=dateString.split("/")[1]-1;
     var day=dateString.split("/")[2];
     var hour=timeString.split(":")[0];
     var minute=timeString.split(":")[1];
@@ -51,7 +51,7 @@ function getTimestampFromDateStringTimeString(dateString,timeString) {
 
 
 function getDateString(dateObj) {
-    var dateString = dateObj.getUTCFullYear()+"/"+pad2(dateObj.getUTCMonth())+"/"+pad2(dateObj.getUTCDate());
+    var dateString = dateObj.getUTCFullYear()+"/"+pad2(dateObj.getUTCMonth()+1)+"/"+pad2(dateObj.getUTCDate());
     return dateString;
 }
 

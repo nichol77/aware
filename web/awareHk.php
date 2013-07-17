@@ -77,10 +77,10 @@ header("Connection: keep-alive");
 				     $('#scaleDiv').toggle();
 				   });
       $('#yAutoScale').change(function() {
-				if($(this).checked) {
+				if($(this).attr('checked')) {
 				  //Switching to autoscale
-				  $('#yMinInput').prop('disabled',true);
-				  $('#yMaxInput').prop('disabled',true);
+				  $('#yMinInput').attr('disabled','disabled');
+				  $('#yMaxInput').attr('disabled','disabled');
 				}
 				else {
 				  //Switching to fixed scale
@@ -91,12 +91,12 @@ header("Connection: keep-alive");
 
 
       $('#xAutoScale').change(function() {
-				if($(this).checked) {
+				if($(this).attr('checked')) {
 				  //Switching to autoscale
-				  $('#xMinDateInput').prop('disabled',true);
-				  $('#xMaxDateInput').prop('disabled',true);
-				  $('#xMinTimeInput').prop('disabled',true);
-				  $('#xMaxTimeInput').prop('disabled',true);
+				  $('#xMinDateInput').attr('disabled','disabled');
+				  $('#xMaxDateInput').attr('disabled','disabled');
+				  $('#xMinTimeInput').attr('disabled','disabled');
+				  $('#xMaxTimeInput').attr('disabled','disabled');
 				}
 				else {
 				  //Switching to fixed scale
