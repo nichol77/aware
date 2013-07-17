@@ -2,15 +2,14 @@
 ob_start("ob_gzhandler"); 
 header("Connection: keep-alive");
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" />
 
 <link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default" >
-<title>Event Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+<title>ARA - AWARE</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
 
 </head>

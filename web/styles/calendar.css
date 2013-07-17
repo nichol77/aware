@@ -4,14 +4,21 @@
 /* the input field */
 .date {
     border:1px solid #ccc;
-    font-size:18px;
     padding:4px;
     text-align:center;
-    width:194px;
-
     -moz-box-shadow:0 0 10px #eee inset;
     -webkit-box-shadow:0 0 10px #eee inset;
 }
+
+/* the input field */
+#xMinTimeInput, #xMaxTimeInput {
+    border:1px solid #ccc;
+    padding:4px;
+    text-align:center;
+    -moz-box-shadow:0 0 10px #eee inset;
+    -webkit-box-shadow:0 0 10px #eee inset;
+}
+
 
 /* calendar root element */
 #calroot {
@@ -157,22 +164,3 @@ a.caldisabled {
 	float:left;
 }
  
-#theday {
-	-moz-border-radius:5px;
-	background-color:#36387B;
-	color:#FFFFFF;
-	float:left;
-	font-size:90px;
-	height:80px;
-	line-height:50px;
-	margin-top:30px;
-	padding:60px;
-	text-shadow:0 0 5px #DDDDDD;
-	width:117px;
-}
- 
-#theday span {
-	display:block;
-	font-size:16px;
-	text-align:center;
-}

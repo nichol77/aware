@@ -10,19 +10,13 @@
 
 
 
-/* Globals */
+/* Globals, these shouldn't really be used in javascript... but hey ho there we go*/
 var thisHkType;
 var globCanName;
 var thisTimeType;
-var instrumentName;
-var lastRun;
-var startRun;
-var endRun;
 var year=2013;
 var datecode=123;
 var timesWaited=0;
-var plotName;
-var plotLabel;
 var startTime;
 var duration;
 
@@ -35,113 +29,121 @@ var timeArray=[];
 
 ///Here are the UI thingies
 function setLastRun(thisRun) {
-    lastRun=thisRun;
+    document.getElementById("runInput").max=thisRun;
+    document.getElementById("endRunInput").max=thisRun;
 }
 
 
+function getTimestampFromDateStringTimeString(dateString,timeString) {
+    //    $('#debugContainer').append("<p>"+dateString+" -- "+timeString+"</p>");
+    var year=dateString.split("/")[0];
+    var month=dateString.split("/")[1];
+    var day=dateString.split("/")[2];
+    var hour=timeString.split(":")[0];
+    var minute=timeString.split(":")[1];
+///< This hack is necessary to get round a Chrome feature which drops the seconds part
+    var second=0;
+    if(timeString.split(":")[2]>=0)    
+	second=timeString.split(":")[2];
+    var date = new Date(year,month,day,hour,minute,second,0);
+    return (date.getTime()-date.getTimezoneOffset()*60*1000);
+}
+
+
+function getDateString(dateObj) {
+    var dateString = dateObj.getUTCFullYear()+"/"+pad2(dateObj.getUTCMonth())+"/"+pad2(dateObj.getUTCDate());
+    return dateString;
+}
+
+function getTimeString(dateObj) {
+    var timeString = pad2(dateObj.getUTCHours())+":"+pad2(dateObj.getUTCMinutes())+":"+pad2(dateObj.getUTCSeconds());
+    return timeString;
+}
+
+function getXAutoScale() {
+    return document.getElementById("xAutoScale").checked;
+}
+
+function setXMin(xmintimestamp) {   
+    var date = new Date(xmintimestamp);//xmintimestamp);
+    document.getElementById("xMinDateInput").value=getDateString(date);
+    document.getElementById("xMinTimeInput").value=getTimeString(date);
+}
+
+function setXMax(xmaxtimestamp) {
+    var date = new Date(xmaxtimestamp);
+    document.getElementById("xMaxDateInput").value=getDateString(date);
+    document.getElementById("xMaxTimeInput").value=getTimeString(date);
+}
+
+function getXMin() {   
+    var dateString=document.getElementById("xMinDateInput").value;
+    var timeString=document.getElementById("xMinTimeInput").value;
+    return getTimestampFromDateStringTimeString(dateString,timeString);
+}
+
+function getXMax() {
+    var dateString=document.getElementById("xMaxDateInput").value;
+    var timeString=document.getElementById("xMaxTimeInput").value;
+    return getTimestampFromDateStringTimeString(dateString,timeString);
+}
+
+function getYAutoScale() {
+    return document.getElementById("yAutoScale").checked;
+}
+
+function setYMin(ymin) {
+    document.getElementById("yMinInput").value=ymin;
+}
+
+function setYMax(ymax) {
+    document.getElementById("yMaxInput").value=ymax;
+}
+    
+
+function getYMin() {
+    return document.getElementById("yMinInput").value;
+}
+
+function getYMax() {
+    return document.getElementById("yMaxInput").value;
+}
+    
+
 function getStartRunFromForm() {
-    startRun=document.getElementById("runInput").value;
-    if(startRun>=lastRun) {
-	startRun=lastRun;
-	setStartRunOnForm(startRun);
-    }
-    return startRun;
+    return document.getElementById("runInput").value;
 } 
 
 function setStartRunOnForm(thisRun) { 
-    if(thisRun<=lastRun) {
-	startRun=thisRun;
-    }
-    else {
-	startRun=lastRun;
-    }
-    document.getElementById("runInput").value=startRun;
-    if(startRun>=lastRun) {
-	$('#nextRunButton').hide();	
-    }
-    else {
-	$('#nextRunButton').show();	
-    }
+    document.getElementById("runInput").value=thisRun;
 	
 } 
 
 function getEndRunFromForm() {
-    endRun=document.getElementById("endRunInput").value;
-    if(endRun>=lastRun) {
-	endRun=lastRun;
-	setEndRunOnForm(endRun);
-    }
-    return endRun;
+    return document.getElementById("endRunInput").value;
 } 
 
 
 function setEndRunOnForm(thisRun) {
-    if(thisRun<=lastRun) {
-	if(endRun>=startRun) {
-	    endRun=thisRun;
-	}
-	else {
-	    endRun=startRun;
-	}
-    }
-    else {
-	endRun=lastRun;
-    }
-    endRun=thisRun;
     document.getElementById("endRunInput").value=thisRun;
-    if(endRun>=lastRun) {
-	$('#nextEndRunButton').hide();	
-    }
-    else {
-	$('#nextEndRunButton').show();	
-    }
-    if(endRun>startRun) {
-	$('#prevEndRunButton').show();
-    }
-    else {
-	$('#prevEndRunButton').hide();
-    }
 
 } 
 
-function getNextStartRun(nextFunction) {
-    startRun=document.getElementById("runInput").value;
-    startRun++;
-    setStartRunOnForm(startRun);
-    nextFunction();
-}
-
-function getPreviousStartRun(nextFunction) {
-    startRun=document.getElementById("runInput").value;
-    startRun--;
-    setStartRunOnForm(startRun);
-    nextFunction();
-}
-
-function getNextEndRun(nextFunction) {
-    endRun=document.getElementById("endRunInput").value;
-    endRun++;
-    setEndRunOnForm(endRun);
-    nextFunction();
-}
-
-function getPreviousEndRun(nextFunction) {
-    endRun=document.getElementById("endRunInput").value;
-    endRun--;
-    setEndRunOnForm(endRun);
-    nextFunction();
-}
-
 
 function getInstrumentNameFromForm() {
-    instrumentName=document.getElementById("instrumentForm").value;
-    return instrumentName;
+    return document.getElementById("instrumentForm").value;
 }
 
+function getPlotLabelFromForm() {
+    var elt = document.getElementById("plotForm");
+    if(elt.selectedIndex==-1)
+	return getPlotNameFromForm();
+    return elt.options[elt.selectedIndex].text;
+}
+
+
 function getPlotNameFromForm() {
-    plotName=document.getElementById("plotForm").value;
-    plotLabel=document.getElementById("plotForm").label;
-    return plotName;
+    return document.getElementById("plotForm").value;
 }
 
 function getMaxPointsToShow() {
@@ -361,6 +363,7 @@ function actuallyDrawTheStuff() {
     choiceContainer.find("input").click(plotAccordingToChoices);
 
     var options = {
+	aware: {zoom:false},
 	yaxis: { },
 	xaxis: {mode: "time"},
 	lines: { show: false },
@@ -376,13 +379,26 @@ function actuallyDrawTheStuff() {
 	var data = [];
 	var xmin=0;
 	var xmax=0;
+
+	if(!getXAutoScale() && !options.aware.zoom) {
+	    options.xaxis.min=getXMin();
+	    options.xaxis.max=getXMax();	    
+	}	
+
+
+	if(!getYAutoScale()) {
+	    options.yaxis.min=getYMin();
+	    options.yaxis.max=getYMax();	    
+	}
+
 	if("min" in options.xaxis) {
 	    xmin=options.xaxis.min;
 	    xmax=options.xaxis.max;
 	}
+
+
 	var smallData=getDataForPlot(datasets,xmin,xmax);
 	
-
 
 
 	choiceContainer.find("input:checked").each(function () {
@@ -394,6 +410,22 @@ function actuallyDrawTheStuff() {
 	
 	if (data.length > 0) {
 	    plot=$.plot(plotCan, data, options);
+
+	    var axes = plot.getAxes();
+	    var realymin = axes.yaxis.min;
+	    var realymax = axes.yaxis.max;
+	    var realxmin = axes.xaxis.min;
+	    var realxmax = axes.xaxis.max;
+	    if(getYAutoScale()) {
+		setYMin(realymin);
+		setYMax(realymax);
+	    }
+	    if(getXAutoScale()) {
+		setXMin(realxmin);
+		setXMax(realxmax);		
+	    }
+	    
+
 	}
 
     }
@@ -402,13 +434,14 @@ function actuallyDrawTheStuff() {
     var lastMax=0;
     
     plotCan.bind("plotselected", function (event, ranges) {
-	options.xaxis.min=ranges.xaxis.from;
-	options.xaxis.max=ranges.xaxis.to;
-	options.yaxis.min=ranges.yaxis.from;
-	options.yaxis.max=ranges.yaxis.to;
-	//	canContainer.append("plotselected");
-	if(lastMin!=options.yaxis.min || lastMax!=options.yaxis.max) {
-	    lastMin=options.yaxis.min;
+		     options.aware.zoom=true; 
+		     options.xaxis.min=ranges.xaxis.from;
+		     options.xaxis.max=ranges.xaxis.to;
+		     options.yaxis.min=ranges.yaxis.from;
+		     options.yaxis.max=ranges.yaxis.to;
+		     //	canContainer.append("plotselected");
+		     if(lastMin!=options.yaxis.min || lastMax!=options.yaxis.max) {
+			 lastMin=options.yaxis.min;
 	    lastMax=options.yaxis.max;	
 
 
@@ -417,13 +450,14 @@ function actuallyDrawTheStuff() {
     });
 
     plotCan.bind("plotunselected", function (event, ranges) {
-	var newxaxis= { mode: "time"};
-	options.xaxis = newxaxis;
-	var newyaxis = {};
-	options.yaxis=newyaxis;
-	//	canContainer.append("plotunselected");
-	if(lastMin!=0 || lastMax!=0) {
-	    lastMin=0;
+		     options.aware.zoom=false;
+		     var newxaxis= { mode: "time"};
+		     options.xaxis = newxaxis;
+		     var newyaxis = {};
+		     options.yaxis=newyaxis;
+		     //	canContainer.append("plotunselected");
+		     if(lastMin!=0 || lastMax!=0) {
+			 lastMin=0;
 	    lastMax=0;
 	    plotAccordingToChoices();
 	}
@@ -449,15 +483,15 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+startRun+"&endrun="+endRun+"&instrument="+instrumentName+"&plot="+plotName+"&timeType="+thisTimeType+"&hkType="+thisHkType;
+    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&endrun="+getEndRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&plot="+getPlotNameFromForm()+"&timeType="+thisTimeType+"&hkType="+thisHkType;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var canContainer = $("#titleContainer"); 
     canContainer.empty();
-    canContainer.append("<h1>"+instrumentName+" -- Run "+startRun+"</h1>");
+    canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
     canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
-    canContainer.append("<h2> Plot "+plotName+"</h2>");
+    canContainer.append("<h2> Plot "+getPlotLabelFromForm()+"</h2>");
     
 }
 
@@ -483,7 +517,7 @@ function handleAjaxFileError(jqXHR, exception) {
 
 
 function simpleHkPlotDrawer() {
-    var simpleHkTimeUrl=getHkTimeName(instrumentName,startRun,year,datecode,thisHkType);
+    var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,thisHkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -496,7 +530,7 @@ function simpleHkPlotDrawer() {
 	setTimeAndVarList(jsonObject);
 
 	//Actual do the drawing
-	drawSimpleHkTime(plotName);
+	drawSimpleHkTime(getPlotNameFromForm());
     }
 
 
@@ -516,7 +550,7 @@ function drawFullHkTimePlot() {
 }
 
 function fullHkPlotDrawer() {
-    var simpleHkTimeUrl=getHkTimeName(instrumentName,startRun,year,datecode,thisHkType);
+    var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,thisHkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -528,7 +562,7 @@ function fullHkPlotDrawer() {
 	setTimeAndVarList(jsonObject);
 
 	//Actual do the drawing
-	fetchFullHkTime(plotName);
+	fetchFullHkTime(getPlotNameFromForm());
     }
 
     $.ajax({
@@ -546,7 +580,7 @@ function fetchFullHkTime(varNameKey) {
     
 
 //    var canContainer = $("#titleContainer"); 
-    var fullHkTimeUrl=getFullHkTimeName(instrumentName,startRun,year,datecode,thisHkType);
+    var fullHkTimeUrl=getFullHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,thisHkType);
 //    canContainer.append("<p>"+fullHkTimeUrl+"</p>");
     
 
@@ -561,7 +595,7 @@ function fetchFullHkTime(varNameKey) {
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
-		var fullHkUrl=getFullHkName(instrumentName,startRun,year,datecode,varName,thisHkType);
+		var fullHkUrl=getFullHkName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,varName,thisHkType);
 //		canContainer.append("<p>"+fullHkUrl+"</p>");	
 		countFilesNeeded++;
 
@@ -612,9 +646,9 @@ function fetchFullHkTime(varNameKey) {
 
 
 function getRunInstrumentDateAndPlot(plotFunc) {
-    startRun=getStartRunFromForm();
-    plotName=getPlotNameFromForm();    
-    instrumentName=getInstrumentNameFromForm();
+    var startRun=getStartRunFromForm();
+    var plotName=getPlotNameFromForm();    
+    var instrumentName=getInstrumentNameFromForm();
     var runListFile=getRunListName(instrumentName,startRun);
     function handleRunList(jsonObject) {
 	var gotRun=0;
@@ -648,10 +682,10 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 
 function doMultiRunPlot() {
     
-    plotName=getPlotNameFromForm();    
-    instrumentName=getInstrumentNameFromForm();
-    startRun=getStartRunFromForm();
-    endRun=getEndRunFromForm();
+    var plotName=getPlotNameFromForm();    
+    var instrumentName=getInstrumentNameFromForm();
+    var startRun=getStartRunFromForm();
+    var endRun=getEndRunFromForm();
     if(endRun<=startRun) {
 	return drawSimpleHkTimePlot();	
     }

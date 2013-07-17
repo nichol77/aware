@@ -1,3 +1,50 @@
+
+
+form, fieldset, legend, ol, li {
+	margin: 0;
+	padding: 0;
+}
+
+form#scaleForm {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 10px;
+	width: 168px;
+}
+
+form#scaleForm fieldset {
+	border: none;
+	margin-bottom: 5px;
+}
+form#scaleForm fieldset:last-of-type {
+	margin-bottom: 0;
+}
+
+form#scaleForm legend {
+	font-size: 16px;
+	font-weight: bold;
+	padding-bottom: 2px;
+}
+
+form#scaleForm ul li {
+	background: #b9cf6a;
+	background: rgba(255,255,255,.3);
+	border-color: #e3ebc3;
+	border-color: rgba(255,255,255,.6);
+	border-style: solid;
+	border-width: 2px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	line-height: 20px;
+	list-style: none;
+	padding: 5px 5px;
+	margin-bottom: 1px;
+}
+
+
+
 @media screen {
    DIV.heading {
                  background-repeat: repeat-y;

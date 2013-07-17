@@ -2,24 +2,24 @@
 ob_start("ob_gzhandler"); 
 header("Connection: keep-alive");
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd"> 
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen" />
-<link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" />
-<link rel="StyleSheet" href="styles/calendar.css" type="text/css" media="screen" />
-<link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default" />
-<title>AWARE Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+<link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen">
+<link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/calendar.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default">
+<title>AWARE Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script type="text/javascript" src="src/awareUtils.js"></script>
 <script type="text/javascript" src="src/awareHkTime.js"></script>
-<script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
 <script type="text/javascript" src="src/jquerytools/jquery.tools.min.js"></script>
-<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
-<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
-<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
-<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
-<script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script type="text/javascript">
 
   $(function() {
@@ -68,6 +68,63 @@ header("Connection: keep-alive");
       
 
       setHkTypeAndCanName(hkType,'divTime',timeType);
+
+
+      ///Here is the logic for delaying with the scale buttons
+      $('#scaleDiv').toggle();
+
+      $('#showScaleButton').click( function() {
+				     $('#scaleDiv').toggle();
+				   });
+      $('#yAutoScale').change(function() {
+				if($(this).checked) {
+				  //Switching to autoscale
+				  $('#yMinInput').prop('disabled',true);
+				  $('#yMaxInput').prop('disabled',true);
+				}
+				else {
+				  //Switching to fixed scale
+				  $('#yMinInput').removeAttr('disabled');
+				  $('#yMaxInput').removeAttr('disabled');
+				}
+			      });
+
+
+      $('#xAutoScale').change(function() {
+				if($(this).checked) {
+				  //Switching to autoscale
+				  $('#xMinDateInput').prop('disabled',true);
+				  $('#xMaxDateInput').prop('disabled',true);
+				  $('#xMinTimeInput').prop('disabled',true);
+				  $('#xMaxTimeInput').prop('disabled',true);
+				}
+				else {
+				  //Switching to fixed scale
+				  $('#xMinDateInput').removeAttr('disabled');
+				  $('#xMaxDateInput').removeAttr('disabled');
+				  $('#xMinTimeInput').removeAttr('disabled');
+				  $('#xMaxTimeInput').removeAttr('disabled');
+				}
+			      });
+      
+      $('#refreshButton').click(function() {
+				  drawPlot();
+				});
+
+
+      $('#runInput').change(function() {			      
+			      //When run input changes we can update end run
+			      if(document.getElementById("runInput").value>=
+				 document.getElementById("endRunInput").value) {
+				document.getElementById("endRunInput").value=
+				  document.getElementById("runInput").value;
+			      }
+			      //And set the minimum for endRunInput to the start run
+			      document.getElementById("endRunInput").min=
+				document.getElementById("runInput").value;
+			    });
+				
+
 
 
       function fillPlotForm(array) {
@@ -138,28 +195,7 @@ header("Connection: keep-alive");
 				    runAlreadySet=false;
 				    updateLastRun(true);
 				  });				
-      
-
-
-
-    
-
-
-      function drawLeftFormParts() {
-	$('#endRunDiv').append("End Run<br />");
-	$('#endRunDiv').append('<button type="button" id="prevEndRunButton" value="Previous" onclick="javascript:getPreviousEndRun(drawPlot);">-</button>');
-	$('#endRunDiv').append("<input type=\"text\" name=\"endRunInput\" id=\"endRunInput\" value=\"\" onchange=\"javascript:drawPlot();\"  />");
-	$('#endRunDiv').append('<button type="button" id="nextEndRunButton" value="Next" onclick="javascript:getNextEndRun(drawPlot);">+</button>');
-	document.getElementById("endRunInput").value=(endrun);	
-
-	$('#timeRangeDiv').append("Time Range:<br />");
-	$('#timeRangeDiv').append("Start:<input type=\"date\" name=\"startDate\" id=\"startDate\" value=\"Date\";\"  /><br/>");
-	//	$('#timeRangeDiv').append("<input type=\"time\" name=\"startTime\" id=\"startTime\" value=\"00:00\";\"  /><br/>");
-	$('#timeRangeDiv').append("End:<input type=\"date\" name=\"endDate\" id=\"endDate\" value=\"Date\";\"  /><br/>");
-//	$('#timeRangeDiv').append("<input type=\"time\" name=\"endTime\" id=\"endTime\" value=\"23:59\";\"  />");
-	$('#timeRangeDiv').append('<button type="button" id=\"setRunRange\" value="Get Data">Run Range</button>');
-
-      }
+        
 
       $('#timeForm').change(function() {			      
 	   timeType = $(this).val();
@@ -190,8 +226,6 @@ header("Connection: keep-alive");
 	   drawPlot();
 			    });
 
-
-      drawLeftFormParts();
       setEndRunOnForm(endrun);
 
 
@@ -211,9 +245,6 @@ header("Connection: keep-alive");
 	var endDatecode=endMonth+endDay;
 	var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
 
-	//	$("#debugContainer").append(startDateRunListUrl);
-//	$("#debugContainer").append(endDateRunListUrl);
-	
 
 	var numGot=0;
 	function handleStartDateRunList(jsonObject) {
@@ -265,8 +296,6 @@ header("Connection: keep-alive");
       $('#endRunDiv').hide();
       $('#timeRangeDiv').hide();
       
-      $('#fullMaxDiv').append("Max Plot Points:<br />");
-      $('#fullMaxDiv').append("<input type=\"text\" name=\"fullMaxForm\" id=\"fullMaxForm\" value=\"100\" onchange=\"javascript:drawPlot();\"  />");
      
 
       $(":date").dateinput({ trigger: true, format: 'yyyy/mm/dd', max: -1 })
@@ -328,7 +357,7 @@ header("Connection: keep-alive");
 <p>
   Click and drag on the background to zoom, double click to unzoom.
 </p>
-
+<div>
 <p id="choices" style=""></p>
 </div>
 
@@ -340,5 +369,38 @@ header("Connection: keep-alive");
 include("leftHk.php");
 ?>
 </div>
+
+
+
+<div id="openTimeTypeHelp" class="helpDialog">
+  <div>
+<a href="#close" title="Close" class="close">X</a>
+<?php
+include "help/timeTypeHelp.php";
+?>
+</div>
+</div>
+
+
+<div id="openStationHelp" class="helpDialog">
+  <div>
+<a href="#close" title="Close" class="close">X</a>
+<?php
+include "help/stationHelp.php";
+?>
+</div>
+</div>
+
+
+
+<div id="openHkTypeHelp" class="helpDialog">
+  <div>
+<a href="#close" title="Close" class="close">X</a>
+<?php
+include "help/hkTypeHelp.php";
+?>
+</div>
+</div>
+
 </body></html>
 
