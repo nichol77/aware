@@ -26,21 +26,93 @@ header("Connection: keep-alive");
 <script type="text/javascript">
 
   $(function() {
-document.body.addEventListener('touchmove', function(event) {
-  event.preventDefault();
-}, false);   
+      document.body.addEventListener('touchmove', function(event) {
+				       event.preventDefault();
+				     }, false);   
 
-  var urlVars=getUrlVars();
-  var timeType='simple'; 
-  if("timeType" in urlVars) {
-  timeType=urlVars["timeType"];
-  }
-  var colLabels= new Array("1/5","2/6","3/7","4/8");
-  var rowLabels= new Array("V1-4","V5-8","H1-4","H5-8","S1-4");
+       $.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if(results != null) {
+	  return results[1];
+	}
+	return null;
+      }
+
+
+
+      var run=document.getElementById("runForm").value;
+      var runAlreadySet=false;
+      if($.urlParam('run')) {
+	run=$.urlParam('run');
+	runAlreadySet=true;
+      }
+
+
   
-  setRowsAndCols(5,4,rowLabels,colLabels);
-  fillEventDivWithWaveformContainers();
-  drawPlot();
+      function readEventLayout() {
+	
+	function actuallyReadEventLayout(jsonObject) {
+	$('#divEvent').empty();
+	  setRowsAndCols(jsonObject.numRows,jsonObject.numCols,jsonObject.rowLabels,jsonObject.colLabels);
+	  fillEventDivWithWaveformContainers(jsonObject.chanOrder,jsonObject.containerLabel);
+	  drawPlot();
+	  
+	}
+	
+	eventLayout=getLayoutFromForm();
+	
+
+	$.ajax({
+	    //url: "config/eventLayout5by4.json",
+	  url: "config/"+eventLayout+".json",
+	      type: "GET",
+	      dataType: "json", 
+	      success: actuallyReadEventLayout
+	      }); 
+
+      }
+
+
+
+      function updateLastRun(setStartToLast) {
+	var tempString="output/"+getInstrumentNameFromForm()+"/lastEvent";
+
+	function actuallyUpdateLastRun(runString) {
+	  setLastRun(Number(runString));
+	  if(setStartToLast) {
+	    setRunOnForm(Number(runString));
+	  }
+	}
+
+
+	$.ajax({
+	  url: tempString,
+	      type: "GET",
+	      dataType: "text", 
+	      success: actuallyUpdateLastRun
+	      }); 
+	
+      }
+
+      if(!runAlreadySet) {
+	updateLastRun(true);
+      }
+
+
+      $('#instrumentForm').change(function() {
+				    runAlreadySet=false;
+				    updateLastRun(true);
+				    readEventLayout();
+				  });
+
+
+      readEventLayout();
+
+
+      $('#layoutForm').change(function() {
+				readEventLayout();
+			      });
+
 });  
 
 </script>

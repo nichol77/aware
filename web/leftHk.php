@@ -112,6 +112,7 @@ echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" ma
 <legend>Time Range</legend>
 <label>Start:</label><input type="date" name="startDate" id="startDate" value="">
 <label>End:</label><input type="date" name="endDate" id="endDate" value="">
+<button type="button" id="setRunRange">Get Run Range</button>
 </fieldset>
 </div>
 <div id="fullMaxDiv">

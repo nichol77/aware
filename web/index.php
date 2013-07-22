@@ -5,13 +5,10 @@ header("Connection: keep-alive");
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" />
-
-<link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default" >
 <title>ARA - AWARE</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
-
 </head>
 
 
@@ -25,16 +22,16 @@ header("Connection: keep-alive");
 <DIV class=middle>
 <DIV class=content>
 <h2>ARA02</h2>
-<a href="awareHk.php?instrument=STATION2">
+<a href="events.php?instrument=STATION2">
 <div class="lastBox">
-  Last Run: 
-<span id="lastRun">
+  Last Event: 
+<span id="lastEvent">
 <?php
-$lastRun='output/STATION2/lastRun';
-include $lastRun ;
+$lastEvent='output/STATION2/lastEvent';
+include $lastEvent ;
 echo "</span>";
-if (file_exists($lastRun)) {
-    echo " started " . date ("F d Y H:i.", filemtime($lastRun));
+if (file_exists($lastEvent)) {
+    echo " started " . date ("F d Y H:i.", filemtime($lastEvent));
 }
 ?>
 </div>
@@ -71,16 +68,16 @@ if (file_exists($lastSensorHk)) {
 
 
 <h2>ARA03</h2>
-<a href="awareHk.php?instrument=STATION3">
+<a href="events.php?instrument=STATION3">
 <div class="lastBox">
-  Last Run:
-<span id="lastRun">
+  Last Event:
+<span id="lastEvent">
 <?php
-$lastRun='output/STATION3/lastRun';
-include $lastRun ;
+$lastEvent='output/STATION3/lastEvent';
+include $lastEvent ;
 echo "</span>";
-if (file_exists($lastRun)) {
-    echo " started " . date ("F d Y H:i.", filemtime($lastRun));
+if (file_exists($lastEvent)) {
+    echo " started " . date ("F d Y H:i.", filemtime($lastEvent));
 }
 ?>
 
@@ -117,16 +114,16 @@ if (file_exists($lastSensorHk)) {
 
 
 <h2>ARA01</h2>
-<a href="awareHk.php?instrument=STATION1B">
+<a href="events.php?instrument=STATION1B">
 <div class="lastBox">
-  Last Run:
-<span id="lastRun">
+  Last Event:
+<span id="lastEvent">
 <?php
-$lastRun='output/STATION1B/lastRun';
-include $lastRun ;
+$lastEvent='output/STATION1B/lastEvent';
+include $lastEvent ;
 echo "</span>";
-if (file_exists($lastRun)) {
-    echo " started " . date ("F d Y H:i.", filemtime($lastRun));
+if (file_exists($lastEvent)) {
+    echo " started " . date ("F d Y H:i.", filemtime($lastEvent));
 }
 ?>
 

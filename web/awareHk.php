@@ -6,10 +6,9 @@ header("Connection: keep-alive");
 <html>
 <head>
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen">
-<link rel="StyleSheet" href="styles/base.css.gz" type="text/css" media="screen">
+<link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/calendar.css" type="text/css" media="screen">
-<link rel="StyleSheet" href="styles/default.css.gz" type="text/css" media="screen" title="RJN default">
 <title>AWARE Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script type="text/javascript" src="src/awareUtils.js"></script>
 <script type="text/javascript" src="src/awareHkTime.js"></script>

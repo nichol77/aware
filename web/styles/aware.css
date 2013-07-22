@@ -9,7 +9,7 @@ form#scaleForm,form#runForm {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
-	padding: 10px;
+	padding: 5px;
 	width: 180px;
 }
 
@@ -24,8 +24,7 @@ form#scaleForm legend, form#runForm legend {
 	padding-bottom: 2px;
 }
 
-form#scaleForm ul li {
-	background: #b9cf6a;
+form#scaleForm li, form#runForm li  {
 	background: rgba(255,255,255,.3);
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -34,9 +33,12 @@ form#scaleForm ul li {
 	list-style: none;
 	padding: 5px 5px;
 	margin-bottom: 1px;
+        margin-left: -2em;
 }
 
-
+label {
+float: left;
+}
 
 @media screen {
    DIV.heading {
@@ -89,15 +91,21 @@ DIV.other {
 For the AWARE web event display
 */
 
-.event-topbar {
+.event-topbar-2up {
 	width:96%;
 	height:5%;
 /*	background-color: red;	*/
 }
 
-.column-label {
+.event-topbar-4up {
+	width:96%;
+	height:5%;
+/*	background-color: red;	*/
+}
+
+.column-label-2up {
 	box-sizing: border-box;
-	width: 23.5%;	
+	width: 45.5%;	
 	height:100%;
 	float: left;
 	padding: 0 0 0 0;
@@ -106,24 +114,64 @@ For the AWARE web event display
 }
 
 
-.event-leftbar {
-	width:4%;
+.column-label-4up {
+	box-sizing: border-box;
+	width: 23%;	
+	height:100%;
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+}
+
+
+.event-leftbar-2up {
+	width:6%;
+	height:210%;
+/*	background-color: red;	 */
+	float:left;
+}
+
+.event-leftbar-4up {
+	width:6%;
 	height:100%;
 /*	background-color: red;	 */
 	float:left;
 }
 
-.event-top-corner {	
+.event-top-corner-4up {	
 	width: 100%;
 	height: 5%;
 	float: left;
 }	
 
 
-.row-label {
+
+.event-top-corner-2up {	
+	width: 100%;
+	height: 2.5%;
+	float: left;
+}	
+
+
+.row-label-4up {
+        vertical-align:middle;	
 	box-sizing: border-box;
 	width: 100%;	
-	height:19%;
+	height:18%;
+	float: left;
+	padding: 100% 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+}
+
+
+
+.row-label-2up {
+        vertical-align:middle;
+	box-sizing: border-box;
+	width: 100%;	
+	height:8.7%;
 	float: left;
 	padding: 100% 0 0 0;
 	margin: 0px 0px 0px 0px;
@@ -142,26 +190,88 @@ text-align: center ;
 	 color: black;
 }
 
-.waveform-container {
-	box-sizing: border-box;
-	width: 23%;
-	height: 19%;
+.waveform-container-4up {
+	width: 22%;
+	height: 18%;
 	padding: 1px 1px 1px 1px;
 	margin: 0px 0px 0px 0px;
 	border: 1px solid #ddd;
 	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:20%;
+	max-width:90%
+	min-height:15%;
+	max-height:60%;
 }
 
+.leftCol-4up {
+	width: 22%;
+	height: 18%;
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:20%;
+	max-width:90%
+	min-height:15%;
+	max-height:60%;	
+}
+
+
+.waveform-container-2up {
+	width: 44%;
+	height: 18%;
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:20%;
+	max-width:90%
+	min-height:15%;
+	max-height:60%;
+}
+
+.leftCol-2up {
+	width: 44%;
+	height: 18%;
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:20%;
+	max-width:90%
+	min-height:15%;
+	max-height:60%;	
+}
+
+
+
 .waveform-placeholder {
-	width: 100%;
-	height: 100%;
-	font-size: 14px;
-	line-height: 14px;
+	padding: 0px;
+	width: 99%;
+	height: 99%;
 }
 
 .double {
-    width:  90%;
-    height: 60%;
+    width:  89%;
+    height: 40%;
+	padding: 1px 1px 1px 1px;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:20%;
+	max-width:90%
+	min-height:15%;
+	max-height:60%;	
 }
 
 .lastBox {
@@ -170,4 +280,8 @@ text-align: center ;
     padding: 10px;
     margin: 10px;
     text-align: center;
+}
+
+div#titleContainer {
+	height:150px;
 }
