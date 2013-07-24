@@ -36,7 +36,7 @@ form#scaleForm li, form#runForm li  {
         margin-left: -2em;
 }
 
-label {
+form#scaleForm label, form#runForm label  {
 float: left;
 }
 
@@ -111,6 +111,8 @@ For the AWARE web event display
 	padding: 0 0 0 0;
 	margin: 0px 0px 0px 0px;
 	background-color: snow;
+        text-align: center ;
+
 }
 
 
@@ -122,12 +124,14 @@ For the AWARE web event display
 	padding: 0 0 0 0;
 	margin: 0px 0px 0px 0px;
 	background-color: snow;
+        text-align: center ;
+
 }
 
 
 .event-leftbar-2up {
 	width:6%;
-	height:210%;
+	height:100%;
 /*	background-color: red;	 */
 	float:left;
 }
@@ -149,51 +153,57 @@ For the AWARE web event display
 
 .event-top-corner-2up {	
 	width: 100%;
-	height: 2.5%;
+	height: 5%;
 	float: left;
 }	
 
+.row-spacer {
+	width: 100%;	
+	height:45%;
+	float: left;
+}
+	
 
 .row-label-4up {
-        vertical-align:middle;	
 	box-sizing: border-box;
 	width: 100%;	
 	height:18%;
 	float: left;
-	padding: 100% 0 0 0;
+	padding: 2px 2px 2px 2px;
 	margin: 0px 0px 0px 0px;
 	background-color: snow;
+	 text-align: center ;
 }
 
 
 
 .row-label-2up {
-        vertical-align:middle;
 	box-sizing: border-box;
 	width: 100%;	
-	height:8.7%;
+	height:9%;
 	float: left;
-	padding: 100% 0 0 0;
+	padding: 2px 2px 2px 2px;
 	margin: 0px 0px 0px 0px;
 	background-color: snow;
+	 text-align: center ;
 }
 	
-h2.rowlabel {
+.rowlabel {	
          font-size:90%;
-	 text-align: center ;
 	 color: black;
 }
 
-h2.collabel {
-         font-size:90%;	 
-text-align: center ;
+.collabel {
+         display:inline-block;	
+         font-size:120%;	 
+         text-align: center ;
 	 color: black;
 }
 
 .waveform-container-4up {
+	box-sizing: border-box;
 	width: 22%;
 	height: 18%;
-	padding: 1px 1px 1px 1px;
 	margin: 0px 0px 0px 0px;
 	border: 1px solid #ddd;
 	float: left;
@@ -203,28 +213,13 @@ text-align: center ;
 	max-width:90%
 	min-height:15%;
 	max-height:60%;
-}
-
-.leftCol-4up {
-	width: 22%;
-	height: 18%;
-	padding: 1px 1px 1px 1px;
-	margin: 0px 0px 0px 0px;
-	border: 1px solid #ddd;
-	float: left;
-	resize:both;
-	overflow:hidden;
-	min-width:20%;
-	max-width:90%
-	min-height:15%;
-	max-height:60%;	
 }
 
 
 .waveform-container-2up {
+	box-sizing: border-box;
 	width: 44%;
-	height: 18%;
-	padding: 1px 1px 1px 1px;
+	height: 9%;
 	margin: 0px 0px 0px 0px;
 	border: 1px solid #ddd;
 	float: left;
@@ -234,21 +229,6 @@ text-align: center ;
 	max-width:90%
 	min-height:15%;
 	max-height:60%;
-}
-
-.leftCol-2up {
-	width: 44%;
-	height: 18%;
-	padding: 1px 1px 1px 1px;
-	margin: 0px 0px 0px 0px;
-	border: 1px solid #ddd;
-	float: left;
-	resize:both;
-	overflow:hidden;
-	min-width:20%;
-	max-width:90%
-	min-height:15%;
-	max-height:60%;	
 }
 
 

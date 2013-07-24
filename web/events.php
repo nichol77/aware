@@ -100,6 +100,7 @@ header("Connection: keep-alive");
 
 
       $('#instrumentForm').change(function() {
+				    setEventIndexOnForm(0);
 				    runAlreadySet=false;
 				    updateLastRun(true);
 				    readEventLayout();

@@ -510,7 +510,7 @@ function fillEventDivWithWaveformContainers(chanArray,containerLabel)
   eventLeftbar.append("<div class=\"event-top-corner-"+containerLabel+"\" id=\"event-top-corner\"></div>");
   for(var row=0;row<nRows;row++) {
       var divName2="event-row"+row;
-      eventLeftbar.append("<div class=\"row-label-"+containerLabel+"\" id=\""+divName2+"\"><h2 class=\"rowlabel\">"+fRowLabels[row]+"</h2></div>");
+      eventLeftbar.append("<div class=\"row-label-"+containerLabel+"\" id=\""+divName2+"\"><div class=\"row-spacer\"></div><div class=\"rowlabel\"><h2>"+fRowLabels[row]+"</h2></div></div>");
   }
 
 
@@ -530,13 +530,8 @@ function fillEventDivWithWaveformContainers(chanArray,containerLabel)
 //        if(col==0) width=26;
 //        var height=10;		   
 //        //if(row==4) height=19;
-       var contName="waveform-container"+chanInd;
-       if(col==0) {
-	   eventDiv.append("<div class=\"waveform-container-"+containerLabel+" leftCol-"+containerLabel+"\" id=\""+contName+"\"><div id=\"divChan"+chanInd+"\" class=\"waveform-placeholder\" ></div></div>");
-       } 
-       else {
-	   eventDiv.append("<div class=\"waveform-container-"+containerLabel+"\" id=\""+contName+"\"><div id=\"divChan"+chanInd+"\" class=\"waveform-placeholder\" ></div></div>");
-       }
+      var contName="waveform-container"+chanInd;
+      eventDiv.append("<div class=\"waveform-container-"+containerLabel+"\" id=\""+contName+"\"><div id=\"divChan"+chanInd+"\" class=\"waveform-placeholder\" ></div></div>");
 
   }
 }
