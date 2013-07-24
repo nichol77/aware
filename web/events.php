@@ -113,6 +113,14 @@ header("Connection: keep-alive");
 				readEventLayout();
 			      });
 
+      $('#eventIndexInput').change(function() {
+				     drawPlot();
+				   });
+
+      $('#eventNumberInput').change(function() {
+				      getEventIndexFromNumber(drawPlot);
+				   });
+
 });  
 
 </script>

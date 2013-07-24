@@ -73,21 +73,29 @@ echo "<li>";
 echo "<label>Run:</label>";
 echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:drawPlot();\" >";
 echo "</li>";
+
 echo "<li>";
 $eventIndex=$_GET["eventIndex"];
 if($_GET["eventIndex"] === null) {
   $eventIndex=0;
  }
-echo "<form name=\"eventForm\"   id=\"eventForm\" action=\"\">";		
-echo "<label>Index:</label> <input type=\"number\" name=\"eventInput\" id=\"eventInput\" value=\"$eventIndex\" step =\"1\" onchange=\"javascript:drawPlot();\">";
+$eventNumber=$_GET["eventNumber"];
+if($_GET["eventNumber"] === null) {
+  $eventNumber=0;
+ }		
+echo "<label>Index:</label> <input type=\"number\" name=\"eventIndexInput\" id=\"eventIndexInput\" value=\"$eventIndex\" step =\"1\" >";
+echo "<label>Number:</label> <input type=\"number\" name=\"eventNumberInput\" id=\"eventNumberInput\" value=\"$eventNumber\" step =\"1\" >";
 echo '<button type="button" value="Previous" onclick="javascript:getPreviousEvent(drawPlot);">Previous</button>';
 echo '<button type="button" value="Next" onclick="javascript:getNextEvent(drawPlot);">Next</button>';
 echo "</li>";
+
+
+
 echo "<li>";
 echo "<input id='playButton' type='button' value='Play' onclick='javascript:playEvents();'>";
 echo "</li>";
 echo "<li>";
-echo "<label>Speed:</label><input id='speedSlide' type='range' value='10' min='1' max='100'>";
+echo "<label>Speed:</label><input id='speedSlide' type='range' value='10' min='1' max='1000'>";
 echo "</li>";
 ?>
 </ul>

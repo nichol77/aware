@@ -97,9 +97,22 @@ function setLastRun(thisRun) {
 } 
 
 function getEventIndexFromForm() {
-    eventIndex=document.getElementById("eventInput").value;
+    eventIndex=document.getElementById("eventIndexInput").value;
     return eventIndex;
 } 
+
+function setEventIndexOnForm(evNum) {
+    document.getElementById("eventIndexInput").value=evNum;
+} 
+
+function getEventNumberFromForm() {
+    return document.getElementById("eventNumberInput").value;
+} 
+
+function setEventNumberOnForm(evNum) {
+    document.getElementById("eventNumberInput").value=evNum;
+} 
+
 
 function getNextRun(nextFunction) {
     runNumber=document.getElementById("runInput").value;
@@ -119,14 +132,14 @@ function getPreviousRun(nextFunction) {
 function getNextEvent(nextFunction) {
     eventIndex=getEventIndexFromForm();
     eventIndex++;
-    document.getElementById("eventInput").value=eventIndex;
+    document.getElementById("eventIndexInput").value=eventIndex;
     nextFunction();
 }
 
 function getPreviousEvent(nextFunction) {
-    eventIndex=document.getElementById("eventInput").value;
+    eventIndex=document.getElementById("eventIndexInput").value;
     eventIndex--;
-    document.getElementById("eventInput").value=eventIndex;
+    document.getElementById("eventIndexInput").value=eventIndex;
     nextFunction();
 }
 
@@ -208,10 +221,10 @@ function getRunInstrumentDateAndEvent(plotFunc) {
     });
 }
 
+
 function getEventNumberAndPlot(plotFunc) {
     var eventIndex=getEventIndexFromForm();
     var eventListFile=getEventListName(instrumentName,runNumber,year,datecode);
-
 
     function handleEventList(jsonObject) {
 	for(var i=0;i<jsonObject.eventList.length;i++) {
@@ -219,6 +232,7 @@ function getEventNumberAndPlot(plotFunc) {
 	}
 	
 	eventNumber=eventList[eventIndex];
+	setEventNumberOnForm(eventNumber);
 	plotFunc();
     
     }
@@ -237,8 +251,38 @@ function getEventNumberAndPlot(plotFunc) {
 	eventNumber=eventList[eventIndex];
 	plotFunc();	
     }
+}
 
 
+function getEventIndexFromNumber(plotFunc) {
+    var eventNumber=getEventNumberFromForm();
+    var eventListFile=getEventListName(instrumentName,runNumber,year,datecode);
+    
+    function handleEventList(jsonObject) {
+	setEventIndexOnForm(0);
+	for(var i=0;i<jsonObject.eventList.length;i++) {
+	    if(jsonObject.eventList[i]==eventNumber) {
+		setEventIndexOnForm(i);
+		break;
+	    }
+	}
+	plotFunc();	
+    }
+
+    if(gotEventListForRun!=runNumber) {
+	eventList = new Array();
+
+	$.ajax({
+	    url: eventListFile,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleEventList
+	});	
+    }
+    else {
+	eventNumber=eventList[eventIndex];
+	plotFunc();	
+    }
 }
 
 
