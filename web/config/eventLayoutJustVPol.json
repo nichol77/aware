@@ -1,0 +1,9 @@
+{
+	"numRows" : 4,
+	"numCols" : 2,
+	"containerLabel" : "4x2up",
+	"rowLabels" : ["TV","TV","BV","BV"],
+	"colLabels" : ["S1/3","S2/4"],
+	"chanOrder" : [[0,4],[8,12],[1,5],[9,13]],
+	"chanScale" : [0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,2,2,2,2]
+}

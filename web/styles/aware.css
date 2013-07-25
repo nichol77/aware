@@ -91,101 +91,34 @@ DIV.other {
 For the AWARE web event display
 */
 
-.event-topbar-2up {
+.event-top-corner  {	
+	width: 100%;
+	height: 5%;
+	float: left;
+}
+
+
+.event-topbar {
 	width:96%;
 	height:5%;
 /*	background-color: red;	*/
 }
 
-.event-topbar-4up {
-	width:96%;
-	height:5%;
-/*	background-color: red;	*/
-}
-
-.column-label-2up {
-	box-sizing: border-box;
-	width: 45.5%;	
-	height:100%;
-	float: left;
-	padding: 0 0 0 0;
-	margin: 0px 0px 0px 0px;
-	background-color: snow;
-        text-align: center ;
-
-}
 
 
-.column-label-4up {
-	box-sizing: border-box;
-	width: 23%;	
-	height:100%;
-	float: left;
-	padding: 0 0 0 0;
-	margin: 0px 0px 0px 0px;
-	background-color: snow;
-        text-align: center ;
-
-}
-
-
-.event-leftbar-2up {
+.event-leftbar {
 	width:6%;
 	height:100%;
 /*	background-color: red;	 */
 	float:left;
 }
 
-.event-leftbar-4up {
-	width:6%;
-	height:100%;
-/*	background-color: red;	 */
-	float:left;
-}
 
-.event-top-corner-4up {	
-	width: 100%;
-	height: 5%;
-	float: left;
-}	
-
-
-
-.event-top-corner-2up {	
-	width: 100%;
-	height: 5%;
-	float: left;
-}	
 
 .row-spacer {
 	width: 100%;	
 	height:45%;
 	float: left;
-}
-	
-
-.row-label-4up {
-	box-sizing: border-box;
-	width: 100%;	
-	height:18%;
-	float: left;
-	padding: 2px 2px 2px 2px;
-	margin: 0px 0px 0px 0px;
-	background-color: snow;
-	 text-align: center ;
-}
-
-
-
-.row-label-2up {
-	box-sizing: border-box;
-	width: 100%;	
-	height:9%;
-	float: left;
-	padding: 2px 2px 2px 2px;
-	margin: 0px 0px 0px 0px;
-	background-color: snow;
-	 text-align: center ;
 }
 	
 .rowlabel {	
@@ -200,7 +133,52 @@ For the AWARE web event display
 	 color: black;
 }
 
-.waveform-container-4up {
+
+
+.waveform-placeholder {
+	padding: 0px;
+	width: 99%;
+	height: 99%;
+}
+
+
+
+.column-label-5x4up {
+	box-sizing: border-box;
+	width: 23%;	
+	height:100%;
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+        text-align: center ;
+
+}
+
+.row-label-4x2up {
+		box-sizing: border-box;
+	width: 100%;	
+	height:18%;
+	float: left;
+	padding: 2px 2px 2px 2px;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+	 text-align: center ;
+}
+
+.row-label-5x4up {
+		box-sizing: border-box;
+	width: 100%;	
+	height:18%;
+	float: left;
+	padding: 2px 2px 2px 2px;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+	 text-align: center ;
+}
+	
+
+.waveform-container-5x4up {
 	box-sizing: border-box;
 	width: 22%;
 	height: 18%;
@@ -216,7 +194,47 @@ For the AWARE web event display
 }
 
 
-.waveform-container-2up {
+.column-label-4x2up {
+
+	box-sizing: border-box;
+	width: 45.5%;	
+	height:100%;
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+        text-align: center ;
+
+}
+.column-label-10x2up  {
+	box-sizing: border-box;
+	width: 45.5%;	
+	height:100%;
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+        text-align: center ;
+
+}
+
+
+
+.row-label-10x2up {
+	box-sizing: border-box;
+	width: 100%;	
+	height:9%;
+	float: left;
+	padding: 2px 2px 2px 2px;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+	 text-align: center ;
+}
+	
+
+
+
+.waveform-container-10x2up {
 	box-sizing: border-box;
 	width: 44%;
 	height: 9%;
@@ -232,12 +250,21 @@ For the AWARE web event display
 }
 
 
-
-.waveform-placeholder {
-	padding: 0px;
-	width: 99%;
-	height: 99%;
+.waveform-container-4x2up {
+	box-sizing: border-box;
+	width: 44%;
+	height: 18%;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:20%;
+	max-width:90%
+	min-height:15%;
+	max-height:60%;
 }
+
 
 .double {
     width:  89%;
@@ -255,6 +282,7 @@ For the AWARE web event display
 }
 
 .lastBox {
+    width:70%;
     border-radius: 15px;
     background-color: greenyellow;
     padding: 10px;

@@ -21,11 +21,13 @@ var year=2013;
 var datecode=123;
 var nRows=5;
 var nCols=4;
+var nChans=20;
+var nScaleGroups=0;
 var fRowLabels;
 var fColLabels;
 var playVar;
 var chanRowColArray;
-var chanToRow;
+var chanToScaleGroup;
 
 function blankAxisFormatter(v, xaxis) {
     return " ";
@@ -76,6 +78,7 @@ function reduceWaveformSamples(channelData,evenSamples,maxV2Samples) {
 function setRowsAndCols(row,col,rowLabels,colLabels) {
     nRows=row;
     nCols=col;
+    nChans=nRows*nCols;
     fRowLabels=rowLabels;
     fColLabels=colLabels;
 }
@@ -298,7 +301,7 @@ function eventPlotter() {
 	var titleContainer = $("#titleContainer"); 
 //	titleContainer.append("<p>This event has "+jsonObject.event.numChannels+" channels.</p>");
 
-	for (var i=0;i<20;i++) 
+	for (var i=0;i<nChans;i++) 
 	    {
 		var plotCan=$("#"+"divChan"+i);
 		plotCan.empty();
@@ -314,9 +317,14 @@ function eventPlotter() {
 	var dataChanArray = new Array();
 	//	for(var row=0;row<nRows;row++) {
 	//	    for(var col=0;col<nCols;col++) {		
-	for(var chan=0; chan<jsonObject.event.numChannels; chan++) {
+
+	for(var i=0; i<nChans; i++) {
+	    
+	    var row=Math.floor(i/nCols);
+	    var col=(i%nCols);
+	    var chan=chanRowColArray[row][col];
 	    //	    var row=Math.floor(chan/nCols);
-	    var row=chanToRow[chan];
+	    var scaleGroup=chanToScaleGroup[chan];
 	    //	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
 	    //	    var chan=chanRowColArray[row][col];
 	    var dataArray = new Array();
@@ -325,28 +333,34 @@ function eventPlotter() {
 		var time=Number((samp*jsonObject.event.channelList[chan].deltaT));
 		var value=Number(jsonObject.event.channelList[chan].data[samp]);		
 		dataArray.push([time,value]);
-		if(value>yMax[row]) yMax[row]=value;
-		if(value<yMin[row]) yMin[row]=value;
+		if(value>yMax[scaleGroup]) yMax[scaleGroup]=value;
+		if(value<yMin[scaleGroup]) yMin[scaleGroup]=value;
 		
 	    }
 	    dataChanArray.push(dataArray);
 	}
 	//	}
-	for(var row=0;row<nRows;row++) {
-	    if(yMax[row]>-1*yMin[row]) yMin[row]=-1*yMax[row];
-	    else yMax[row]=-1*yMin[row];
+	for(var scaleGroup=0;scaleGroup<nScaleGroups;scaleGroup++) {
+	    if(yMax[scaleGroup]>-1*yMin[scaleGroup]) yMin[scaleGroup]=-1*yMax[scaleGroup];
+	    else yMax[scaleGroup]=-1*yMin[scaleGroup];
 	}
 
-	for(var chan=0; chan<jsonObject.event.numChannels; chan++) {
+	for(var i=0; i<nChans; i++) {
+	    
+	    var row=Math.floor(i/nCols);
+	    var col=(i%nCols);
+	    var chan=chanRowColArray[row][col];
+	    
+
 	    //	    var row=Math.floor(chan/nCols);
-	    var row=chanToRow[chan];
+	    var scaleGroup=chanToScaleGroup[chan];
 	    //	    var col=chan%nCols;
 	    var divName="divChan"+chan;
 	    var contName="waveform-container"+chan;
 	    var grLabel="RFCHAN"+chan;  ///Need to fix this
 
-	    //	    plotSingleChannel(divName,contName,jsonObject.event.channelList[chan].data,yMin[row],yMax[row],grLabel);
-	    plotSingleChannel(divName,contName,dataChanArray[chan],yMin[row],yMax[row],grLabel);
+	    //	    plotSingleChannel(divName,contName,jsonObject.event.channelList[chan].data,yMin[scaleGroup],yMax[scaleGroup],grLabel);
+	    plotSingleChannel(divName,contName,dataChanArray[i],yMin[scaleGroup],yMax[scaleGroup],grLabel);
 	}
 
     }
@@ -487,49 +501,39 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel) 
 
 }
 
-function fillEventDivWithWaveformContainers(chanArray,containerLabel)
+function fillEventDivWithWaveformContainers(chanArray,containerLabel,chanScale)
 {
 
-    chanToRow = new Array(nRows*nCols);
-    chanRowColArray=chanArray;
-    for(var row=0;row<nRows;row++) {
-	for(var col=0;col<nCols;col++) {
-	    var chan=chanRowColArray[row][col];
-	    chanToRow[chan]=row;
-	}
+    chanToScaleGroup = new Array(chanScale.length);
+    chanRowColArray=chanArray;    
+    for(var i=0;i<chanScale.length;i++) {
+	chanToScaleGroup[i]=chanScale[i];
+	if(chanScale[i]>(nScaleGroups-1)) nScaleGroups=chanScale[i]+1;
     }
-    
-    //    for(var chan=0;chan<chanToRow.length;chan++) {
-    //	$('#debugContainer').append("<p>"+chan+" "+chanToRow[chan]+"</p>");
-    //    }
 
 //Get hold of the divEvent object and fill it with a table of divs for the event display
   var eventDiv = $("#divEvent");
-  eventDiv.append("<div class=\"event-leftbar-"+containerLabel+"\" id=\"event-leftbar\"></div>");
+  eventDiv.append("<div class=\"event-leftbar\" id=\"event-leftbar\"></div>");
   var eventLeftbar=$("#event-leftbar");
-  eventLeftbar.append("<div class=\"event-top-corner-"+containerLabel+"\" id=\"event-top-corner\"></div>");
+  eventLeftbar.append("<div class=\"event-top-corner\" id=\"event-top-corner\"></div>");
   for(var row=0;row<nRows;row++) {
       var divName2="event-row"+row;
       eventLeftbar.append("<div class=\"row-label-"+containerLabel+"\" id=\""+divName2+"\"><div class=\"row-spacer\"></div><div class=\"rowlabel\"><h2>"+fRowLabels[row]+"</h2></div></div>");
   }
 
 
-  eventDiv.append("<div class=\"event-topbar-"+containerLabel+"\" id=\"event-topbar\"></div>");
+  eventDiv.append("<div class=\"event-topbar\" id=\"event-topbar\"></div>");
   var eventTopbar= $("#event-topbar");
   for(var col=0;col<nCols;col++) {
       var divName="event-col"+col;
       eventTopbar.append("<div class=\"column-label-"+containerLabel+"\" id=\""+divName+"\"><h2 class=\"collabel\">"+fColLabels[col]+"</h2></div>");
   }
 
-  for (var i=0;i<20;i++) 
+  for (var i=0;i<nChans;i++) 
   {
       var row=Math.floor(i/nCols);
       var col=(i%nCols);
       var chanInd=chanRowColArray[row][col];
-//        var width=24;		  
-//        if(col==0) width=26;
-//        var height=10;		   
-//        //if(row==4) height=19;
       var contName="waveform-container"+chanInd;
       eventDiv.append("<div class=\"waveform-container-"+containerLabel+"\" id=\""+contName+"\"><div id=\"divChan"+chanInd+"\" class=\"waveform-placeholder\" ></div></div>");
 

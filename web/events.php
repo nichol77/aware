@@ -54,7 +54,7 @@ header("Connection: keep-alive");
 	function actuallyReadEventLayout(jsonObject) {
 	$('#divEvent').empty();
 	  setRowsAndCols(jsonObject.numRows,jsonObject.numCols,jsonObject.rowLabels,jsonObject.colLabels);
-	  fillEventDivWithWaveformContainers(jsonObject.chanOrder,jsonObject.containerLabel);
+	  fillEventDivWithWaveformContainers(jsonObject.chanOrder,jsonObject.containerLabel,jsonObject.chanScale);
 	  drawPlot();
 	  
 	}
