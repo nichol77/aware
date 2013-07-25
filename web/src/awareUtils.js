@@ -81,4 +81,48 @@ function getEventListName(instrument, run, year, datecode) {
     return name;
 }
 
+function ajaxLoadingLog(urlName) {
+    if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>Loading... "+urlName+"</p>");
+}
 
+function ajaxLoadedLog(urlName) {    
+    if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>Loaded... "+urlName+"</p>");
+}
+
+
+function handleAjaxError(jqXHR, exception) {
+    
+    var canContainer = $("#titleContainer"); 
+    var debugContainer = $("#debugContainer"); 
+    if (jqXHR.status === 0) {
+        canContainer.append('Not connect.\n Verify Network.');
+	if($('#debugContainer').is(":visible"))
+	    debugContainer.append('Not connect.\n Verify Network.');
+    } else if (jqXHR.status == 404) {
+        canContainer.append('Requested page not found. [404]');
+	if($('#debugContainer').is(":visible"))
+	    debugContainer.append('Requested page not found. [404]');
+    } else if (jqXHR.status == 500) {
+        canContainer.append('Internal Server Error [500].');
+	if($('#debugContainer').is(":visible"))
+	    debugContainer.append('Internal Server Error [500].');
+    } else if (exception === 'parsererror') {
+        canContainer.append('Requested JSON parse failed.');
+	if($('#debugContainer').is(":visible"))
+	    debugContainer.append('Requested JSON parse failed.');
+    } else if (exception === 'timeout') {
+        canContainer.append('Time out error.');
+	if($('#debugContainer').is(":visible"))
+	    debugContainer.append('Time out error.');
+    } else if (exception === 'abort') {
+            canContainer.append('Ajax request aborted.');
+	    if($('#debugContainer').is(":visible"))
+		debugContainer.append('Ajax request aborted.');
+    } else {
+        canContainer.append('Uncaught Error.\n' + jqXHR.responseText);
+	if($('#debugContainer').is(":visible"))
+	    debugContainer.append('Uncaught Error.\n' + jqXHR.responseText);
+    }
+}

@@ -121,6 +121,8 @@ header("Connection: keep-alive");
       $('#eventNumberInput').change(function() {
 				      getEventIndexFromNumber(drawPlot);
 				   });
+      $('#debugContainer').hide();
+
 
 });  
 
@@ -137,13 +139,9 @@ header("Connection: keep-alive");
 </DIV>
 <DIV class=middle>
 <DIV class=content>
-
-<div id="debugContainer"></div>
 <div id="titleContainer"></div>
 <div id="divEvent" style="width:100%; height:85%; padding: 0px; float : left;"></div>
-
-<p id="choices" style=""></p>
-</div>
+<div id="debugContainer"></div>
 
 
 </div></div>

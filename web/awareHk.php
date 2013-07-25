@@ -331,6 +331,7 @@ header("Connection: keep-alive");
       updateHkType(hkType);
       if(!runAlreadySet) updateLastRun(true);
 
+      $('#debugContainer').hide();
 
       //      drawPlot();
   });  
@@ -349,7 +350,6 @@ header("Connection: keep-alive");
 <DIV class=middle>
 <DIV class=content>
 
-<div id="debugContainer"></div>
 <div id="titleContainer"></div>
 <div id="divTime" style="width:90%; height:50%; padding: 0px; float : left;"></div>
 <div id="divLabel" style="width:10%; height:50%; padding: 0px; float : right;"></div>
@@ -360,6 +360,7 @@ header("Connection: keep-alive");
 <p id="choices" style=""></p>
 </div>
 
+<div id="debugContainer"></div>
 
 </div></div>
 

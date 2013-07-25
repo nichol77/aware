@@ -539,7 +539,7 @@ function simpleHkPlotDrawer() {
 	type: "GET",
 	dataType: "json", 
 	success: handleHkTimeJsonFile,
-	error: handleAjaxFileError
+	error: handleAjaxError
     }); 
     
 }
@@ -570,7 +570,7 @@ function fullHkPlotDrawer() {
 	type: "GET",
 	dataType: "json",
 	success: handleHkTimeJsonFile,
-	error: handleAjaxFileError
+	error: handleAjaxError
     }); 
     
 }
@@ -640,7 +640,7 @@ function fetchFullHkTime(varNameKey) {
 	type: "GET",
 	dataType: "json",
 	success: handleFullHkTimeJsonFile,
-	error: handleAjaxFileError
+	error: handleAjaxError
     }); 
 }
 
@@ -675,7 +675,7 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 	type: "GET",
 	dataType: "json",
 	success: handleRunList,
-	error: handleAjaxFileError
+	error: handleAjaxError
     });
 }
 

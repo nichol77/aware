@@ -197,6 +197,8 @@ function plotEvent() {
     getRunInstrumentDateAndEvent(getEventNumberAndPlot);
 }
 
+
+
 function getRunInstrumentDateAndEvent(plotFunc) {
     setDatecode=0;
     runNumber=getRunFromForm();  
@@ -216,11 +218,18 @@ function getRunInstrumentDateAndEvent(plotFunc) {
 	}
     }
     
+
+    ajaxLoadingLog(runListFile);
     $.ajax({
-	url: runListFile,
-	type: "GET",
-	dataType: "json",
-	success: handleRunList
+	    url: runListFile,
+		type: "GET",
+		dataType: "json",
+		success: function(data) {
+		//Log the loadingf of the file
+		ajaxLoadedLog(runListFile);
+		handleRunList(data);
+	        },
+		error: handleAjaxError
     });
 }
 
@@ -243,11 +252,16 @@ function getEventNumberAndPlot(plotFunc) {
     if(gotEventListForRun!=runNumber) {
 	eventList = new Array();
 
+	ajaxLoadingLog(eventListFile);
 	$.ajax({
 	    url: eventListFile,
 	    type: "GET",
 	    dataType: "json",
-	    success: handleEventList
+		    success: function(data) {
+		    ajaxLoadedLog(eventListFile);
+		    handleEventList(data);
+		},
+		    error: handleAjaxError
 	});	
     }
     else {
@@ -275,12 +289,17 @@ function getEventIndexFromNumber(plotFunc) {
     if(gotEventListForRun!=runNumber) {
 	eventList = new Array();
 
+	ajaxLoadingLog(eventListFile);
 	$.ajax({
-	    url: eventListFile,
-	    type: "GET",
-	    dataType: "json",
-	    success: handleEventList
-	});	
+		url: eventListFile,
+		    type: "GET",
+		    dataType: "json",
+		    success: function(data) {
+		    ajaxLoadedLog(eventListFile);
+		    handleEventList(data);
+		},
+		    error: handleAjaxError
+		    });	
     }
     else {
 	eventNumber=eventList[eventIndex];
@@ -365,11 +384,16 @@ function eventPlotter() {
 
     }
 
+    ajaxLoadingLog(eventUrl);
     $.ajax({
-	url: eventUrl,
-	type: "GET",
-	dataType: "json",
-	success: handleEventJsonFile
+	    url: eventUrl,
+		type: "GET",
+		dataType: "json",
+		success: function(data) {
+		ajaxLoadedLog(eventUrl);
+		handleEventJsonFile(data);
+	    },
+		error : handleAjaxError
     }); 
     
 }
