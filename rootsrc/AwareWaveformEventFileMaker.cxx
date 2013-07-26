@@ -50,9 +50,11 @@ void AwareWaveformEventFileMaker::addVariableToEvent(const char *varKey, int var
 
 void AwareWaveformEventFileMaker::addChannelToFile(TGraph *grChannel, Int_t grId, const char *grLabel)
 {
-  fGraphMap.insert(std::pair<Int_t,TGraph*>(grId,grChannel));
-  std::string fLabel(grLabel);
-  fGraphLabelMap.insert(std::pair<Int_t,std::string>(grId,fLabel));
+   char newLabel[20];
+   strncpy(newLabel,grLabel,20);
+   fGraphMap.insert(std::pair<Int_t,TGraph*>(grId,grChannel));
+   std::string fLabel(grLabel);
+   fGraphLabelMap.insert(std::pair<Int_t,std::string>(grId,fLabel));
 }
 
 void AwareWaveformEventFileMaker::writeFile()
@@ -87,7 +89,7 @@ void AwareWaveformEventFileMaker::writeFile()
   int firstChannel=1;
 
   std::map<Int_t,TGraph *>::iterator graphIt=fGraphMap.begin();
-  std::map<Int_t,std::string>::iterator labelIt=fGraphLabelMap.end();
+  std::map<Int_t,std::string>::iterator labelIt=fGraphLabelMap.begin();
   for(;graphIt!=fGraphMap.end();graphIt++ , labelIt++) {
     if(!firstChannel) fEventFile << ",\n";
     fEventFile << "{\n";
@@ -96,9 +98,10 @@ void AwareWaveformEventFileMaker::writeFile()
     Int_t numPoints=graphIt->second->GetN();
     Double_t deltaT=xVals[numPoints-1]-xVals[0];
     deltaT/=(numPoints-1);
-
-    //    fEventFile << "\"label\": \"" << labelIt->second << "\",\n";
+    //    std::cerr << "\"label\": \"" << labelIt->second.c_str() << "\",\n";
+    fEventFile << "\"label\": \"" << labelIt->second.c_str() << "\",\n";
     fEventFile << "\"deltaT\": " << deltaT << ",\n";
+    fEventFile << "\"t0\": " << xVals[0] << ",\n";
     fEventFile << "\"data\": [\n";
     Double_t *yVals = graphIt->second->GetY();
 

@@ -365,7 +365,7 @@ function actuallyDrawTheStuff() {
     var options = {
 	aware: {zoom:false},
 	yaxis: { },
-	xaxis: {mode: "time"},
+	xaxis: {mode: "time", timezone:"UTC"},
 	lines: { show: false },
 	points: { show: true   },
 	legend:{container: $("#divLabel")},
