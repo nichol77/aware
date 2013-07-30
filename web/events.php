@@ -69,7 +69,7 @@ header("Connection: keep-alive");
       function readEventLayout() {	
 	function actuallyReadEventLayout(jsonObject) {
 	  setupEventDisplay(jsonObject);
-	  drawPlot();
+	  plotEvent();
 	  
 	}	
 	eventLayout=getLayoutFromForm();
@@ -121,22 +121,22 @@ header("Connection: keep-alive");
 			      });
 
       $('#waveformForm').change(function() {
-				  drawPlot();
+				  plotEvent();
 			      });
 
       $('#eventIndexInput').change(function() {
-				     drawPlot();
+				     plotEvent();
 				   });
 
       $('#eventNumberInput').change(function() {
-				      getEventIndexFromNumber(drawPlot);
+				      getEventIndexFromNumber(plotEvent);
 				   });
       $('#debugContainer').hide();
 
 
 
       $('#includeCables').change(function() {
-				   drawPlot();
+				   plotEvent();
 				 });
 
       $('#xAutoScale').change(function() {
@@ -154,7 +154,7 @@ header("Connection: keep-alive");
 
 
       $('#refreshButton').click(function() {
-				  drawPlot();
+				  plotEvent();
 				});
 
 

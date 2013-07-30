@@ -1,16 +1,16 @@
-//////////////////////////////////////////////////////////////////////////////
-/////                                                                    /////
-/////   awareEvent.js                                                    /////
-/////                                                                    /////
-/////   Simple javascript for getting event data in JSON format          /////
-/////   and plotting using the flot library.                             /////
-/////                                                                    /////
-/////   March 2013, r.nichol@ucl.ac.uk                                   /////
-//////////////////////////////////////////////////////////////////////////////
+/**
+ * A simple javascript module for displaying waveform event data using the Flot library
+ * @module awareEvent 
+ * @author Ryan Nichol <r.nichol@ucl.ac.uk>
+ */
 
 
 
-/* Globals */
+
+/**
+ * The AwareEvent namespace
+ * @namespace
+ */
 var AwareEvent = {};
 
 AwareEvent.eventList;
@@ -30,21 +30,24 @@ AwareEvent.showXaxis;
 AwareEvent.showYaxis;
 
 
-function blankAxisFormatter(v, xaxis) {
-    return " ";
-}
-
-
-
+/**
+ * Thie timeSortData is a sorting algorithm which is used to sort arrays by time.
+ */
 function timeSortData(a,b) {
     return a[0]-b[0];
 }
 
+/**
+ * Thie voltageSortData is a sorting algorithm which is used to sort arrays by voltage.
+ */
 function voltageSortData(a,b) {
     return b[1]-a[1];
 }
 
 
+/**
+ * The reduceWaveformSamples function is @deprecated
+ */
 function reduceWaveformSamples(channelData,evenSamples,maxV2Samples) {
     //channel data is an array of [time,voltage] numbers
     //this function will return a similar array which has been trimmed
@@ -76,6 +79,9 @@ function reduceWaveformSamples(channelData,evenSamples,maxV2Samples) {
 }
 
 
+/**
+ * One of the UI interface functions that defines the grid of waveforms and the labels
+ */
 function setRowsAndCols(row,col,rowLabels,colLabels) {
     AwareEvent.nRows=row;
     AwareEvent.nCols=col;
@@ -86,38 +92,67 @@ function setRowsAndCols(row,col,rowLabels,colLabels) {
 
 
 
-///Here are the UI thingies
+/**
+ * The UI interface function that gets the run from the runInput form.
+ * @returns {number}
+ */
 function getRunFromForm() {
     return document.getElementById("runInput").value;
     //    return AwareEvent.runNumber;
 } 
 
+/**
+ * The UI interface function that sets the run on the runInput form.
+ */
 function setRunOnForm(thisRun) {
     document.getElementById("runInput").value=thisRun;
 } 
 
+
+/**
+ * The UI interface function that sets the maximum run on the runInput form.
+ */
 function setLastRun(thisRun) {
     document.getElementById("runInput").max=thisRun;
 } 
 
+
+/**
+ * The UI interface function that gets the event index from the eventIndexInput form.
+ * @returns {number}
+ */
 function getEventIndexFromForm() {
     eventIndex=document.getElementById("eventIndexInput").value;
     return eventIndex;
 } 
 
+
+/**
+ * The UI interface function that sets the event index on the eventIndexInput form.
+ */
 function setEventIndexOnForm(evNum) {
     document.getElementById("eventIndexInput").value=evNum;
 } 
 
+/**
+ * The UI interface function that gets the event number from the eventNumberInput form.
+ * @returns {number}
+ */
 function getEventNumberFromForm() {
     return document.getElementById("eventNumberInput").value;
 } 
 
+
+/**
+ * The UI interface function that sets the event number on the eventNumberInput form.
+ */
 function setEventNumberOnForm(evNum) {
     document.getElementById("eventNumberInput").value=evNum;
 } 
 
-
+/**
+ * The UI interface function that gets the next run and then executes nextFunction, which is typically to draw the event
+ */
 function getNextRun(nextFunction) {
     var runNumber=document.getElementById("runInput").value;
     runNumber++;
@@ -125,6 +160,10 @@ function getNextRun(nextFunction) {
     nextFunction();
 }
 
+
+/**
+ * The UI interface function that gets the previous run and then executes nextFunction, which is typically to draw the event
+ */
 function getPreviousRun(nextFunction) {
     var runNumber=document.getElementById("runInput").value;
     runNumber--;
@@ -133,6 +172,9 @@ function getPreviousRun(nextFunction) {
 }
 
 
+/**
+ * The UI interface function that gets the next event and then executes nextFunction, which is typically to draw the event
+ */
 function getNextEvent(nextFunction) {
     eventIndex=getEventIndexFromForm();
     eventIndex++;
@@ -140,6 +182,10 @@ function getNextEvent(nextFunction) {
     nextFunction();
 }
 
+
+/**
+ * The UI interface function that gets the previous event and then executes nextFunction, which is typically to draw the event
+ */
 function getPreviousEvent(nextFunction) {
     eventIndex=document.getElementById("eventIndexInput").value;
     eventIndex--;
@@ -147,6 +193,10 @@ function getPreviousEvent(nextFunction) {
     nextFunction();
 }
 
+
+/**
+ * The UI interface function that is executed when the play button is pressed. The code executes getNextEvent at am interval specified by the speedSlide form.
+ */
 function playEvents() {
    if(document.getElementById("playButton").value=='Play') {
       document.getElementById("playButton").value='Stop';
@@ -159,43 +209,81 @@ function playEvents() {
    }
 }
 
+
+
+/**
+ * The UI interface function that gets the event layout from the layoutForm.
+* @returns {string}
+ */
 function getLayoutFromForm() {
     return document.getElementById("layoutForm").value;
 }
 
 
+/**
+ * The UI interface function that gets the waveform type from the waveformForm.
+* @returns {string}
+ */
 function getWaveformTypeFromForm() {
     return document.getElementById("waveformForm").value;
 }
 
 
+/**
+ * The UI interface function that gets the instrument name from the instrumentForm.
+* @returns {string}
+ */
 function getInstrumentNameFromForm() {
     return document.getElementById("instrumentForm").value;
 }
 
 
+/**
+ * The UI interface function that checks if the includeCables box is checked to determine if cable delays should be subtracted
+* @returns {boolean}
+ */
 function isCableDelaysChecked() {
     return document.getElementById("includeCables").checked;
 }
 
 
+/**
+ * The UI interface function that checks if the xAutoScale box is checked to determine if the x scale should be set automatically or user determined.
+* @returns {boolean}
+ */
 function getXAutoScale() {
     return document.getElementById("xAutoScale").checked;
 }
 
+
+/**
+ * The UI interface function that updates xMinInput to xmin
+ */
 function setXMin(xmin) {
     document.getElementById("xMinInput").value=xmin;
 }
 
+/**
+ * The UI interface function that updates xMaxInput to xmax
+ */
 function setXMax(xmax) {
     document.getElementById("xMaxInput").value=xmax;
 }
     
 
+/**
+ * The UI interface function that gets a new xmin from the xMinInput form
+ * returns {number}
+ */
 function getXMin() {
     return document.getElementById("xMinInput").value;
 }
 
+
+/**
+ * The UI interface function that gets a new xmax from the xMaxInput form
+ * returns {number}
+ */
 function getXMax() {
     return document.getElementById("xMaxInput").value;
 }
@@ -203,6 +291,9 @@ function getXMax() {
 
 
 
+/**
+ * The function that updates both the plot title and the URL in the lcoation bar, to ensure if reload is hit that same event display is returned. This works at some level but does not remember things like the xAutoScale
+ */
 function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
@@ -219,10 +310,9 @@ function updatePlotTitle(jsonObject) {
 }
 
 
-function drawPlot() {
-    plotEvent();
-}
-
+/*
+* The function that is actually called to plot the event
+*/
 function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
@@ -233,6 +323,9 @@ function plotEvent() {
 
 
 
+/*
+ * The first thing we need to do to plot the event is determine which year and date the run comes from. This function reads the appropriate run list and sets the year and datecode before calling the next stage of plotting
+*/
 function getRunInstrumentDateAndEvent(plotFunc) {
     AwareEvent.gotDateCode=0;
     var runNumber=getRunFromForm();  
@@ -269,6 +362,9 @@ function getRunInstrumentDateAndEvent(plotFunc) {
 }
 
 
+/*
+ * This function converts eventIndex to eventNumber using the event list for the requested run. Then the eventPlotter function is called.
+*/
 function getEventNumberAndPlot(plotFunc) {
     var eventIndex=getEventIndexFromForm();
     var runNumber=getRunFromForm();
@@ -308,6 +404,9 @@ function getEventNumberAndPlot(plotFunc) {
 }
 
 
+/*
+ * This function converts eventNumber to eventIndex using the event list for the requested run. Then the eventPlotter function is called.
+*/
 function getEventIndexFromNumber(plotFunc) {
     var eventNumber=getEventNumberFromForm();
     var runNumber=getRunFromForm();
@@ -353,6 +452,9 @@ function getEventIndexFromNumber(plotFunc) {
 
 
 
+/*
+ * This is one of the two main functions of the awareEvent module. The function first downloads the JSON file containing the event data. The next step is to convert the raw ADC data in to either voltage-time or power-frequency arrays before the plotting function is called.
+*/
 function eventPlotter() {
    var eventUrl=getEventName(getInstrumentNameFromForm(),getRunFromForm(),AwareEvent.year,AwareEvent.datecode,getEventNumberFromForm());
 
@@ -582,7 +684,20 @@ function eventPlotter() {
 }
 
 
+/*
+ * This is the actual plotting function for a single channel of waveform data
+ * @param divChanName -- The HMTL div for the plot
+ * @param divContName -- The HMTL div for the plot container
+ * @param dataArray -- The array of data
+ * @param xMin -- xMin
+ * @param xMax -- xMax
+ * @param yMin -- yMin
+ * @param yMax -- xMax
+ * @param grLabel -- The graph label
+ * @param showX -- A boolean determining if the x-axis is shown
+ * @param showY -- A boolean determining if the y-axis is shown
 
+*/
 function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax,grLabel,showX,showY) {
   
     var showXaxis=showX;
@@ -677,7 +792,6 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
        }
        else {
 	  //	  options.xaxis.show=false;
-	  //	  options.xaxis.tickFomatter=blankAxisFormatter;
 	  options.xaxis.labelHeight=5;
 	  options.xaxis.labelWidth=5;
 	  options.xaxis.font={size:1,lineHeight:1};
@@ -691,7 +805,6 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
        }
        else {
 	  //	  options.yaxis.show=false;
-	  //	  options.yaxis.tickFomatter=blankAxisFormatter;
 	  options.yaxis.labelHeight=5;
 	  options.yaxis.labelWidth=5;
 	  options.yaxis.font={size:1,lineHeight:1};
@@ -722,6 +835,9 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
 
 }
 
+/*
+* Worker function which populated the grid of HTML div elements used to store the waveforms.
+*/
 function fillEventDivWithWaveformContainers(chanArray,containerLabel,chanScale)
 {
 
@@ -757,6 +873,9 @@ function fillEventDivWithWaveformContainers(chanArray,containerLabel,chanScale)
 }
 
 
+/*
+* Worker function which stes some of the global variables deterined by the selected eventLayout (eg. number of rows, columns etc.)
+*/
 function setupEventDisplay(jsonObject) {
    $('#divEvent').empty();	   	
 

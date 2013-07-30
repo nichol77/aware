@@ -106,7 +106,7 @@ echo "</li>";
 
 echo "<li>";
 echo "<label>Run:</label>";
-echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:drawPlot();\" >";
+echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:plotEvent();\" >";
 echo "</li>";
 
 echo "<li>";
@@ -120,8 +120,8 @@ if($_GET["eventNumber"] === null) {
  }		
 echo "<label>Index:</label> <input type=\"number\" name=\"eventIndexInput\" id=\"eventIndexInput\" value=\"$eventIndex\" step =\"1\" >";
 echo "<label>Number:</label> <input type=\"number\" name=\"eventNumberInput\" id=\"eventNumberInput\" value=\"$eventNumber\" step =\"1\" >";
-echo '<button type="button" value="Previous" onclick="javascript:getPreviousEvent(drawPlot);">Previous</button>';
-echo '<button type="button" value="Next" onclick="javascript:getNextEvent(drawPlot);">Next</button>';
+echo '<button type="button" value="Previous" onclick="javascript:getPreviousEvent(plotEvent);">Previous</button>';
+echo '<button type="button" value="Next" onclick="javascript:getNextEvent(plotEvent);">Next</button>';
 echo "</li>";
 
 
