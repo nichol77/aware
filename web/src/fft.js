@@ -22,6 +22,51 @@
  *   Software.
  */
 
+/*
+ * Converts an array of real numbers into a power spectrum
+ *
+ */
+function makePowerSpectrumMvNs(inputArray, deltaT, summaryObj) {
+    var dataArray = new Array();
+    var realArray= new Array();
+    var imagArray = new Array();
+    for(var samp=0;samp<inputArray.length;samp++) {
+	realArray.push(inputArray[samp]);
+	imagArray.push(0);
+    }
+    var deltaFInMHz=1e3/(realArray.length*deltaT);
+    var complexLength=realArray.length;
+    if(complexLength%2==1) {
+	complexLength=(complexLength+1)/2;
+    }
+    else {
+	complexLength=(complexLength/2)+1;
+    }
+    
+    transform(realArray,imagArray);
+    for(var ind=0;ind<complexLength;ind++) {
+	var freq=deltaFInMHz*ind;
+	var power=realArray[ind]*realArray[ind]+imagArray[ind]*imagArray[ind];
+	if(ind>0 && ind<complexLength-1) power*=2;
+	power*=deltaT/realArray.length;
+	power/=deltaFInMHz;
+	if(power>0) power=10*(Math.log(power)/Math.LN10);
+	if(!isNaN(power)) {
+	    //Bug in thes FFT library that sometimes retutrns NaN for half the data
+	    if(power>summaryObj.pMax) summaryObj.pMax=power;
+	    if(power<summaryObj.pMin) summaryObj.pMin=power;			
+	    
+	    dataArray.push([freq,power]);		    
+	}
+    }
+    summaryObj.fMin=0;
+    summaryObj.fMax=deltaFInMHz*complexLength;
+
+    return dataArray;
+}
+
+
+
 
 /* 
  * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.

@@ -32,7 +32,7 @@ AwareEvent.showYaxis;
 
 function blankAxisFormatter(v, xaxis) {
     return " ";
-  }
+}
 
 
 
@@ -382,10 +382,8 @@ function eventPlotter() {
 	}
 	
 	if(newEvent) {
-	    if('waveformArray' in AwareEvent)
-		delete AwareEvent.waveformArray;
-	    if('fftArray' in AwareEvent)
-		delete AwareEvent.fftArray;
+	    AwareEvent.waveformArray=null;
+	    AwareEvent.fftArray=null;
 	}
 		
 
@@ -393,22 +391,24 @@ function eventPlotter() {
 	var processData=true;
 	if(!newEvent) {
 	    if(getWaveformTypeFromForm()=="fft") {
-		if('fftArray' in AwareEvent) 
+		if(AwareEvent.fftArray!=null) 
 		    processData=false;
 	    }
 	    if(getWaveformTypeFromForm()=="waveform") {
-		if('waveformArray' in AwareEvent) {
+		if(AwareEvent.waveformArray!=null) {
 		    if(AwareEvent.cableChecked==isCableDelaysChecked()) {
 			processData=false;
 		    }
-		    else delete AwareEvent.waveformArray;
+		    else {
+			AwareEvent.waveformArray=null;
+		    }
 		}
 	    }
 	}
 	    
 	if(processData) {
 
-	    if(!('waveformArray' in AwareEvent)) {
+	    if(AwareEvent.waveformArray==null) {
 		AwareEvent.tMin=0;
 		AwareEvent.tMax=0;
 		AwareEvent.voltMax=new Array();
@@ -420,7 +420,7 @@ function eventPlotter() {
 		}
 	    }
 	    
-	    if(!('fftArray' in AwareEvent)) {
+	    if(AwareEvent.fftArray==null) {
 		AwareEvent.fMin=0;
 		AwareEvent.fMax=0;
 		AwareEvent.powerMax=new Array();
@@ -449,41 +449,20 @@ function eventPlotter() {
 		var dataArray = new Array();
 		
 		if(getWaveformTypeFromForm()=="fft") {
-		    var realArray= new Array();
-		    var imagArray = new Array();
-		    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
-			realArray.push(jsonObject.event.channelList[chan].data[samp]);
-			imagArray.push(0);
-		    }
-		    var deltaT=jsonObject.event.channelList[chan].deltaT;
-		    var deltaFInMHz=1e3/(realArray.length*deltaT);
-		    var complexLength=realArray.length;
-		    if(complexLength%2==1) {
-			complexLength=(complexLength+1)/2;
-		    }
-		    else {
-			complexLength=(complexLength/2)+1;
-		    }
+		    var summaryObj = {};
+		    summaryObj.pMax=-1*Number.MAX_VALUE;
+		    summaryObj.pMin=Number.MAX_VALUE;
+		    summaryObj.fMax==1*Number.MAX_VALUE;
+		    summaryObj.fMin=Number.MAX_VALUE;
+		    dataArray = makePowerSpectrumMvNs(jsonObject.event.channelList[chan].data,
+						      jsonObject.event.channelList[chan].deltaT,
+						      summaryObj);
 		    
-		    transform(realArray,imagArray);
-		    for(var ind=0;ind<complexLength;ind++) {
-			var freq=deltaFInMHz*ind;
-			var power=realArray[ind]*realArray[ind]+imagArray[ind]*imagArray[ind];
-			if(ind>0 && ind<complexLength-1) power*=2;
-			power*=deltaT/realArray.length;
-			power/=deltaFInMHz;
-			if(power>0) power=10*(Math.log(power)/Math.LN10);
-			if(!isNaN(power)) {
-			    //Bug in thes FFT library that sometimes retutrns NaN for half the data
-			    if(power>AwareEvent.powerMax[scaleGroup]) AwareEvent.powerMax[scaleGroup]=power;
-			    if(power<AwareEvent.powerMin[scaleGroup]) AwareEvent.powerMin[scaleGroup]=power;			
-			    
-			    dataArray.push([freq,power]);		    
-			}
-		    }
-		    AwareEvent.fMin=0;
-		    if(deltaFInMHz*complexLength>AwareEvent.fMax) AwareEvent.fMax=deltaFInMHz*complexLength;
-		    //		$('#titleContainer').append("<p>"+inputChan+" "+dataArray.length+"</p>");		    
+		    if(summaryObj.pMax>AwareEvent.powerMax[scaleGroup]) AwareEvent.powerMax[scaleGroup]=summaryObj.pMax;
+		    if(summaryObj.pMin<AwareEvent.powerMin[scaleGroup]) AwareEvent.powerMin[scaleGroup]=scaleGroup.pMin;
+		    
+		    if(summaryObj.fMax>AwareEvent.fMax) AwareEvent.fMax=summaryObj.fMax;
+		    if(summaryObj.fMin<AwareEvent.fMin) AwareEvent.fMin=summaryObj.fMin;		   
 		    
 		    
 		}
@@ -782,10 +761,10 @@ function setupEventDisplay(jsonObject) {
    $('#divEvent').empty();	   	
 
    if('waveformArray' in AwareEvent) {
-       delete AwareEvent.waveformArray;
+       AwareEvent.waveformArray=null;
    }
    if('fftArray' in AwareEvent) {
-       delete AwareEvent.fftArray;
+       AwareEvent.fftArray=null;
    }
    
     AwareEvent.chanToScaleGroup = new Array(jsonObject.chanScale.length);
