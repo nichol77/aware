@@ -22,67 +22,31 @@ header("Connection: keep-alive");
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script language="javascript" type="text/javascript" src="src/flot/jquery.flot.resize.js.gz"></script>
+<script language="javascript" type="text/javascript" src="src/fft.js"></script>
 
 <script type="text/javascript">
 
   $(function() {
-      document.body.addEventListener('touchmove', function(event) {
-				       event.preventDefault();
-				     }, false);   
-
-       $.urlParam = function(name){
-	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	if(results != null) {
-	  return results[1];
-	}
-	return null;
-      }
-
-
-
-      var run=document.getElementById("runForm").value;
-      var runAlreadySet=false;
-      if($.urlParam('run')) {
-	run=$.urlParam('run');
-	runAlreadySet=true;
-      }
-
-
-  
-      function readEventLayout() {
-	
-	function actuallyReadEventLayout(jsonObject) {
-
-	   setupEventDisplay(jsonObject);
-	  drawPlot();
-	  
-	}
-	
-	eventLayout=getLayoutFromForm();
-	
-
-	$.ajax({
-	    //url: "config/eventLayout5by4.json",
-	  url: "config/"+eventLayout+".json",
-	      type: "GET",
-	      dataType: "json", 
-	      success: actuallyReadEventLayout
-	      }); 
-
-      }
 
 
 
       function updateLastRun(setStartToLast) {
 	var tempString="output/"+getInstrumentNameFromForm()+"/lastEvent";
-
+	
 	function actuallyUpdateLastRun(runString) {
 	  setLastRun(Number(runString));
 	  if(setStartToLast) {
 	    setRunOnForm(Number(runString));
+	    readEventLayout();
 	  }
 	}
+	
+	if(setStartToLast) {
+	  $('#titleContainer').empty();
+	  $('#titleContainer').append("<h2>Fetching most recent run</h2>");
 
+	}
+	
 
 	$.ajax({
 	  url: tempString,
@@ -93,9 +57,55 @@ header("Connection: keep-alive");
 	
       }
 
+      $.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if(results != null) {
+	  return results[1];
+	}
+	return null;
+      }
+
+  
+      function readEventLayout() {	
+	function actuallyReadEventLayout(jsonObject) {
+	  setupEventDisplay(jsonObject);
+	  drawPlot();
+	  
+	}	
+	eventLayout=getLayoutFromForm();
+	
+	$.ajax({
+	    //url: "config/eventLayout5by4.json",
+	  url: "config/"+eventLayout+".json",
+	      type: "GET",
+	      dataType: "json", 
+	      success: actuallyReadEventLayout
+	      }); 
+      }
+
+      
+      //This is something to do with the touch interface
+      document.body.addEventListener('touchmove', function(event) {
+				       event.preventDefault();
+				     }, false);   
+      
+      
+      run=document.getElementById("runForm").value;
+      var runAlreadySet=false;
+      if($.urlParam('run')) {
+	run=$.urlParam('run');
+	runAlreadySet=true;
+      }
+
+
       if(!runAlreadySet) {
 	updateLastRun(true);
       }
+      else {
+	readEventLayout();
+      }
+
+
 
 
       $('#instrumentForm').change(function() {
@@ -106,11 +116,12 @@ header("Connection: keep-alive");
 				  });
 
 
-      readEventLayout();
-
-
       $('#layoutForm').change(function() {
 				readEventLayout();
+			      });
+
+      $('#waveformForm').change(function() {
+				  drawPlot();
 			      });
 
       $('#eventIndexInput').change(function() {

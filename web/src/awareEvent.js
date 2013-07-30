@@ -17,6 +17,7 @@ AwareEvent.eventList;
 AwareEvent.gotEventListForRun;
 AwareEvent.year=2013;
 AwareEvent.datecode=123;
+AwareEvent.gotDateCode=0;
 AwareEvent.nRows=5;
 AwareEvent.nCols=4;
 AwareEvent.nChans=20;
@@ -27,6 +28,7 @@ AwareEvent.chanToScaleGroup;
 AwareEvent.chanRowColArray;
 AwareEvent.showXaxis;
 AwareEvent.showYaxis;
+
 
 function blankAxisFormatter(v, xaxis) {
     return " ";
@@ -162,6 +164,11 @@ function getLayoutFromForm() {
 }
 
 
+function getWaveformTypeFromForm() {
+    return document.getElementById("waveformForm").value;
+}
+
+
 function getInstrumentNameFromForm() {
     return document.getElementById("instrumentForm").value;
 }
@@ -200,7 +207,7 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+getRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&eventNumber="+getEventNumberFromForm()+"&eventIndex="+getEventIndexFromForm();
+    currentUrl=currentUrl+"?run="+getRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&eventNumber="+getEventNumberFromForm()+"&eventIndex="+getEventIndexFromForm()+"&layoutType="+getLayoutFromForm()+"&waveformType="+getWaveformTypeFromForm();
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
@@ -227,7 +234,7 @@ function plotEvent() {
 
 
 function getRunInstrumentDateAndEvent(plotFunc) {
-    setDatecode=0;
+    AwareEvent.gotDateCode=0;
     var runNumber=getRunFromForm();  
     var instrumentName=getInstrumentNameFromForm();
     //var titleContainer = $("#leftbar"); 
@@ -238,7 +245,8 @@ function getRunInstrumentDateAndEvent(plotFunc) {
 	    if(jsonObject.runList[i][0]==runNumber) {
 		AwareEvent.year=jsonObject.runList[i][1];
 		AwareEvent.datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-//		titleContainer.append("<p>"+AwareEvent.year+" "+AwareEvent.datecode+"</p>");	
+		AwareEvent.gotDateCode=1;
+		//		debugContainer.append("<p>"+runNumber+" "+AwareEvent.year+" "+AwareEvent.datecode+"</p>");	
 		plotFunc(eventPlotter);
 		break;
 	    }
@@ -362,54 +370,187 @@ function eventPlotter() {
 		plotCan.empty();
 	    }	
 
-	var xMin=0;
-	var xMax=0;
-	var yMin = new Array();
-	var yMax = new Array();
-	for(var row=0;row<AwareEvent.nRows;row++) {
-	    yMin.push(4096);
-	    yMax.push(0);
-	}
-	var dataChanArray = new Array();
-	//	for(var row=0;row<AwareEvent.nRows;row++) {
-	//	    for(var col=0;col<AwareEvent.nCols;col++) {		
+	var newEvent=true;
+	if('gotDataForIndex' in AwareEvent) {
+	    if(AwareEvent.gotDataForIndex==getEventIndexFromForm()) {
+		if('gotDataForRun' in AwareEvent) {
+		    if(AwareEvent.gotDataForRun==getRunFromForm())
+			newEvent=false;
+		}
+	    }
 
-	for(var i=0; i<AwareEvent.nChans; i++) {
+	}
+	
+	if(newEvent) {
+	    if('waveformArray' in AwareEvent)
+		delete AwareEvent.waveformArray;
+	    if('fftArray' in AwareEvent)
+		delete AwareEvent.fftArray;
+	}
+		
+
+
+	var processData=true;
+	if(!newEvent) {
+	    if(getWaveformTypeFromForm()=="fft") {
+		if('fftArray' in AwareEvent) 
+		    processData=false;
+	    }
+	    if(getWaveformTypeFromForm()=="waveform") {
+		if('waveformArray' in AwareEvent) {
+		    if(AwareEvent.cableChecked==isCableDelaysChecked()) {
+			processData=false;
+		    }
+		    else delete AwareEvent.waveformArray;
+		}
+	    }
+	}
 	    
-	    var row=Math.floor(i/AwareEvent.nCols);
-	    var col=(i%AwareEvent.nCols);
-	    var chan=AwareEvent.chanRowColArray[row][col];
-	    //	    var row=Math.floor(chan/AwareEvent.nCols);
-	    var scaleGroup=AwareEvent.chanToScaleGroup[chan];
-	    //	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].t0+"</p>");	   
-	    //	    var chan=AwareEvent.chanRowColArray[row][col];
-	    var dataArray = new Array();
-	    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
-		//The Number is important for the logical tests below
-		var time=0;
-		if(isCableDelaysChecked()) {
-		    time=Number(jsonObject.event.channelList[chan].t0+(samp*jsonObject.event.channelList[chan].deltaT));
+	if(processData) {
+
+	    if(!('waveformArray' in AwareEvent)) {
+		AwareEvent.tMin=0;
+		AwareEvent.tMax=0;
+		AwareEvent.voltMax=new Array();
+		AwareEvent.voltMin=new Array();
+		
+		for(var scaleGroup=0;scaleGroup<AwareEvent.nScaleGroups;scaleGroup++) {
+		    AwareEvent.voltMin.push(4096);
+		    AwareEvent.voltMax.push(0);
+		}
+	    }
+	    
+	    if(!('fftArray' in AwareEvent)) {
+		AwareEvent.fMin=0;
+		AwareEvent.fMax=0;
+		AwareEvent.powerMax=new Array();
+		AwareEvent.powerMin=new Array();
+		
+		for(var scaleGroup=0;scaleGroup<AwareEvent.nScaleGroups;scaleGroup++) {
+		    AwareEvent.powerMin.push(4096);
+		    AwareEvent.powerMax.push(0);
+		}
+	    }
+
+
+	    var dataChanArray = new Array();
+	    //	for(var row=0;row<AwareEvent.nRows;row++) {
+	    //	    for(var col=0;col<AwareEvent.nCols;col++) {		
+	    
+	    for(var inputChan=0; inputChan<AwareEvent.nChans; inputChan++) {
+		
+		var row=Math.floor(inputChan/AwareEvent.nCols);
+		var col=(inputChan%AwareEvent.nCols);
+		var chan=AwareEvent.chanRowColArray[row][col];
+		//	    var row=Math.floor(chan/AwareEvent.nCols);
+		var scaleGroup=AwareEvent.chanToScaleGroup[chan];
+		//	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].t0+"</p>");	   
+		//	    var chan=AwareEvent.chanRowColArray[row][col];
+		var dataArray = new Array();
+		
+		if(getWaveformTypeFromForm()=="fft") {
+		    var realArray= new Array();
+		    var imagArray = new Array();
+		    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
+			realArray.push(jsonObject.event.channelList[chan].data[samp]);
+			imagArray.push(0);
+		    }
+		    var deltaT=jsonObject.event.channelList[chan].deltaT;
+		    var deltaFInMHz=1e3/(realArray.length*deltaT);
+		    var complexLength=realArray.length;
+		    if(complexLength%2==1) {
+			complexLength=(complexLength+1)/2;
+		    }
+		    else {
+			complexLength=(complexLength/2)+1;
+		    }
+		    
+		    transform(realArray,imagArray);
+		    for(var ind=0;ind<complexLength;ind++) {
+			var freq=deltaFInMHz*ind;
+			var power=realArray[ind]*realArray[ind]+imagArray[ind]*imagArray[ind];
+			if(ind>0 && ind<complexLength-1) power*=2;
+			power*=deltaT/realArray.length;
+			power/=deltaFInMHz;
+			if(power>0) power=10*(Math.log(power)/Math.LN10);
+			if(!isNaN(power)) {
+			    //Bug in thes FFT library that sometimes retutrns NaN for half the data
+			    if(power>AwareEvent.powerMax[scaleGroup]) AwareEvent.powerMax[scaleGroup]=power;
+			    if(power<AwareEvent.powerMin[scaleGroup]) AwareEvent.powerMin[scaleGroup]=power;			
+			    
+			    dataArray.push([freq,power]);		    
+			}
+		    }
+		    AwareEvent.fMin=0;
+		    if(deltaFInMHz*complexLength>AwareEvent.fMax) AwareEvent.fMax=deltaFInMHz*complexLength;
+		    //		$('#titleContainer').append("<p>"+inputChan+" "+dataArray.length+"</p>");		    
+		    
+		    
 		}
 		else {
-		    time=Number((samp*jsonObject.event.channelList[chan].deltaT));
+		    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
+			//The Number is important for the logical tests below
+			var time=0;
+			if(isCableDelaysChecked()) {
+			    time=Number(jsonObject.event.channelList[chan].t0+(samp*jsonObject.event.channelList[chan].deltaT));
+		    }
+			else {
+			    time=Number((samp*jsonObject.event.channelList[chan].deltaT));
+			}
+			
+			var value=Number(jsonObject.event.channelList[chan].data[samp]);		
+			dataArray.push([time,value]);
+			if(value>AwareEvent.voltMax[scaleGroup]) AwareEvent.voltMax[scaleGroup]=value;
+			if(value<AwareEvent.voltMin[scaleGroup]) AwareEvent.voltMin[scaleGroup]=value;
+			if(time<AwareEvent.tMin) AwareEvent.tMin=time;
+			if(time>AwareEvent.tMax) AwareEvent.tMax=time;
+			
+		    }
 		}
-		    
-		var value=Number(jsonObject.event.channelList[chan].data[samp]);		
-		dataArray.push([time,value]);
-		if(value>yMax[scaleGroup]) yMax[scaleGroup]=value;
-		if(value<yMin[scaleGroup]) yMin[scaleGroup]=value;
-		if(time<xMin) xMin=time;
-		if(time>xMax) xMax=time;
+		
+		dataChanArray.push(dataArray);
 		
 	    }
-	    dataChanArray.push(dataArray);
-	}
-	//	}
-	for(var scaleGroup=0;scaleGroup<AwareEvent.nScaleGroups;scaleGroup++) {
-	    if(yMax[scaleGroup]>-1*yMin[scaleGroup]) yMin[scaleGroup]=-1*yMax[scaleGroup];
-	    else yMax[scaleGroup]=-1*yMin[scaleGroup];
+	    //	}
+	    
+	    if(getWaveformTypeFromForm()=="waveform") {
+		for(var scaleGroup=0;scaleGroup<AwareEvent.nScaleGroups;scaleGroup++) {
+		    if(AwareEvent.voltMax[scaleGroup]>-1*AwareEvent.voltMin[scaleGroup]) AwareEvent.voltMin[scaleGroup]=-1*AwareEvent.voltMax[scaleGroup];
+		    else AwareEvent.voltMax[scaleGroup]=-1*AwareEvent.voltMin[scaleGroup];
+		}
+
+		AwareEvent.waveformArray=dataChanArray;
+		AwareEvent.cableChecked=isCableDelaysChecked();
+		
+	    }
+	    else if(getWaveformTypeFromForm()=="fft") {	    
+		AwareEvent.fftArray=dataChanArray;
+	    }
+	    AwareEvent.gotDataForIndex=getEventIndexFromForm();
+	    AwareEvent.gotDataForRun=getRunFromForm();
 	}
 
+	//Here is the actually plotting stuff
+	var xMin=0;
+	var xMax=0;
+	var yMin;
+	var yMax;
+	var dataChanArray;
+	if(getWaveformTypeFromForm()=="waveform") {
+	    xMin=AwareEvent.tMin;
+	    xMax=AwareEvent.tMax;
+	    yMin=AwareEvent.voltMin;
+	    yMax=AwareEvent.voltMax;
+	    dataChanArray=AwareEvent.waveformArray;
+	}
+	else if(getWaveformTypeFromForm()=="fft") { 
+	    xMin=AwareEvent.fMin;
+	    xMax=AwareEvent.fMax;
+	    yMin=AwareEvent.powerMin;
+	    yMax=AwareEvent.powerMax;
+	    dataChanArray=AwareEvent.fftArray;
+	}
+	    
 
 	if(getXAutoScale()) {
 	    setXMin(xMin);
@@ -471,9 +612,10 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
     
     var titleContainer = $("#titleContainer"); 
     //    titleContainer.append("<p>"+divContName+"</p>");
-    //    titleContainer.append("<p>The plot has "+dataArray.length+" time points</p>");
+    //titleContainer.append("<p>The plot has "+dataArray.length+" time points</p>");
     //    titleContainer.append("<p>"+yMin+" "+yMax+"</p>");
     //    titleContainer.append("<p>First point "+dataArray[0][0] +","+dataArray[0][1]+"</p>");
+    //    titleContainer.append("<p>Second point "+dataArray[1][0] +","+dataArray[1][1]+"</p>");
     //    titleContainer.append("<p>Last point "+dataArray[dataArray.length-1][0] +","+dataArray[dataArray.length-1][1]+"</p>");
     var plotCan=$("#"+divChanName);
     var plotCont=$("#"+divContName);
@@ -639,6 +781,12 @@ function fillEventDivWithWaveformContainers(chanArray,containerLabel,chanScale)
 function setupEventDisplay(jsonObject) {
    $('#divEvent').empty();	   	
 
+   if('waveformArray' in AwareEvent) {
+       delete AwareEvent.waveformArray;
+   }
+   if('fftArray' in AwareEvent) {
+       delete AwareEvent.fftArray;
+   }
    
     AwareEvent.chanToScaleGroup = new Array(jsonObject.chanScale.length);
     AwareEvent.chanRowColArray= jsonObject.chanOrder;

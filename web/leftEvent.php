@@ -15,9 +15,21 @@ $realDefaults = array();
 foreach($defaults_array as $ignore => $properties){
   $realDefaults["instrument"]=$properties[instrument];
   $realDefaults["layoutType"]=$properties[layoutType];
+  $realDefaults["waveformType"]=$properties[waveformType];
 }
 
-$layoutType=$realDefaults[layoutType];
+
+$layoutType=$_GET["layoutType"];
+if($_GET["layoutType"] === null) {
+  $layoutType=$realDefaults[layoutType];
+ }
+
+
+$waveformType=$_GET["waveformType"];
+if($_GET["waveformType"] === null) {
+  $waveformType=$realDefaults[waveformType];
+ }
+
 
 $instrument=$_GET["instrument"];
 if($_GET["instrument"] === null) {
@@ -69,6 +81,29 @@ foreach($layout_array as $layout => $properties){
 echo "</select>";
 echo "<a href=\"#openLayoutHelp\">?</a>";
 echo "</li>";
+
+
+echo "<li>";
+///Load the instrument array config file
+$waveform_array = parse_ini_file("config/waveformList.ini", true);
+echo '<label>Data:</label> <select id="waveformForm" >';
+foreach($waveform_array as $waveform => $properties){
+  $key=$properties[name];
+  $value=$properties[title];
+  $pos = strpos($waveformType,$key);
+  if($pos !== false) {
+  echo "<option value=$key selected=\"selected\" label=\"$value\">$value</option>";
+  }
+  else {
+    echo "<option value=$key label=\"$value\">$value</option>";    
+  }         
+}
+echo "</select>";
+echo "<a href=\"#openWaveformHelp\">?</a>";
+echo "</li>";
+
+
+
 echo "<li>";
 echo "<label>Run:</label>";
 echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:drawPlot();\" >";
@@ -101,7 +136,7 @@ echo "</li>";
 </ul>
 </fieldset>
 <fieldset>
-<legend>Time Axis Options</legend>
+<legend>x-Axis Options</legend>
 <ul>
 <li>
 <label for = "includeCables">Cable Delays</label>
