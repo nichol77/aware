@@ -24,6 +24,7 @@
 
 /*
  * Converts an array of real numbers into a power spectrum
+ @returns {array} The frequency power spectrum in db(relative to 1mV^2/1ns)/MHz vs MHz
  *
  */
 function makePowerSpectrumMvNs(inputArray, deltaT, summaryObj) {
@@ -34,7 +35,7 @@ function makePowerSpectrumMvNs(inputArray, deltaT, summaryObj) {
 	realArray.push(inputArray[samp]);
 	imagArray.push(0);
     }
-    var deltaFInMHz=1e3/(realArray.length*deltaT);
+    var deltaFInMHz=1e3/(realArray.length*deltaT); ///<1e3 converts to MHz
     var complexLength=realArray.length;
     if(complexLength%2==1) {
 	complexLength=(complexLength+1)/2;
