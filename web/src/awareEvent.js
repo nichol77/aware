@@ -167,6 +167,35 @@ function getInstrumentNameFromForm() {
 }
 
 
+function isCableDelaysChecked() {
+    return document.getElementById("includeCables").checked;
+}
+
+
+function getXAutoScale() {
+    return document.getElementById("xAutoScale").checked;
+}
+
+function setXMin(xmin) {
+    document.getElementById("xMinInput").value=xmin;
+}
+
+function setXMax(xmax) {
+    document.getElementById("xMaxInput").value=xmax;
+}
+    
+
+function getXMin() {
+    return document.getElementById("xMinInput").value;
+}
+
+function getXMax() {
+    return document.getElementById("xMaxInput").value;
+}
+    
+
+
+
 function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
@@ -333,7 +362,8 @@ function eventPlotter() {
 		plotCan.empty();
 	    }	
 
-
+	var xMin=0;
+	var xMax=0;
 	var yMin = new Array();
 	var yMax = new Array();
 	for(var row=0;row<AwareEvent.nRows;row++) {
@@ -351,16 +381,25 @@ function eventPlotter() {
 	    var chan=AwareEvent.chanRowColArray[row][col];
 	    //	    var row=Math.floor(chan/AwareEvent.nCols);
 	    var scaleGroup=AwareEvent.chanToScaleGroup[chan];
-	    //	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].data.length+"</p>");	   
+	    //	    titleContainer.append("<p>"+jsonObject.event.channelList[chan].deltaT+" "+jsonObject.event.channelList[chan].t0+"</p>");	   
 	    //	    var chan=AwareEvent.chanRowColArray[row][col];
 	    var dataArray = new Array();
 	    for(var samp=0;samp<jsonObject.event.channelList[chan].data.length;samp++) {
 		//The Number is important for the logical tests below
-		var time=Number((samp*jsonObject.event.channelList[chan].deltaT));
+		var time=0;
+		if(isCableDelaysChecked()) {
+		    time=Number(jsonObject.event.channelList[chan].t0+(samp*jsonObject.event.channelList[chan].deltaT));
+		}
+		else {
+		    time=Number((samp*jsonObject.event.channelList[chan].deltaT));
+		}
+		    
 		var value=Number(jsonObject.event.channelList[chan].data[samp]);		
 		dataArray.push([time,value]);
 		if(value>yMax[scaleGroup]) yMax[scaleGroup]=value;
 		if(value<yMin[scaleGroup]) yMin[scaleGroup]=value;
+		if(time<xMin) xMin=time;
+		if(time>xMax) xMax=time;
 		
 	    }
 	    dataChanArray.push(dataArray);
@@ -370,6 +409,17 @@ function eventPlotter() {
 	    if(yMax[scaleGroup]>-1*yMin[scaleGroup]) yMin[scaleGroup]=-1*yMax[scaleGroup];
 	    else yMax[scaleGroup]=-1*yMin[scaleGroup];
 	}
+
+
+	if(getXAutoScale()) {
+	    setXMin(xMin);
+	    setXMax(xMax);
+	}
+	else {
+	    xMin=getXMin();
+	    xMax=getXMax();
+	}
+
 
 	for(var i=0; i<AwareEvent.nChans; i++) {
 	    
@@ -388,10 +438,11 @@ function eventPlotter() {
 	    //	    var col=chan%AwareEvent.nCols;
 	    var divName="divChan"+chan;
 	    var contName="waveform-container"+chan;
-	    var grLabel="RFCHAN"+chan;  ///Need to fix this
+	    //	    var grLabel="RFCHAN"+chan;  ///Need to fix this
+	    var grLabel=jsonObject.event.channelList[chan].label  ///Need to fix this
 
 	    //	    plotSingleChannel(divName,contName,jsonObject.event.channelList[chan].data,yMin[scaleGroup],yMax[scaleGroup],grLabel);
-	    plotSingleChannel(divName,contName,dataChanArray[i],yMin[scaleGroup],yMax[scaleGroup],grLabel,showX,showY);
+	    plotSingleChannel(divName,contName,dataChanArray[i],xMin,xMax,yMin[scaleGroup],yMax[scaleGroup],grLabel,showX,showY);
 	}
 
     }
@@ -412,7 +463,7 @@ function eventPlotter() {
 
 
 
-function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel,showX,showY) {
+function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax,grLabel,showX,showY) {
   
     var showXaxis=showX;
     var showYaxis=showY;
@@ -461,7 +512,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel,s
 
     var options = {
        yaxis: { min: yMin, max: yMax},
-       xaxis : { },
+       xaxis: { min: xMin, max: xMax},
        lines: { show: true, lineWidth:1 },
        selection : { mode : "xy" },
        grid: { 
@@ -539,8 +590,8 @@ function plotSingleChannel(divChanName,divContName,dataArray,yMin,yMax,grLabel,s
 
     plotCan.unbind("plotunselected");
     plotCan.bind("plotunselected", function (event, ranges) {
-	delete options.xaxis.min;
-	delete options.xaxis.max;
+	options.xaxis.min=xMin;
+	options.xaxis.max=xMax;
 	options.yaxis.min=yMin;
 	options.yaxis.max=yMax;
 	doThePlot();

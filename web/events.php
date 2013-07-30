@@ -123,6 +123,30 @@ header("Connection: keep-alive");
       $('#debugContainer').hide();
 
 
+
+      $('#includeCables').change(function() {
+				   drawPlot();
+				 });
+
+      $('#xAutoScale').change(function() {
+				if($(this).attr('checked')) {
+				  //Switching to autoscale
+				  $('#xMinInput').attr('disabled','disabled');
+				  $('#xMaxInput').attr('disabled','disabled');
+				}
+				else {
+				  //Switching to fixed scale
+				  $('#xMinInput').removeAttr('disabled');
+				  $('#xMaxInput').removeAttr('disabled');
+				}
+			      });
+
+
+      $('#refreshButton').click(function() {
+				  drawPlot();
+				});
+
+
 });  
 
 </script>
@@ -134,7 +158,7 @@ header("Connection: keep-alive");
 
 
 <DIV class="heading">
-<h1>Event Housekeeping</h1>
+<h1>AWARE Event Display</h1>
 </DIV>
 <DIV class=middle>
 <DIV class=content>

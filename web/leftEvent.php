@@ -100,6 +100,36 @@ echo "</li>";
 ?>
 </ul>
 </fieldset>
+<fieldset>
+<legend>Time Axis Options</legend>
+<ul>
+<li>
+<label for = "includeCables">Cable Delays</label>
+<input type = "checkbox"
+  id = "includeCables"
+  value = "includeCables"
+  checked>
+</li>
+<li>
+<label for = "xAutoScale">Auto Scale</label>
+<input type = "checkbox"
+  id = "xAutoScale"
+  value = "xAutoScale"
+  checked >
+</li>
+<li>
+<label>x-min:</label>
+<input type="number" name="xMin" id="xMinInput" value="" disabled>
+</li>
+<li>
+<label>x-max:</label>
+<input type="number" name="xMax" id="xMaxInput" value="" disabled> 
+</li>
+<li>
+<button type="button" id="refreshButton">Refresh</button>
+</li>
+</ul>
+</fieldset>
 </form>
 
 
