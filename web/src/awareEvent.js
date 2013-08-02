@@ -201,7 +201,7 @@ function playEvents() {
    if(document.getElementById("playButton").value=='Play') {
       document.getElementById("playButton").value='Stop';
       var playInt=document.getElementById("speedSlide").value;
-      AwareEvent.playVar=setInterval(function(){getNextEvent(drawPlot())},(10000/playInt));
+      AwareEvent.playVar=setInterval(function(){getNextEvent(plotEvent())},(10000/playInt));
    }
    else {
       document.getElementById("playButton").value='Play';
