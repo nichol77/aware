@@ -12,6 +12,7 @@
 #include "TGraph.h"
 #include "TTimeStamp.h"
 #include "AwareVariableSummary.h"
+#include "AwareWaveformChannel.h"
 
 #include <fstream>
 #include <map>
@@ -27,7 +28,7 @@ class AwareWaveformEventFileMaker
   void addVariableToEvent(const char *varKey, const char *varValue);
   void addVariableToEvent(const char *varKey, double varValue);
   void addVariableToEvent(const char *varKey, int varValue);
-  void addChannelToFile(TGraph *grChannel, Int_t grId, const char *grLabel);
+  void addChannelToFile(AwareWaveformChannel theChannel);
 
   void writeFile();
 
@@ -41,8 +42,7 @@ class AwareWaveformEventFileMaker
 
   //Maps to hold the various JSON thingies
   std::map<std::string, std::string> fVariableMap;
-  std::map<Int_t,TGraph *> fGraphMap;
-  std::map<Int_t,std::string> fGraphLabelMap;
+  std::map<Int_t,AwareWaveformChannel> fChannelMap;
 
 
 };

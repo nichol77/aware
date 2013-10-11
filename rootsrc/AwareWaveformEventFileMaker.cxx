@@ -48,13 +48,9 @@ void AwareWaveformEventFileMaker::addVariableToEvent(const char *varKey, int var
 
 }
 
-void AwareWaveformEventFileMaker::addChannelToFile(TGraph *grChannel, Int_t grId, const char *grLabel)
+void AwareWaveformEventFileMaker::addChannelToFile(AwareWaveformChannel theChannel)
 {
-   char newLabel[20];
-   strncpy(newLabel,grLabel,20);
-   fGraphMap.insert(std::pair<Int_t,TGraph*>(grId,grChannel));
-   std::string fLabel(grLabel);
-   fGraphLabelMap.insert(std::pair<Int_t,std::string>(grId,fLabel));
+   fChannelMap.insert(std::pair<Int_t,AwareWaveformChannel>(theChannel.getId(),theChannel));
 }
 
 void AwareWaveformEventFileMaker::writeFile()
@@ -67,45 +63,44 @@ void AwareWaveformEventFileMaker::writeFile()
    boost::iostreams::filtering_ostream fEventFile;
    fEventFile.push(boost::iostreams::gzip_compressor());
    fEventFile.push(boost::iostreams::file_sink(fEventFilename.c_str()));
+   
+   
+   fEventFile << "{\n\"event\":{\n";
+   fEventFile <<  "\"instrument\": \"" << fInstrumentName << "\",\n";
+   fEventFile <<  "\"run\": " << fRun << ",\n";
+   fEventFile <<  "\"eventNumber\": " << fEventNumber << ",\n";
+   
+   std::map<std::string,std::string>::iterator varIt=fVariableMap.begin();
+   for(;varIt!=fVariableMap.end();varIt++) {
+      fEventFile << "\"" << varIt->first.c_str() << "\" : \"" << varIt->second.c_str() << "\",\n";
+   }
 
+   Int_t numChannels=fChannelMap.size();
+   if(numChannels==0) { 
+      return;
+   }
+   
+   fEventFile <<  "\"numChannels\": " << numChannels << ",\n";
+   fEventFile << "\"channelList\": [\n";
+   int firstChannel=1;
 
-  fEventFile << "{\n\"event\":{\n";
-  fEventFile <<  "\"instrument\": \"" << fInstrumentName << "\",\n";
-  fEventFile <<  "\"run\": " << fRun << ",\n";
-  fEventFile <<  "\"eventNumber\": " << fEventNumber << ",\n";
-
-  std::map<std::string,std::string>::iterator varIt=fVariableMap.begin();
-  for(;varIt!=fVariableMap.end();varIt++) {
-    fEventFile << "\"" << varIt->first.c_str() << "\" : \"" << varIt->second.c_str() << "\",\n";
-  }
-
-  Int_t numChannels=fGraphMap.size();
-  if(numChannels==0) { 
-    return;
-  }
-  
-  fEventFile <<  "\"numChannels\": " << numChannels << ",\n";
-  fEventFile << "\"channelList\": [\n";
-  int firstChannel=1;
-
-  std::map<Int_t,TGraph *>::iterator graphIt=fGraphMap.begin();
-  std::map<Int_t,std::string>::iterator labelIt=fGraphLabelMap.begin();
-  for(;graphIt!=fGraphMap.end();graphIt++ , labelIt++) {
+  std::map<Int_t,AwareWaveformChannel>::iterator channelIt=fChannelMap.begin();
+  for(;channelIt!=fChannelMap.end();channelIt++) {
     if(!firstChannel) fEventFile << ",\n";
     fEventFile << "{\n";
-    fEventFile << "\"id\": " << graphIt->first << ",\n";
-    Double_t *xVals = graphIt->second->GetX();
-    Int_t numPoints=graphIt->second->GetN();
+    fEventFile << "\"id\": " << channelIt->first << ",\n";
+    Double_t *xVals = channelIt->second.getGraph()->GetX();
+    Int_t numPoints=channelIt->second.getGraph()->GetN();
     Double_t deltaT=xVals[numPoints-1]-xVals[0];
     deltaT/=(numPoints-1);
-    //    std::cerr << "\"label\": \"" << labelIt->second.c_str() << "\",\n";
-    fEventFile << "\"label\": \"" << labelIt->second.c_str() << "\",\n";
+    fEventFile << "\"label\": \"" << channelIt->second.getLabel() << "\",\n";
     fEventFile << "\"deltaT\": " << deltaT << ",\n";
     fEventFile << "\"t0\": " << xVals[0] << ",\n";
+    fEventFile << channelIt->second.getVariableString() << "\n";
     fEventFile << "\"data\": [\n";
-    Double_t *yVals = graphIt->second->GetY();
+    Double_t *yVals = channelIt->second.getGraph()->GetY();
 
-    //    std::cout << fEventNumber << "\t" << graphIt->first << "\t" << numPoints << "\n";
+    //    std::cout << fEventNumber << "\t" << channelIt->first << "\t" << numPoints << "\n";
     for(int i=0;i<numPoints;i++) {
       if(i>0) fEventFile << ",";
       if(i%10==0) fEventFile << "\n";
