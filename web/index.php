@@ -66,6 +66,21 @@ if (file_exists($lastSensorHk)) {
 </div>
 </a>
 
+<a href="awareHk.php?instrument=STATION2&hkType=header">
+<div class="lastBox">
+  Last Header: 
+<span id="lastHeader">
+<?php
+$lastHeader='output/STATION2/lastEvent';
+include $lastHeader ;
+echo "</span>";
+if (file_exists($lastHeader)) {
+    echo " started " . date ("F d Y H:i.", filemtime($lastHeader));
+}
+?>
+</div>
+</a>
+
 
 <h2>ARA03</h2>
 <a href="events.php?instrument=STATION3">
@@ -111,6 +126,22 @@ if (file_exists($lastSensorHk)) {
 ?>
 </div>
 </a>
+
+<a href="awareHk.php?instrument=STATION3&hkType=header">
+<div class="lastBox">
+  Last Header: 
+<span id="lastHeader">
+<?php
+$lastHeader='output/STATION3/lastEvent';
+include $lastHeader ;
+echo "</span>";
+if (file_exists($lastHeader)) {
+    echo " started " . date ("F d Y H:i.", filemtime($lastHeader));
+}
+?>
+</div>
+</a>
+
 
 
 <h2>ARA01</h2>
@@ -158,6 +189,20 @@ if (file_exists($lastSensorHk)) {
 </div>
 </a>
 
+<a href="awareHk.php?instrument=STATION1B&hkType=header">
+<div class="lastBox">
+  Last Header: 
+<span id="lastHeader">
+<?php
+$lastHeader='output/STATION1B/lastEvent';
+include $lastHeader ;
+echo "</span>";
+if (file_exists($lastHeader)) {
+    echo " started " . date ("F d Y H:i.", filemtime($lastHeader));
+}
+?>
+</div>
+</a>
 
 </div>
 </div>

@@ -1,6 +1,8 @@
 {
 	"numRows" : 10,
 	"numCols" : 2,
+	"rowContLabel" : "10up",
+	"colContLabel" : "2up",
 	"containerLabel" : "10x2up",
 	"rowLabels" : ["TV","TV","BV","BV","TH","TH","BH","BH","S","S"],
 	"colLabels" : ["S1/3","S2/4"],

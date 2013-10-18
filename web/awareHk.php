@@ -5,23 +5,60 @@ header("Connection: keep-alive");
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="StyleSheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
-<link rel="StyleSheet" href="styles/calendar.css" type="text/css" media="screen">
+
 <title>AWARE Housekeeping</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script type="text/javascript" src="src/awareUtils.js"></script>
 <script type="text/javascript" src="src/awareHkTime.js"></script>
-<script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
-<script type="text/javascript" src="src/jquerytools/jquery.tools.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.resize.min.js.gz"></script>
 <script type="text/javascript">
 
   $(function() {
+
+
+      var docHeight=$( document ).height();
+      var maxPlotHeight=Math.round((63*docHeight)/100);
+
+
+      $('#debugContainer').hide();
+     
+     
+      $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+	.resizable()
+	.find( ".plot-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+	.find( ".plot-content" );        
+      
+      
+      $( ".plot-header .ui-icon" ).click(function() {
+					   $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+					   $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).toggle();
+					   if($( this ).parents( ".plot-holder:first" ).height()>maxPlotHeight) {
+					     maxPlotHeight=$( this ).parents( ".plot-holder:first" ).height();
+					   }
+					     
+
+					   toggleHeight=100;
+					   if( $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).is(':visible')) {
+					     toggleHeight=maxPlotHeight;
+					   }
+					   $( this ).parents( ".plot-holder:first" ).height( toggleHeight );
+					 });
+      
+
+
 
       $.urlParam = function(name){
 	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -66,7 +103,7 @@ header("Connection: keep-alive");
       updateLastRun(false);
       
 
-      setHkTypeAndCanName(hkType,'divTime',timeType);
+      setHkTypeAndCanName(hkType,'divTime-1',timeType,1);
 
 
       ///Here is the logic for delaying with the scale buttons
@@ -135,7 +172,7 @@ header("Connection: keep-alive");
       
       function updateHkType(thisHkType) {
 	hkType=thisHkType;
-	setHkTypeAndCanName(hkType,'divTime',timeType);
+	setHkTypeAndCanName(hkType,'divTime-1',timeType,1);
 	
 	function actuallyUpdateHkType(plotFormArray) {
 	  var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
@@ -221,7 +258,7 @@ header("Connection: keep-alive");
 	   }
 
 
-	   setHkTypeAndCanName(hkType,'divTime',timeType);
+	   setHkTypeAndCanName(hkType,'divTime-1',timeType,1);
 	   drawPlot();
 			    });
 
@@ -235,6 +272,8 @@ header("Connection: keep-alive");
 	var startMonth=startDate.split("/")[1];
 	var startDay=startDate.split("/")[2];
 	var startDatecode=startMonth+startDay;
+	
+
 	var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);
 
 	var endDate=document.getElementById("endDate").value;
@@ -296,27 +335,22 @@ header("Connection: keep-alive");
       $('#timeRangeDiv').hide();
       
      
+      $( "#startDate" ).datepicker({
+	dateFormat:"yy/mm/dd",
+	maxDate:0,
+	onClose: function( selectedDate ) {
+	    $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+	  }
+	});     
+      $( "#endDate" ).datepicker({
+	dateFormat:"yy/mm/dd",
+	maxDate:0,
+	onClose: function( selectedDate ) {
+	    $( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+	  }
+	});
 
-      $(":date").dateinput({ trigger: true, format: 'yyyy/mm/dd', max: -1 })
-	
-	// use the same callback for two different events. possible with bind
-	$(":date").bind("onShow onHide", function()  {
-			  $(this).parent().toggleClass("active");
-			});
-      
-      // when first date input is changed
-      $(":date:first").data("dateinput").change(function() {
-						  // we use it's value for the seconds input min option
-						  $(":date:last").data("dateinput").setMin(this.getValue(), true);
-						});
 
-
-      // when first date input is changed
-      $(":date:last").data("dateinput").change(function() {
-						  // we use it's value for the seconds input min option
-						  $(":date:first").data("dateinput").setMax(this.getValue(), true);
-						});
-      
 
       
 
@@ -331,7 +365,6 @@ header("Connection: keep-alive");
       updateHkType(hkType);
       if(!runAlreadySet) updateLastRun(true);
 
-      $('#debugContainer').hide();
 
       //      drawPlot();
   });  
@@ -344,22 +377,22 @@ header("Connection: keep-alive");
 <body>
 
 
-<DIV class="heading">
+<div class="heading">
 <h1>AWARE Housekeeping</h1>
-</DIV>
-<DIV class=middle>
-<DIV class=content>
-
-<div id="titleContainer"></div>
-<div id="divTime" style="width:90%; height:50%; padding: 0px; float : left;"></div>
-<div id="divLabel" style="width:10%; height:50%; padding: 0px; float : right;"></div>
-<p>
-  Click and drag on the background to zoom, double click to unzoom.
-</p>
-<div>
-<p id="choices" style=""></p>
 </div>
+<div class=middle>
+<div class=content>
+<div id="titleContainer"></div>
 
+<div id="plot-holder-1" class="plot-holder" style="width:100%; height:70%" >
+<div id="plot-header-1" class="plot-header"><h3>First Plot</h3></div>
+<div id="plot-content-1" class="plot-content" style="width:100%; height:96%">
+<div id="divTime-1" style="width:90%; height:80%; padding: 0px; float : left;"></div>
+<div id="divLabel-1" style="width:10%; height:80%; padding: 0px; float : right;"></div>
+<div id="divChoices-1" style="width:80%; height:20%; padding: 0px;"><p id="choices" style=""></p></div>
+</div>
+</div>
+<div style="display: block; clear: both;"></div>
 <div id="debugContainer"></div>
 
 </div></div>

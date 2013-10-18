@@ -20,4 +20,6 @@
 	{"sym":"tdaVoltage","desc":"TDA Voltage","hkCode":"sensorHk"},
 	{"sym":"tdaTemp","desc":"TDA Temperature","hkCode":"sensorHk"},
 	{"sym":"eventRate","desc":"Event Rate","hkCode":"header"},
+	{"sym":"numTrigChans","desc":"Num. Trig. Chans.","hkCode":"header"},
+	{"sym":"trigChan","desc":"Trigger Chans.","hkCode":"header"},
 	{"sym":"rms","desc":"RMS","hkCode":"header"}]

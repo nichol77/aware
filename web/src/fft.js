@@ -255,3 +255,67 @@ function convolveComplex(xreal, ximag, yreal, yimag, outreal, outimag) {
         outimag[i] = ximag[i] / n;
     }
 }
+
+
+/* 
+ * Computes the circular convolution of the given complex vectors. Each vector's length must be the same.
+ */
+function correlateReal(xreal, yreal, outreal) {
+    if (xreal.length != yreal.length || xreal.length != outreal.length)
+        throw "Mismatched lengths";
+    
+    var n = xreal.length;
+    var ximag = new Array(n);
+    var yimag = new Array(n);
+    var outimag = new Array(n);
+    for (var i = 0; i < n; i++) {
+	ximag[i]=0;
+	yimag[i]=0;
+	outimag[i]=0;
+    }
+    
+    xreal = xreal.slice(0);
+    ximag = ximag.slice(0);
+    yreal = yreal.slice(0);
+    yimag = yimag.slice(0);
+    
+    transform(xreal, ximag);
+    transform(yreal, yimag);
+    for (var i = 0; i < n; i++) {
+        var temp = xreal[i] * yreal[i] + ximag[i] * yimag[i];
+        ximag[i] = ximag[i] * yreal[i] - xreal[i] * yimag[i];
+        xreal[i] = temp;
+    }
+    inverseTransform(xreal, ximag);
+    for (var i = 0; i < n; i++) {  // Scaling (because this FFT implementation omits it)
+        outreal[i] = xreal[i] / n;
+        outimag[i] = ximag[i] / n;
+    }
+}
+
+
+
+/**
+ * Return the correlation of two vectors
+ *
+ */
+function makeCorrelation(aArray,bArray) {
+    var numPoints=aArray.length;
+    var correlationArray = new Array(numPoints);
+    var val1 = new Array(numPoints);
+    var val2 = new Array(numPoints);
+    
+    var deltaCable=aArray[0][0]-bArray[0][0];
+    for(var i=0;i<numPoints;i++) {
+	val1[i]=aArray[i][1];
+	val2[i]=bArray[i][1];
+    }
+    correlateReal(val1,val2,correlationArray);
+    
+    var returnArray = new Array();
+    var deltaT=aArray[1][0]-aArray[0][0];
+    for(var i=0;i<numPoints;i++) {
+	returnArray.push([(deltaT*i)+deltaCable,correlationArray[i]]);	
+    }
+    return returnArray;
+}

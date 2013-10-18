@@ -1,6 +1,8 @@
 {
 	"numRows" : 4,
 	"numCols" : 2,
+	"rowContLabel" : "4up",
+	"colContLabel" : "2up",
 	"containerLabel" : "4x2up",
 	"rowLabels" : ["TH","TH","BH","BH"],
 	"colLabels" : ["S1/3","S2/4"],

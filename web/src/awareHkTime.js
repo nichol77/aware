@@ -19,6 +19,7 @@ var datecode=123;
 var timesWaited=0;
 var startTime;
 var duration;
+var thisPlotId=1;
 
 var timeList;// = new Array();
 var varList;
@@ -151,10 +152,11 @@ function getMaxPointsToShow() {
 }
 
 
-function setHkTypeAndCanName(hkType,canName,timeType) {
+function setHkTypeAndCanName(hkType,canName,timeType,plotId) {
     thisHkType=hkType;
     globCanName=canName;
     thisTimeType=timeType;
+    thisPlotId=plotId;
 }
 
 function updateTimeType(timeType) {
@@ -368,7 +370,7 @@ function actuallyDrawTheStuff() {
 	xaxis: {mode: "time", timezone:"UTC"},
 	lines: { show: false },
 	points: { show: true   },
-	legend:{container: $("#divLabel")},
+	legend:{container: $("#divLabel-1")},
 	selection : { mode : "xy" },
 	canvas : true,
     }
@@ -491,28 +493,9 @@ function updatePlotTitle(jsonObject) {
     canContainer.empty();
     canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
     canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
-    canContainer.append("<h2> Plot "+getPlotLabelFromForm()+"</h2>");
+    var plotHeader = $("#plot-header-"+thisPlotId+" h3");
+    plotHeader.text(getPlotLabelFromForm());
     
-}
-
-function handleAjaxFileError(jqXHR, exception) {
-    
-    var canContainer = $("#titleContainer"); 
-    if (jqXHR.status === 0) {
-        canContainer.append('Not connect.\n Verify Network.');
-    } else if (jqXHR.status == 404) {
-        canContainer.append('Requested page not found. [404]');
-    } else if (jqXHR.status == 500) {
-        canContainer.append('Internal Server Error [500].');
-    } else if (exception === 'parsererror') {
-        canContainer.append('Requested JSON parse failed.');
-    } else if (exception === 'timeout') {
-        canContainer.append('Time out error.');
-    } else if (exception === 'abort') {
-            canContainer.append('Ajax request aborted.');
-    } else {
-        canContainer.append('Uncaught Error.\n' + jqXHR.responseText);
-    }
 }
 
 
@@ -534,6 +517,8 @@ function simpleHkPlotDrawer() {
     }
 
 
+
+    ajaxLoadingLog(simpleHkTimeUrl);
     $.ajax({
 	url: simpleHkTimeUrl,
 	type: "GET",
@@ -565,6 +550,8 @@ function fullHkPlotDrawer() {
 	fetchFullHkTime(getPlotNameFromForm());
     }
 
+
+    ajaxLoadingLog(simpleHkTimeUrl);
     $.ajax({
 	url: simpleHkTimeUrl,
 	type: "GET",
@@ -599,6 +586,7 @@ function fetchFullHkTime(varNameKey) {
 //		canContainer.append("<p>"+fullHkUrl+"</p>");	
 		countFilesNeeded++;
 
+		ajaxLoadingLog(fullHkUrl);
 		$.ajax({
 		    url: fullHkUrl,
 		    type: "GET",
@@ -635,6 +623,8 @@ function fetchFullHkTime(varNameKey) {
     }
 
 
+    
+    ajaxLoadingLog(fullHkTimeUrl);
     $.ajax({
 	url: fullHkTimeUrl,
 	type: "GET",
@@ -670,6 +660,7 @@ function getRunInstrumentDateAndPlot(plotFunc) {
     }
     
 
+    ajaxLoadingLog(runListFile);
     $.ajax({
 	url: runListFile,
 	type: "GET",
@@ -705,6 +696,8 @@ function doMultiRunPlot() {
 		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],year,datecode,thisHkType);
 		    countFilesNeeded++;		
 	
+
+		    ajaxLoadingLog(hkFileName);
 		    $.ajax({
 			url: hkFileName,
 			type: "GET",
@@ -720,6 +713,8 @@ function doMultiRunPlot() {
 	}
 	if(runListFile!=lastRunListFile) {
 //	    canContainer.append("<p>"+runListFile+"</p>");
+
+	    ajaxLoadingLog(runListFile);
 	    $.ajax({
 		url: runListFile,
 		type: "GET",
@@ -816,7 +811,7 @@ function drawPlot() {
     timeArray.length=0;
     var plotCan=$("#"+globCanName);
     var choiceContainer = $("#choices");
-    var labelContainer= $("#divLabel");
+    var labelContainer= $("#divLabel-1");
     var titleContainer=$("#titleContainer"); 
     titleContainer.empty();
     plotCan.empty();
