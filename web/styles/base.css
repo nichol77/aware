@@ -1,92 +1,26 @@
 
-BODY {
-/*   background-color: #b0b0ff;*/
+body {
    color: black;
-   margin: 0;
    font-family: sans-serif;
 }
 
-DIV.heading {
-   position: absolute;
-   top: 1em;
-   left:3em;
-   right: 0;
-
+div.heading {
+   vertical-align:middle;
    width:100%;
-   height:12ex;
-background: url(../images/araTestBed1.png)  ;
-                 background-repeat: repeat-y;
-                 background-position: center;
-                 
+   background: url(../images/araTestBed1.png)  ;
+   background-repeat: repeat-y;
+   background-position: center;                 
    background-color: white;
    z-index:5;
+   padding:15px;
 }
 
 
-
-DIV.vertical {
-   position: absolute;
-   left: 3em;
-   top: 14ex;;
-   width: 13em;
-   padding-right:0;
-   padding-left:0;
-   float: left ;
-/*   background-color: #808080; */
-   background-color:#99a3ad;
-   margin-top: 1ex;
-   margin-left: 0;
-   margin-right: 0;
-   margin-bottom: 0;
-   z-index: 4;
-}
-
-DIV.content {
-   position: absolute;
-   top: 14ex;
-   left: 15em;
-   right: 0;
-   margin-top: 1ex;
-
-   width:80%;
-   height: 100%;
-   float:left;
-/*  padding-right:20px;
-  padding-left:10px;*/
-
-
-/*   background-color: #b0b0ff;*/
-   background-color: white;
-   color: black;
-   font-family: sans-serif;
-
-/*   padding-top: 2ex;*/
-   padding-left: 2em;
-   padding-right: 1em;
-   padding-bottom: 0;
-/*   min-width: 10em;*/
-   z-index: 2;
-}
-
-DIV.body {
+div.body {
    padding-top: 1ex;
    clear: both;
 }
 
-
-PRE {
-   background-color: #ffffff;
-   color: #000000;
-   margin: 2em; 
-   color:purple;
-
-   padding-left: 0.5em;
-   padding-right: 0.5em;
-   padding-top: 0.5ex;
-   padding-bottom: 0.5ex;
-   margin-top: 0;
-   margin-bottom: 0;
-}
 
 
 H1 {
@@ -98,10 +32,11 @@ H1 {
    text-align: center;
 }
 
-H2 {
+h2 {
    font-family: sans-serif;
    font-weight: 600;
    margin-bottom: 0.5ex;
+	text-align:center;
 }
 
 H2.navigation {
@@ -269,4 +204,82 @@ a.head:hover {
 
 a.head:active {
     TEXT-DECORATION: underline;
+}
+
+
+
+div.leftBar {
+   height:30%;
+   width: 93%;
+   padding-right:0;
+   padding-left:0;
+   background-color:#99a3ad;
+   margin-top: 1em;
+   margin-left: 0;
+   margin-right: 0;
+   margin-bottom: 0;
+   z-index: 4;
+   clear:both;
+   padding-left: 2em;
+   padding-right: 1em;
+   float:left;
+}
+
+div.middle {
+   width:90%;
+   height:100%;
+   float:left;
+   background-color: white;
+   color: black;
+   font-family: sans-serif;
+   padding-left: 2em;
+   padding-right: 1em;
+   padding-bottom: 0;
+   padding-top: 1em;
+   z-index: 2;
+   clear:both;
+}
+
+
+div.formDiv {
+	width:25%;
+	float:left;
+   background-color:#99a3ad;
+}
+
+
+div.plot-holder {
+	height:500px;
+	width:100%;
+}
+
+@media only screen and (min-width: 800px) {
+
+   
+
+  div.leftBar {
+   	float: left ;
+        width:20%;
+        height:80%;
+        position: absolute;
+        top: 14ex;
+   padding-left: 0em;
+   padding-right: 0em;
+
+   }
+
+
+div.middle {
+   position: absolute;
+   top: 14ex;
+   right: 0;
+   clear:none;
+   width:75%;
+   height:100%;
+  }
+
+div.formDiv {
+	width:100%;
+}
+
 }

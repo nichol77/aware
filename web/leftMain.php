@@ -14,6 +14,4 @@ accesskey="C">Events</a>
 <a class=
 "leftBar" title="Housekeeping" href="awareHk.php"
 accesskey="C">Housekeeping</a>
-
-
 </p>

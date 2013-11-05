@@ -7,25 +7,11 @@
 /////                                                                    /////
 /////   March 2013, r.nichol@ucl.ac.uk                                   /////
 //////////////////////////////////////////////////////////////////////////////
+/**
+ * @fileoverview Simple javascript for getting housekeeping data in JSON format and plotting using the flot library. 
+ * @author r.nichol@ucl.ac.uk (Ryan Nichol)
+ */
 
-
-
-/* Globals, these shouldn't really be used in javascript... but hey ho there we go*/
-var thisHkType;
-var globCanName;
-var thisTimeType;
-var year=2013;
-var datecode=123;
-var timesWaited=0;
-var startTime;
-var duration;
-var thisPlotId=1;
-
-var timeList;// = new Array();
-var varList;
-var datasets = new Object();
-    
-var timeArray=[];
 
 
 ///Here are the UI thingies
@@ -42,7 +28,7 @@ function getTimestampFromDateStringTimeString(dateString,timeString) {
     var day=dateString.split("/")[2];
     var hour=timeString.split(":")[0];
     var minute=timeString.split(":")[1];
-///< This hack is necessary to get round a Chrome feature which drops the seconds part
+    ///< This hack is necessary to get round a Chrome feature which drops the seconds part
     var second=0;
     if(timeString.split(":")[2]>=0)    
 	second=timeString.split(":")[2];
@@ -103,11 +89,11 @@ function setYMax(ymax) {
     
 
 function getYMin() {
-    return document.getElementById("yMinInput").value;
+    return Number(document.getElementById("yMinInput").value);
 }
 
 function getYMax() {
-    return document.getElementById("yMaxInput").value;
+    return Number(document.getElementById("yMaxInput").value);
 }
     
 
@@ -147,60 +133,53 @@ function getPlotNameFromForm() {
     return document.getElementById("plotForm").value;
 }
 
-function getMaxPointsToShow() {
-    return document.getElementById("fullMaxForm").value;; //For now fix this will make it tuneable later
+function getMaxTimePointsToShow() {
+    return document.getElementById("maxTimePointsForm").value;; //For now fix this will make it tuneable later
+}
+
+function getMaxProjBins() {
+    return document.getElementById("maxProjPointsForm").value;; 
 }
 
 
-function setHkTypeAndCanName(hkType,canName,timeType,plotId) {
-    thisHkType=hkType;
-    globCanName=canName;
-    thisTimeType=timeType;
-    thisPlotId=plotId;
-}
 
-function updateTimeType(timeType) {
-    thisTimeType=timeType;
-}
-
-function updateTimeTypeFromForm() {
-    thisTimeType=document.getElementById("timeForm").value;
-
-}
-
-
-function fillFullTimeArray(jsonObject) {
+function fillFullTimeArray(awareControl,jsonObject) {
     for(var index=0;index<jsonObject.full.timeList.length;index++) {
 	var timePoint=jsonObject.full.timeList[index];
-	timeArray.push(timePoint*1000); ///< Javascript needs the number in milliseconds
+	awareControl.timeArray.push(timePoint*1000); ///< Javascript needs the number in milliseconds
     }
 }
 
 
-function addFullVariableToDataset(jsonObject) {
+function addFullVariableToDataset(awareControl,jsonObject) {
     
-//    var canContainer = $("#titleContainer"); 
+    //    var canContainer = $("#titleContainer"); 
 
     var varPoint=jsonObject.full;
     var varName=varPoint.name;
     var dataList = new Object();
     dataList.label=varPoint.label;
     dataList.data= new Array();
+    dataList.yMin=Number.MAX_VALUE;
+    dataList.yMax=-1*Number.MAX_VALUE;
 
-//    canContainer.append("<p>");
-    var maxPointsToShow=getMaxPointsToShow();
+    //    canContainer.append("<p>");
+    var maxPointsToShow=getMaxTimePointsToShow();
 
     var varTimeList=varPoint.timeList;
 
     for(var index=0;index<varTimeList.length;index++) {
-	var timePoint=timeArray[index];
+	var timePoint=awareControl.timeArray[index];
 	var dataPoint=varTimeList[index];
 
+	if(dataPoint>dataList.yMax) dataList.yMax=dataPoint;
+	if(dataPoint<dataList.yMin) dataList.yMin=dataPoint;
 	dataList.data.push([timePoint,dataPoint]); ///< No stdDev for full files
-//	canContainer.append("{"+timeArray[index]+","+dataPoint+"},");
+	//	canContainer.append("{"+awareControl.timeArray[index]+","+dataPoint+"},");
     }
-//    canContainer.append("</p>");
-    datasets[ varName ]=dataList;
+    //    canContainer.append("</p>");
+    //    $('#debugContainer').append("<p>"+varName+" -- "+dataList.yMin+" -- "+dataList.yMax+"</p>");
+    awareControl.datasets[ varName ]=dataList;
 }
 
 function timeSortData(a,b) {
@@ -211,28 +190,48 @@ function numberSort(a,b) {
     return a - b;
 }
 
-function sortDataSets() {
-
-    $.each(datasets, function(key, val) {
+function sortDataSets(awareControl) {
+    
+    $.each(awareControl.datasets, function(key, val) {
 	       val.data.sort(timeSortData);
 	   }
 	   );
 }
 
 
-function getDataForPlot(fullDataset,xaxisMin,xaxisMax) {
-    //Here the fullDataset has every single point, the return of this does not
-    smallDataset = new Object();
+function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
+    //Here the awareControl.datasets has every single point, the return of this does not    
+    var smallHolder = new Object();
+    smallHolder.timeDataset = new Object();
+    smallHolder.projDataset = new Object();
 
 
-    var maxPointsToShow=getMaxPointsToShow();
+    var maxPointsToShow=getMaxTimePointsToShow();
     var doZoom=0;
     if(xaxisMax>xaxisMin) doZoom=1;
     var firstTimeIndex=-1;
     var lastTimeIndex=-1;
     var fullTimePoints=new Array();
     var plotEvery=1;
-    $.each(fullDataset, function(key, val) {
+
+    var projMin=Number.MAX_VALUE;
+    var projMax=-1*Number.MAX_VALUE;
+    if(!getYAutoScale()) {
+	projMin=getYMin();
+	projMax=getYMax();
+    }
+    else if(awareControl.zoom) {
+	projMin=awareControl.yMin;
+	projMax=awareControl.yMax;
+    }
+    else {	
+	$.each(awareControl.datasets, function(key, val) {
+		   if(val.yMin<projMin) projMin=val.yMin;
+		   if(val.yMax>projMax) projMax=val.yMax;
+	       });
+    }
+    //    $('#debugContainer').append("<p>"+projMin+" -- "+projMax+"</p>");
+    $.each(awareControl.datasets, function(key, val) {
 	       if(fullTimePoints.length==0) {
 		   for(var index=0;index<val.data.length;index++) {
 		       if(!doZoom || (val.data[index][0]>=xaxisMin && val.data[index][0]<=xaxisMax)) {
@@ -249,24 +248,63 @@ function getDataForPlot(fullDataset,xaxisMin,xaxisMax) {
 	       }
 
 	       var varName=key;
-	       var dataList = new Object();
-	       dataList.label=val.label;
-	       if("color" in val) 
-		   dataList.color=val.color;
-	       if("points" in val)
-		   dataList.points=val.points;
-	       dataList.data= new Array();	       	       
+	       var timeDataList = new Object();
+	       var projDataList = new Object();
+	       timeDataList.label=val.label;
+	       projDataList.label=val.label;
+	       if("color" in val) {
+		   timeDataList.color=val.color;
+		   projDataList.color=val.color;
+	       }
+	       if("points" in val) {
+		   timeDataList.points=val.points;
+		   projDataList.points=val.points;
+	       }
+	       projDataList.numBins=getMaxProjBins();
+	       projDataList.minVal=projMin;
+	       projDataList.maxVal=projMax;
+	       projDataList.binSize=(projMax-projMin)/projDataList.numBins;
+	       if(projMax-projMin<0.01) projDataList.binSize=0.01;
+	       projDataList.bars=new Object();
+	       projDataList.bars.show=true;
+	       projDataList.bars.barWidth=projDataList.binSize;
+	       projDataList.data = new Array();
+	       for(var bin=0;bin<projDataList.numBins;bin++) {
+		   projDataList.data.push([projDataList.minVal+bin*projDataList.binSize,0]);
+	       }
+
+	       timeDataList.data= new Array();	       	       
 	       for(var index=firstTimeIndex;index<=lastTimeIndex;index+=plotEvery) {		  
 		   var timePoint=fullTimePoints[index-firstTimeIndex];
 		   var dataPoint=val.data[index][1];
+		   var bin=Math.floor((dataPoint-projDataList.minVal)/projDataList.binSize);
+		   //		   if(bin<0) bin=0;
+		   //		   if(bin>=projDataList.numBins) bin=projDataList.numBins-1;
+		   if(bin>=0 && bin<projDataList.numBins) {
+		       projDataList.data[bin][1]++;
+		   }
+
 		   var stdDev=0;
 		   if(plotEvery>1) {	    
 		       var dp2=0;
 		       var deltaT=0;
 		       var count=1;
+
+
 		       for(var index2=index+1;index2<index+plotEvery && index2<=lastTimeIndex;index2++) {
+			   //Fill the histogram
+			   var dataPoint2=val.data[index2][1];
+			   var bin=Math.floor((dataPoint2-projDataList.minVal)/projDataList.binSize);
+			   
+			   if(bin>=0 && bin<projDataList.numBins) {
+			       //			   if(bin<0) bin=0;
+			       //			   if(bin>=projDataList.numBins) bin=projDataList.numBins-1;
+			       projDataList.data[bin][1]++;
+			   }
+
+
 			   count++;
-			   dataPoint+=val.data[index2][1];
+			   dataPoint+=dataPoint2;
 			   deltaT+=(fullTimePoints[index2-firstTimeIndex]-fullTimePoints[index-firstTimeIndex]);
 			   dp2+=(val.data[index2][1]*val.data[index2][1]);
 		       }
@@ -277,15 +315,16 @@ function getDataForPlot(fullDataset,xaxisMin,xaxisMax) {
 		       stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
 		   }	
 
-		   dataList.data.push([timePoint,dataPoint,stdDev]); ///< No stdDev for full files
+		   timeDataList.data.push([timePoint,dataPoint,stdDev]); ///< No stdDev for full files
 	       }
-	       smallDataset[ varName ]=dataList; 
 	       
+	       smallHolder.timeDataset[varName]=timeDataList; 
+	       smallHolder.projDataset[varName]=projDataList;
 	   }
 	   );
     
 
-    return smallDataset;
+    return smallHolder;
 	       
     
 }
@@ -293,15 +332,15 @@ function getDataForPlot(fullDataset,xaxisMin,xaxisMax) {
 
 
 
-function drawSimpleHkTime(varNameKey) {
-    for(var index=0;index<timeList.length;index++) {
-	var timePoint=timeList[index];
-	timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
+function drawSimpleHkTime(varNameKey,awareControl) {
+    for(var index=0;index<awareControl.timeList.length;index++) {
+	var timePoint=awareControl.timeList[index];
+	awareControl.timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
     }
 
     
-    for(var varIndex=0;varIndex<varList.length;varIndex++) {
-	var varPoint=varList[varIndex];
+    for(var varIndex=0;varIndex<awareControl.varList.length;varIndex++) {
+	var varPoint=awareControl.varList[varIndex];
 	var varName = new String(varPoint.name);
 	var varLabel = new String(varPoint.label);
 	//	document.write(varName+"<br>");
@@ -311,47 +350,52 @@ function drawSimpleHkTime(varNameKey) {
 	    var dataList = new Object();
 	    dataList.label=varLabel;
 	    dataList.data= new Array();
+	    dataList.yMin=Number.MAX_VALUE;
+	    dataList.yMax=-1*Number.MAX_VALUE;
 	    
 	    var varTimeList=varPoint.timeList;	    
 	    for(var index=0;index<varTimeList.length;index++) {
 		var dataPoint=varTimeList[index];
-		dataList.data.push([timeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev
+		if(dataPoint.mean>dataList.yMax) dataList.yMax=dataPoint.mean;
+		if(dataPoint.mean<dataList.yMin) dataList.yMin=dataPoint.mean;
+		dataList.data.push([awareControl.timeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev
 	    }
-	    datasets[ varName ]=dataList;
+	    awareControl.datasets[ varName ]=dataList;
 	}
 	
     }
 
 
 
-//    canContainer.append("<p>In drawSimpleHkTime</p>");
+    //    canContainer.append("<p>In drawSimpleHkTime</p>");
 
-    actuallyDrawTheStuff();
+    actuallyDrawTheStuff(awareControl);
 }
 
 
-function actuallyDrawTheStuff() {
+function actuallyDrawTheStuff(awareControl) {
     //Step one is to time sort
-    sortDataSets();
+    sortDataSets(awareControl);
 
     var i = 0;
     var numPoints=0;
-    $.each(datasets, function(key, val) {
+    $.each(awareControl.datasets, function(key, val) {
 	       numPoints=val.data.length;
 	       val.color = i;
 	       ++i;
 	   });
     
 
-    var canContainer = $("#titleContainer"); 
-    if(numPoints>getMaxPointsToShow()) numPoints=getMaxPointsToShow();
-    canContainer.append("<p>The plot shows "+numPoints+" of "+timeArray.length+" time points</p>");
+    var canContainer = $("#plot-text-"+awareControl.plotId); 
+    if(numPoints>getMaxTimePointsToShow()) numPoints=getMaxTimePointsToShow();
+    canContainer.append("<p>The plot shows "+numPoints+" of "+awareControl.timeArray.length+" time points</p>");
 
-    var plotCan=$("#"+globCanName);
+    var timePlotCan=$("#"+awareControl.timeCanName);
+    var projPlotCan=$("#"+awareControl.projCanName);
     // insert checkboxes 
     var countNum=0;
-    var choiceContainer = $("#choices");
-    $.each(datasets, function(key, val) {
+    var choiceContainer = $("#choices-"+awareControl.plotId);
+    $.each(awareControl.datasets, function(key, val) {
 	       if(countNum%4==0) {
 		   choiceContainer.append("<br />");
 	       }
@@ -364,56 +408,74 @@ function actuallyDrawTheStuff() {
     
     choiceContainer.find("input").click(plotAccordingToChoices);
 
-    var options = {
-	aware: {zoom:false},
-	yaxis: { },
+    var timeOptions = {
+	yaxes: [{ label:"Fred"}],
+	yaxis: {  },
 	xaxis: {mode: "time", timezone:"UTC"},
 	lines: { show: false },
 	points: { show: true   },
-	legend:{container: $("#divLabel-1")},
+	legend: { show:false},
 	selection : { mode : "xy" },
-	canvas : true,
+	canvas : true
     }
-    var plot;	
+
+    var projOptions = {
+	yaxis: {},
+	xaxis: {},
+	bars: { show: true, barwidth:10 },
+	selection : { mode : "x" },
+	canvas : true
+    }
+
+    var timePlot;	
+    var projPlot;
+
+    awareControl.zoom=false;
 
     function plotAccordingToChoices() {
 
-	var data = [];
+	var timeData = [];
+	var projData = [];
 	var xmin=0;
 	var xmax=0;
 
-	if(!getXAutoScale() && !options.aware.zoom) {
-	    options.xaxis.min=getXMin();
-	    options.xaxis.max=getXMax();	    
+	if(!getXAutoScale() && !awareControl.zoom) {
+	    timeOptions.xaxis.min=getXMin();
+	    timeOptions.xaxis.max=getXMax();	    
 	}	
 
 
 	if(!getYAutoScale()) {
-	    options.yaxis.min=getYMin();
-	    options.yaxis.max=getYMax();	    
+	    timeOptions.yaxis.min=getYMin();
+	    timeOptions.yaxis.max=getYMax();	    
 	}
 
-	if("min" in options.xaxis) {
-	    xmin=options.xaxis.min;
-	    xmax=options.xaxis.max;
+	if("min" in timeOptions.xaxis) {
+	    xmin=timeOptions.xaxis.min;
+	    xmax=timeOptions.xaxis.max;
 	}
 
 
-	var smallData=getDataForPlot(datasets,xmin,xmax);
+	var smallHolder=getDataForPlot(awareControl,xmin,xmax);
+	var smallTime=smallHolder.timeDataset;
+	var smallProj=smallHolder.projDataset;
 	
-
 
 	choiceContainer.find("input:checked").each(function () {
-	    var key = $(this).attr("name");
-	    if (key && smallData[key]) {
-		data.push(smallData[key]);
-	    }
-	});
+						       var key = $(this).attr("name");
+						       if (key && smallTime[key]) {
+							   timeData.push(smallTime[key]);
+						       }
+						       if (key && smallProj[key]) {
+							   projData.push(smallProj[key]);
+						       }
+						   });
 	
-	if (data.length > 0) {
-	    plot=$.plot(plotCan, data, options);
+	if (timeData.length > 0) {
+	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
+	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
-	    var axes = plot.getAxes();
+	    var axes = timePlot.getAxes();
 	    var realymin = axes.yaxis.min;
 	    var realymax = axes.yaxis.max;
 	    var realxmin = axes.xaxis.min;
@@ -434,36 +496,65 @@ function actuallyDrawTheStuff() {
     
     var lastMin=0;
     var lastMax=0;
+
+    projPlotCan.bind("plotselected", function(event,ranges) {
+		     awareControl.zoom=true; 
+		     timeOptions.yaxis.min=ranges.xaxis.from;
+		     timeOptions.yaxis.max=ranges.xaxis.to;
+		     awareControl.yMin=timeOptions.yaxis.min;
+		     awareControl.yMax=timeOptions.yaxis.max;
+		     
+
+		     if(lastMin!=timeOptions.yaxis.min || lastMax!=timeOptions.yaxis.max) {
+			 lastMin=timeOptions.yaxis.min;
+			 lastMax=timeOptions.yaxis.max;	
+			 plotAccordingToChoices();
+		     }
+		     });
     
-    plotCan.bind("plotselected", function (event, ranges) {
-		     options.aware.zoom=true; 
-		     options.xaxis.min=ranges.xaxis.from;
-		     options.xaxis.max=ranges.xaxis.to;
-		     options.yaxis.min=ranges.yaxis.from;
-		     options.yaxis.max=ranges.yaxis.to;
-		     //	canContainer.append("plotselected");
-		     if(lastMin!=options.yaxis.min || lastMax!=options.yaxis.max) {
-			 lastMin=options.yaxis.min;
-	    lastMax=options.yaxis.max;	
+    timePlotCan.bind("plotselected", function (event, ranges) {
+		     awareControl.zoom=true; 
+		     timeOptions.xaxis.min=ranges.xaxis.from;
+		     timeOptions.xaxis.max=ranges.xaxis.to;
+		     timeOptions.yaxis.min=ranges.yaxis.from;
+		     timeOptions.yaxis.max=ranges.yaxis.to;
+		     awareControl.yMin=timeOptions.yaxis.min;
+		     awareControl.yMax=timeOptions.yaxis.max;
+
+		     if(lastMin!=timeOptions.yaxis.min || lastMax!=timeOptions.yaxis.max) {
+			 lastMin=timeOptions.yaxis.min;
+			 lastMax=timeOptions.yaxis.max;	
 
 
-	    plotAccordingToChoices();
-	}
-    });
+			 plotAccordingToChoices();
+		     }
+		 });
 
-    plotCan.bind("plotunselected", function (event, ranges) {
-		     options.aware.zoom=false;
-		     var newxaxis= { mode: "time"};
-		     options.xaxis = newxaxis;
-		     var newyaxis = {};
-		     options.yaxis=newyaxis;
-		     //	canContainer.append("plotunselected");
-		     if(lastMin!=0 || lastMax!=0) {
-			 lastMin=0;
+    function resetZoom() {
+	awareControl.zoom=false;
+	var newxaxis= { mode: "time"};
+	timeOptions.xaxis = newxaxis;
+	var newyaxis = {};
+	timeOptions.yaxis=newyaxis;
+	//	canContainer.append("plotunselected");
+	if(lastMin!=0 || lastMax!=0) {
+	    lastMin=0;
 	    lastMax=0;
 	    plotAccordingToChoices();
 	}
-    });
+
+
+    }
+
+
+    timePlotCan.bind("plotunselected", function (event, ranges) {
+			 resetZoom();
+		 });
+
+
+    projPlotCan.bind("plotunselected", function (event, ranges) {
+			 resetZoom();
+		 });
 	
   
     plotAccordingToChoices();
@@ -472,128 +563,130 @@ function actuallyDrawTheStuff() {
 }
 
 
-function setTimeAndVarList(jsonObject) {
-    timeList=jsonObject.timeSum.timeList;
-    varList=jsonObject.timeSum.varList;
+function setTimeAndVarList(awareControl,jsonObject) {
+    awareControl.timeList=jsonObject.timeSum.timeList;
+    awareControl.varList=jsonObject.timeSum.varList;
 }
 
-function drawSimpleHkTimePlot() {
-    getRunInstrumentDateAndPlot(simpleHkPlotDrawer);
+function drawSimpleHkTimePlot(awareControl) {
+    getRunInstrumentDateAndPlot(simpleHkPlotDrawer,awareControl);
 }
 
-function updatePlotTitle(jsonObject) {
+function updatePlotTitle(jsonObject,awareControl) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&endrun="+getEndRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&plot="+getPlotNameFromForm()+"&timeType="+thisTimeType+"&hkType="+thisHkType;
+    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&endrun="+getEndRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&plot="+getPlotNameFromForm()+"&timeType="+awareControl.timeType+"&hkType="+awareControl.hkType;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var canContainer = $("#titleContainer"); 
     canContainer.empty();
     canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
-    canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
-    var plotHeader = $("#plot-header-"+thisPlotId+" h3");
-    plotHeader.text(getPlotLabelFromForm());
+    //    canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
+    var plotHeader = $("#plot-header-"+awareControl.plotId+" h3");
+    plotHeader.text(getPlotLabelFromForm() +"-- Start Time "+jsonObject.timeSum.startTime);
+
+    $('#debugContainer').append("<p>thisPlotId"+awareControl.plotId+"</p>");
     
 }
 
 
-function simpleHkPlotDrawer() {
-    var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,thisHkType);
+function simpleHkPlotDrawer(awareControl) {
+    var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
-	updatePlotTitle(jsonObject);
-	datasets = new Object();	
-	var choiceContainer = $("#choices");
+	updatePlotTitle(jsonObject,awareControl);
+	awareControl.datasets = new Object();	
+	var choiceContainer = $("#choices-"+awareControl.plotId);
 	choiceContainer.empty();
 	
 	//Set the time and var list
-	setTimeAndVarList(jsonObject);
+	setTimeAndVarList(awareControl,jsonObject);
 
 	//Actual do the drawing
-	drawSimpleHkTime(getPlotNameFromForm());
+	drawSimpleHkTime(getPlotNameFromForm(),awareControl);
     }
 
 
 
     ajaxLoadingLog(simpleHkTimeUrl);
     $.ajax({
-	url: simpleHkTimeUrl,
-	type: "GET",
-	dataType: "json", 
-	success: handleHkTimeJsonFile,
-	error: handleAjaxError
-    }); 
+	    url: simpleHkTimeUrl,
+		type: "GET",
+		dataType: "json", 
+		success: handleHkTimeJsonFile,
+		error: handleAjaxError
+		}); 
     
 }
 
 
-function drawFullHkTimePlot() {
-    getRunInstrumentDateAndPlot(fullHkPlotDrawer);
+function drawFullHkTimePlot(awareControl) {
+    getRunInstrumentDateAndPlot(fullHkPlotDrawer,awareControl);
 }
 
-function fullHkPlotDrawer() {
-    var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,thisHkType);
+function fullHkPlotDrawer(awareControl) {
+    var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
 
     function handleHkTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
-	updatePlotTitle(jsonObject);
-	var choiceContainer = $("#choices");
+	updatePlotTitle(jsonObject,awareControl);
+	var choiceContainer = $("#choices-"+awareControl.plotId);
 	choiceContainer.empty();
 	
 	//Set the time and var list
-	setTimeAndVarList(jsonObject);
+	setTimeAndVarList(awareControl,jsonObject);
 
 	//Actual do the drawing
-	fetchFullHkTime(getPlotNameFromForm());
+	fetchFullHkTime(getPlotNameFromForm(),awareControl);
     }
 
 
     ajaxLoadingLog(simpleHkTimeUrl);
     $.ajax({
-	url: simpleHkTimeUrl,
-	type: "GET",
-	dataType: "json",
-	success: handleHkTimeJsonFile,
-	error: handleAjaxError
-    }); 
+	    url: simpleHkTimeUrl,
+		type: "GET",
+		dataType: "json",
+		success: handleHkTimeJsonFile,
+		error: handleAjaxError
+		}); 
     
 }
 
 
-function fetchFullHkTime(varNameKey) {
+function fetchFullHkTime(varNameKey,awareControl) {
     
 
-//    var canContainer = $("#titleContainer"); 
-    var fullHkTimeUrl=getFullHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,thisHkType);
-//    canContainer.append("<p>"+fullHkTimeUrl+"</p>");
+    //    var canContainer = $("#titleContainer"); 
+    var fullHkTimeUrl=getFullHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
+    //    canContainer.append("<p>"+fullHkTimeUrl+"</p>");
     
 
     var countFilesNeeded=0;
     function handleFullHkTimeJsonFile(jsonObject) { 
 	///First step is fill the full time list
-	fillFullTimeArray(jsonObject);
-//	canContainer.append("<p>"+timeArray.length+"</p>");
+	fillFullTimeArray(awareControl,jsonObject);
+	//	canContainer.append("<p>"+awareControl.timeArray.length+"</p>");
 
-	for(var varIndex=0;varIndex<varList.length;varIndex++) {
-	    var varPoint=varList[varIndex];
+	for(var varIndex=0;varIndex<awareControl.varList.length;varIndex++) {
+	    var varPoint=awareControl.varList[varIndex];
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
-		var fullHkUrl=getFullHkName(getInstrumentNameFromForm(),getStartRunFromForm(),year,datecode,varName,thisHkType);
-//		canContainer.append("<p>"+fullHkUrl+"</p>");	
+		var fullHkUrl=getFullHkName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,varName,awareControl.hkType);
+		//		canContainer.append("<p>"+fullHkUrl+"</p>");	
 		countFilesNeeded++;
 
 		ajaxLoadingLog(fullHkUrl);
 		$.ajax({
-		    url: fullHkUrl,
-		    type: "GET",
-		    dataType: "json",
-		    success: handleFullHkJsonFile,
-		    error: handleFullHkError
-		}); 
+			url: fullHkUrl,
+			    type: "GET",
+			    dataType: "json",
+			    success: handleFullHkJsonFile,
+			    error: handleFullHkError
+			    }); 
 	
 	    }	
 	}
@@ -604,20 +697,20 @@ function fetchFullHkTime(varNameKey) {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
 
-//	    var canContainer = $("#titleContainer"); 
-//	    canContainer.append("<p>In handleFullHkError</p>");
-	    actuallyDrawTheStuff();
+	    //	    var canContainer = $("#titleContainer"); 
+	    //	    canContainer.append("<p>In handleFullHkError</p>");
+	    actuallyDrawTheStuff(awareControl);
 	}
     }
 
     function handleFullHkJsonFile(jsonObject) { 
 	countFilesGot++;
-	addFullVariableToDataset(jsonObject);
-//	canContainer.append("<p>"+countFilesNeeded+ "    "+countFilesGot+"</p>");	
+	addFullVariableToDataset(awareControl,jsonObject);
+	//	canContainer.append("<p>"+countFilesNeeded+ "    "+countFilesGot+"</p>");	
 	if(countFilesNeeded==countFilesGot) {
-//	    var canContainer = $("#titleContainer"); 
-//	    canContainer.append("<p>In handleFullHkJsonFile</p>");
-	    actuallyDrawTheStuff();
+	    //	    var canContainer = $("#titleContainer"); 
+	    //	    canContainer.append("<p>In handleFullHkJsonFile</p>");
+	    actuallyDrawTheStuff(awareControl);
 	}
 	
     }
@@ -626,16 +719,16 @@ function fetchFullHkTime(varNameKey) {
     
     ajaxLoadingLog(fullHkTimeUrl);
     $.ajax({
-	url: fullHkTimeUrl,
-	type: "GET",
-	dataType: "json",
-	success: handleFullHkTimeJsonFile,
-	error: handleAjaxError
-    }); 
+	    url: fullHkTimeUrl,
+		type: "GET",
+		dataType: "json",
+		success: handleFullHkTimeJsonFile,
+		error: handleAjaxError
+		}); 
 }
 
 
-function getRunInstrumentDateAndPlot(plotFunc) {
+function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
     var startRun=getStartRunFromForm();
     var plotName=getPlotNameFromForm();    
     var instrumentName=getInstrumentNameFromForm();
@@ -644,17 +737,17 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 	var gotRun=0;
 	for(var i=0;i<jsonObject.runList.length;i++) {
 	    if(jsonObject.runList[i][0]==startRun) {
-		year=jsonObject.runList[i][1];
-		datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
+		awareControl.year=jsonObject.runList[i][1];
+		awareControl.dateCode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
 		gotRun=1;
-		plotFunc();
+		plotFunc(awareControl);
 		break;
 	    }
 	}
-	if(gotRun==0 ) {// && thisTimeType.indexOf("simple")>=0) {
-	    var plotCan=$("#"+globCanName);
-	    plotCan.empty();
-	    plotCan.append("<h2>Don't have data for run "+startRun+"</h2>");
+	if(gotRun==0 ) {
+	    var timePlotCan=$("#"+awareControl.timeCanName);
+	    timePlotCan.empty();
+	    timePlotCan.append("<h2>Don't have data for run "+startRun+"</h2>");
 	}
 	
     }
@@ -662,23 +755,23 @@ function getRunInstrumentDateAndPlot(plotFunc) {
 
     ajaxLoadingLog(runListFile);
     $.ajax({
-	url: runListFile,
-	type: "GET",
-	dataType: "json",
-	success: handleRunList,
-	error: handleAjaxError
-    });
+	    url: runListFile,
+		type: "GET",
+		dataType: "json",
+		success: handleRunList,
+		error: handleAjaxError
+		});
 }
 
 
-function doMultiRunPlot() {
+function doMultiRunPlot(awareControl) {
     
     var plotName=getPlotNameFromForm();    
     var instrumentName=getInstrumentNameFromForm();
     var startRun=getStartRunFromForm();
     var endRun=getEndRunFromForm();
     if(endRun<=startRun) {
-	return drawSimpleHkTimePlot();	
+	return drawSimpleHkTimePlot(awareControl);	
     }
 
 
@@ -691,20 +784,20 @@ function doMultiRunPlot() {
 	function handleRunList(jsonObject) {
 	    for(var i=0;i<jsonObject.runList.length;i++) {
 		if(jsonObject.runList[i][0]>=startRun && jsonObject.runList[i][0]<=endRun) {
-		    year=jsonObject.runList[i][1];
-		    datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string  	    
-		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],year,datecode,thisHkType);
+		    awareControl.year=jsonObject.runList[i][1];
+		    awareControl.dateCode=jsonObject.runList[i][2]; ///RJN need to zero pad the string  	    
+		    var hkFileName=getHkTimeName(instrumentName,jsonObject.runList[i][0],awareControl.year,awareControl.dateCode,awareControl.hkType);
 		    countFilesNeeded++;		
 	
 
 		    ajaxLoadingLog(hkFileName);
 		    $.ajax({
-			url: hkFileName,
-			type: "GET",
-			dataType: "json",
-			success: addHkTimeFileToArrays,
-			error: errorHkTimeFile
-		    });
+			    url: hkFileName,
+				type: "GET",
+				dataType: "json",
+				success: addHkTimeFileToArrays,
+				error: errorHkTimeFile
+				});
 		    //Get simple hk files
 		    //Add to some arrays
 		    //Fill variables for plot   		    
@@ -712,15 +805,15 @@ function doMultiRunPlot() {
 	    }
 	}
 	if(runListFile!=lastRunListFile) {
-//	    canContainer.append("<p>"+runListFile+"</p>");
+	    //	    canContainer.append("<p>"+runListFile+"</p>");
 
 	    ajaxLoadingLog(runListFile);
 	    $.ajax({
-		url: runListFile,
-		type: "GET",
-		dataType: "json",
-		success: handleRunList
-	    });
+		    url: runListFile,
+			type: "GET",
+			dataType: "json",
+			success: handleRunList
+			});
 	}
 	lastRunListFile=runListFile;
     }
@@ -731,28 +824,28 @@ function doMultiRunPlot() {
 	if(countFilesNeeded==countFilesGot) {
 	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
 
-//	    var canContainer = $("#titleContainer"); 
-//	    canContainer.append("<p>In errorHkTimeFile</p>");
-	    actuallyDrawTheStuff();
+	    //	    var canContainer = $("#titleContainer"); 
+	    //	    canContainer.append("<p>In errorHkTimeFile</p>");
+	    actuallyDrawTheStuff(awareControl);
 	}
     }
 
     function addHkTimeFileToArrays(jsonObject) {
 	countFilesGot++;
-	if(countFilesGot==1) updatePlotTitle(jsonObject);
+	if(countFilesGot==1) updatePlotTitle(jsonObject,awareControl);
 	var varNameKey=plotName;
 	var timeList=jsonObject.timeSum.timeList;
 	var tempTimeArray = new Array();
 	var varList=jsonObject.timeSum.varList;
 	for(var index=0;index<timeList.length;index++) {
 	    var timePoint=timeList[index];
-	    timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
+	    awareControl.timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
 	    tempTimeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
-	    //	    canContainer.append("<p>"+timeArray[timeArray.length-1]+"</p>")
+	    //	    canContainer.append("<p>"+awareControl.timeArray[awareControl.timeArray.length-1]+"</p>")
 	}
 
 	//	canContainer.append("<p>"+countFilesGot+"</p>");
-	//	canContainer.append("<p>"+timeArray.length+" "+tempTimeArray.length+"</p>");
+	//	canContainer.append("<p>"+awareControl.timeArray.length+" "+tempTimeArray.length+"</p>");
 
 	
 	for(var varIndex=0;varIndex<varList.length;varIndex++) {
@@ -761,43 +854,44 @@ function doMultiRunPlot() {
 	    var varLabel = new String(varPoint.label);
 	    //	document.write(varName+"<br>");
 	    if(varName.indexOf(varNameKey)>=0) {
-		if(varName in datasets) {
-		//		canContainer.append("<p>Got"+varName+"</p>");
+		if(varName in awareControl.datasets) {
+		    //		canContainer.append("<p>Got"+varName+"</p>");
 		}
 		else {
 		    //	    document.write(varNameKey);
 		    ///Got a variable
-		    var dataSetsIndex=$.inArray(varName, datasets);
-		    //		canContainer.append("<p>Not got"+varName+"</p>");
+		    var dataSetsIndex=$.inArray(varName, awareControl.datasets);
+		    //		canContainer.append("<p>Not got"+varName+"</p>");		    
+
 		    if(dataSetsIndex<0) {
 			
 			var dataList = new Object();
 			dataList.label=varLabel;
 			dataList.data= new Array();
+			dataList.yMin=Number.MAX_VALUE;
+			dataList.yMax=-1*Number.MAX_VALUE;
+
+
 			
 			
-			datasets[varName]=dataList;
+			awareControl.datasets[varName]=dataList;
 		    }
 		}
 	    
 		var varTimeList=varPoint.timeList;	    
 		for(var index=0;index<varTimeList.length;index++) {
 		    var dataPoint=varTimeList[index];
-		    datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev 
-		    //		    canContainer.append("<p>"+index+" "+tempTimeArray[index]+" "+dataPoint.mean+"</p>");
+		    if(dataPoint.mean>awareControl.datasets[varName].yMax)
+			awareControl.datasets[varName].yMax=dataPoint.mean;
+		    if(dataPoint.mean<awareControl.datasets[varName].yMin)
+			awareControl.datasets[varName].yMin=dataPoint.mean;
+		    awareControl.datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev 
 		}
-	    
-	    //	    canContainer.append("<p>"+varName+" "+datasets[varName].data.length+" "+timeList.length+"</p>");
-	    
 	    }
 	}
 	
 	if(countFilesNeeded==countFilesGot) {
-	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
-
-//	    var canContainer = $("#titleContainer"); 
-//	    canContainer.append("<p>In addHkTimeFileToArrays</p>");
-	    actuallyDrawTheStuff();
+	    actuallyDrawTheStuff(awareControl);
 	}
     }
 
@@ -807,23 +901,444 @@ function doMultiRunPlot() {
 
 
 
-function drawPlot() {   
-    timeArray.length=0;
-    var plotCan=$("#"+globCanName);
-    var choiceContainer = $("#choices");
-    var labelContainer= $("#divLabel-1");
+function drawPlot(plotControl) {   
+
+    var awareControl = plotControl;
+    awareControl.year=2013;
+    awareControl.datecode=123;
+
+    var timePlotCan=$("#"+awareControl.timeCanName);
+    var projPlotCan=$("#"+awareControl.projCanName);
+    var choiceContainer =$("#choices-"+awareControl.plotId);
+    var labelContainer=$("#divLabel-"+awareControl.plotId);
+    var textContainer=$("#plot-text-"+awareControl.plotId);
     var titleContainer=$("#titleContainer"); 
     titleContainer.empty();
-    plotCan.empty();
-    plotCan.append("<h2>Loading</h2>");
+    timePlotCan.empty();
+    projPlotCan.empty();
+    textContainer.empty();
+    timePlotCan.append("<h2>Loading</h2>");
     choiceContainer.empty();
     labelContainer.empty();
-    datasets = new Object();
+    awareControl.datasets = new Object();
+    awareControl.timeArray=[];
+    awareControl.timeArray.length=0;
 
-    if(thisTimeType.indexOf("simple")>=0) drawSimpleHkTimePlot();
-    else if(thisTimeType.indexOf("full")>=0) drawFullHkTimePlot();
-    else if(thisTimeType.indexOf("multiRun")>=0) doMultiRunPlot();
-    else if(thisTimeType.indexOf("timeRange")>=0) doMultiRunPlot();
+    if(awareControl.timeType.indexOf("simple")>=0) drawSimpleHkTimePlot(awareControl);
+    else if(awareControl.timeType.indexOf("full")>=0) drawFullHkTimePlot(awareControl);
+    else if(awareControl.timeType.indexOf("multiRun")>=0) doMultiRunPlot(awareControl);
+    else if(awareControl.timeType.indexOf("timeRange")>=0) doMultiRunPlot(awareControl);
 	    
 }
 
+
+
+function initialiseAwareHk() {
+
+    var docHeight=$(window).height();
+    var docWidth=$(window).width();
+    var heightPercentage=60;
+    if(docWidth>=800) heightPercentage=80;
+    var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
+    $('#plot-holder-1').height(maxPlotHeight); 
+
+
+    $('#divProjection-1').show();
+    $('#debugContainer').hide();
+
+     
+    $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+	.resizable()
+	.find( ".plot-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+	.find( ".plot-content" );        
+      
+      
+    $( ".plot-header .ui-icon" ).click(function() {
+					   $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+					   $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).toggle();
+					   if($( this ).parents( ".plot-holder:first" ).height()>maxPlotHeight) {
+					       maxPlotHeight=$( this ).parents( ".plot-holder:first" ).height();
+					   }
+					     
+
+					   toggleHeight=100;
+					   if( $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).is(':visible')) {
+					       toggleHeight=maxPlotHeight;
+					   }
+					   $( this ).parents( ".plot-holder:first" ).height( toggleHeight );
+				       });
+      
+
+
+    
+    $("#layoutRadio").buttonset();
+
+    
+
+    $.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if(results != null) {
+	    return results[1];
+	}
+	return null;
+    }
+
+
+    var urlVars=getUrlVars();
+
+      
+    var timeType=document.getElementById("timeForm").value;
+    if("timeType" in urlVars) {
+	timeType=urlVars["timeType"];
+    }
+
+    var hkType=document.getElementById("hkTypeForm").value;
+    if($.urlParam('hkType')) {
+	hkType=$.urlParam('hkType');
+    }
+
+
+    var instrument=document.getElementById("instrumentForm").value;
+    if("instrument" in urlVars) {
+	instrument=urlVars["instrument"];
+    }
+
+    var run=document.getElementById("runForm").value;
+    var runAlreadySet=false;
+    if("run" in urlVars) {
+	run=urlVars["run"];
+	runAlreadySet=true;
+    }
+
+    var endrun=run;
+    if("endrun" in urlVars) {
+	endrun=urlVars["endrun"];
+    }
+
+    updateLastRun(false);
+      
+
+    var plotControl = new Object();
+    plotControl.hkType=hkType;
+    plotControl.plotId=1;
+    plotControl.timeType=timeType;
+    plotControl.timeCanName='divTime-1';
+    plotControl.projCanName='divProjection-1';
+
+
+    $("input:radio[name=layoutRadio]").click(function(){
+						 var str=$(this).val();	;
+						 if(str.indexOf("both")>=0) {
+						     $('#divTime-1').width("70%");
+						     $('#divProjection-1').width("30%");
+						     $('#divTime-1').show();
+						     $('#divProjection-1').show();
+
+						 }
+						 else if(str.indexOf("time")>=0) {
+						     $('#divTime-1').width("100%");
+						     $('#divTime-1').show();
+						     $('#divProjection-1').hide();
+
+						 }
+						 else if(str.indexOf("projection")>=0) {
+						     $('#divProjection-1').width("100%");
+						     $('#divTime-1').hide();
+						     $('#divProjection-1').show();
+						 }
+						 
+    })
+
+
+
+
+
+    ///Here is the logic for delaying with the scale buttons
+    $('#xScaleDiv').hide();
+    $('#yScaleDiv').hide();
+
+    $('#showScaleButton').click( function() {
+				     $('#xScaleDiv').toggle();
+				     $('#yScaleDiv').toggle();
+				 });
+    
+    $('#yAutoScale').change(function() {
+				if($('#yAutoScale').prop('checked')) {
+				$('#debugContainer').append("<p>yAutoScale checked</p>");
+				    //Switching to autoscale
+				    $('#yMinInput').attr('disabled','disabled');
+				    $('#yMaxInput').attr('disabled','disabled');
+				}
+				else {
+				$('#debugContainer').append("<p>yAutoScale not checked</p>");
+				    //Switching to fixed scale
+				    $('#yMinInput').removeAttr('disabled');
+				    $('#yMaxInput').removeAttr('disabled');
+				}
+			    });
+
+
+    $('#xAutoScale').change(function() {
+				if($('#yAutoScale').prop('checked')) {
+				    //Switching to autoscale
+				    $('#xMinDateInput').attr('disabled','disabled');
+				    $('#xMaxDateInput').attr('disabled','disabled');
+				    $('#xMinTimeInput').attr('disabled','disabled');
+				    $('#xMaxTimeInput').attr('disabled','disabled');
+				}
+				else {
+				    //Switching to fixed scale
+				    $('#xMinDateInput').removeAttr('disabled');
+				    $('#xMaxDateInput').removeAttr('disabled');
+				    $('#xMinTimeInput').removeAttr('disabled');
+				    $('#xMaxTimeInput').removeAttr('disabled');
+				}
+			    });
+      
+    $('#refreshButton').click(function() {
+				  drawPlot(plotControl);
+			      });
+
+
+    $('#runInput').change(function() {			      
+			      //When run input changes we can update end run
+			      if(document.getElementById("runInput").value>=
+				 document.getElementById("endRunInput").value) {
+				  document.getElementById("endRunInput").value=
+				      document.getElementById("runInput").value;
+			      }
+			      //And set the minimum for endRunInput to the start run
+			      document.getElementById("endRunInput").min=
+				  document.getElementById("runInput").value;
+			  });
+				
+
+
+
+    function fillPlotForm(array) {
+	$('#plotForm').empty();
+	for (i=0;i<array.length;i++){             
+	    $('<option/>').val(array[i].sym).html(array[i].desc).appendTo('#plotForm');
+	}
+    }
+      
+    function updateHkType(thisHkType) {
+	hkType=thisHkType;
+	plotControl.hkType=thisHkType;
+	
+
+	function actuallyUpdateHkType(plotFormArray) {
+	    var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
+	    fillPlotForm(tempArray);
+	    drawPlot(plotControl);	   
+	}
+	
+
+	$.ajax({
+		url: "config/plotTypeList.json",
+		    type: "GET",
+		    dataType: "json", 
+		    success: actuallyUpdateHkType
+		    }); 
+
+    }
+
+    function updateLastRun(setStartToLast) {
+	//	var tempString="output/"+instrument+"/lastRun";
+	var tempString="output/"+instrument+"/last"+capitaliseFirstLetter(hkType);
+
+
+	function actuallyUpdateLastRun(runString) {
+	    setLastRun(Number(runString));
+	    if(setStartToLast) {
+		setStartRunOnForm(Number(runString));
+		setEndRunOnForm(Number(runString));
+		drawPlot(plotControl);
+	    }
+	}
+
+
+	$.ajax({
+		url: tempString,
+		    type: "GET",
+		    dataType: "text", 
+		    success: actuallyUpdateLastRun
+		    }); 
+	
+    }
+
+
+    $('#runForm').change(function() {
+			     drawPlot(plotControl);
+			 });
+
+
+    $('#runForm2').change(function() {
+			      drawPlot(plotControl);
+			  });				
+      
+
+    $('#instrumentForm').change(function(e) {
+				    instrument=$(this).val();
+				    runAlreadySet=false;
+				    e.stopPropagation();
+				    updateLastRun(true);
+				});	
+
+    $('#hkTypeForm').change(function(e) {
+				var selectedValue = $(this).val();
+				e.stopPropagation();
+				updateHkType(selectedValue);
+	   
+			    });
+      
+			
+        
+
+    $('#timeForm').change(function(e) {			      
+			      timeType = $(this).val();
+			      e.stopPropagation();
+			      if(timeType == "timeRange") {
+				  $('#endRunDiv').show();
+				  $('#timeRangeDiv').show();	     
+			      }
+			      else if(timeType == "multiRun") {
+				  $('#endRunDiv').show();
+				  $('#fullMaxDiv').show();
+				  $('#timeRangeDiv').hide();
+			      }
+			      else {
+				  $('#endRunDiv').hide();
+				  if(timeType == "full") {
+				      $('#fullMaxDiv').show();
+				      $('#timeRangeDiv').hide();
+				  }
+				  else {
+				      $('#fullMaxDiv').show();
+				      $('#timeRangeDiv').hide();
+				  }
+	       
+			      }
+
+
+			      plotControl.timeType=timeType;
+			      drawPlot(plotControl);
+			  });
+
+    setEndRunOnForm(endrun);
+
+
+    $('#setRunRange').bind('click', function() {
+
+			       var startDate=document.getElementById("startDate").value;
+			       var startYear=startDate.split("/")[0];
+			       var startMonth=startDate.split("/")[1];
+			       var startDay=startDate.split("/")[2];
+			       var startDatecode=startMonth+startDay;
+	
+
+			       var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);
+
+			       var endDate=document.getElementById("endDate").value;
+			       var endYear=endDate.split("/")[0];
+			       var endMonth=endDate.split("/")[1];
+			       var endDay=endDate.split("/")[2];
+			       var endDatecode=endMonth+endDay;
+			       var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
+
+
+			       var numGot=0;
+			       function handleStartDateRunList(jsonObject) {
+				   for(var i=0;i<jsonObject.runList.length;i++) {
+				       var thisRun=jsonObject.runList[i];
+				       setStartRunOnForm(Number(thisRun));	    
+				       break;
+				   }
+				   numGot++;
+				   if(numGot==2) drawPlot(plotControl);
+			       }
+
+			       function handleEndDateRunList(jsonObject) {
+				   for(var i=0;i<jsonObject.runList.length;i++) {
+				       var thisRun=jsonObject.runList[i];
+				       setEndRunOnForm(Number(thisRun));	    
+				   }
+				   numGot++;
+				   if(numGot==2) drawPlot(plotControl);
+			       }
+	
+			       function handleFailure() {
+				   numGot++;
+				   if(numGot==2) drawPlot(plotControl);
+			       }
+	   	   
+	
+			       $.ajax({
+				       url: startDateRunListUrl,
+					   type: "GET",
+					   dataType: "json",
+					   success: handleStartDateRunList,
+					   error: handleFailure
+					   });
+	
+			       $.ajax({
+				       url: endDateRunListUrl,
+					   type: "GET",
+					   dataType: "json",
+					   success: handleEndDateRunList,
+					   error: handleFailure
+					   });
+	
+	
+	
+			   });
+
+
+    $('#endRunDiv').hide();
+    $('#timeRangeDiv').hide();
+      
+    $( "#startDate" ).change(function(e) {			      
+				 e.stopPropagation();
+			     });
+
+    $( "#endDate" ).change(function(e) {			      
+			       e.stopPropagation();
+			   });
+
+     
+    $( "#startDate" ).datepicker({
+	    dateFormat:"yy/mm/dd",
+		maxDate:0,
+		onClose: function( selectedDate ) {
+		$( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+	    }
+	});     
+    $( "#endDate" ).datepicker({
+	    dateFormat:"yy/mm/dd",
+		maxDate:0,
+		onClose: function( selectedDate ) {
+		$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+	    }
+	});
+
+
+
+      
+
+    $('#fullMaxDiv').show();
+    if(timeType == "multiRun")
+	$('#endRunDiv').show();
+    if(timeType == "timeRange") {
+	$('#endRunDiv').show();
+	$('#timeRangeDiv').show();	  
+    }
+
+    updateHkType(hkType);
+    if(!runAlreadySet) updateLastRun(true);
+
+
+    //      drawPlot(plotControl);
+}

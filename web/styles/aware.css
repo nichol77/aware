@@ -1,11 +1,17 @@
 
 
+form input[type=text], form input[type=number] {
+	font-color: red;
+	font-size: 12px;
+
+}
+
 form, fieldset, legend, ol, li {
 	margin: 0;
 	padding: 0;
 }
 
-form#scaleForm,form#runForm {
+form.scaleForm,form.runForm {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -13,18 +19,18 @@ form#scaleForm,form#runForm {
 	width: 180px;
 }
 
-form#scaleForm fieldset, form#runForm fieldset {
+form.scaleForm fieldset, form.runForm fieldset {
 	border: none;
 	margin-bottom: 5px;
 }
 
-form#scaleForm legend, form#runForm legend {
+form.scaleForm legend, form.runForm legend {
 	font-size: 16px;
 	font-weight: bold;
 	padding-bottom: 2px;
 }
 
-form#scaleForm li, form#runForm li  {
+form.scaleForm li, form.runForm li  {
 	background: rgba(255,255,255,.3);
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -36,7 +42,7 @@ form#scaleForm li, form#runForm li  {
         margin-left: -2em;
 }
 
-form#scaleForm label, form#runForm label  {
+form.scaleForm label, form.runForm label  {
 float: left;
 }
 
@@ -312,7 +318,7 @@ For the AWARE web event display
 }
 
 .lastBox {
-    width:70%;
+    width:90%;
     border-radius: 15px;
     background-color: greenyellow;
     padding: 10px;
@@ -333,10 +339,12 @@ border: 0px solid black;
 }
 
 
-
-.plot-holder { margin: 0 1em 1em 0; }
-.plot-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+.plot-preamble { height:50px}
+.plot-holder { margin: 0em; }
+.plot-header { margin: 0.1em; padding-bottom: 1px; padding-left: 0.2em; padding-top: 1px; }
 .plot-header .ui-icon { float: right; }
 .plot-content { padding: 0.4em; }
 
-td.legendLabel { font-size: 12px; }
+td.legendLabel { font-size: 50%; }
+
+p.choiceList {font-size: 50%;}

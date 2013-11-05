@@ -1,4 +1,4 @@
-
+<div class="formDiv">
 <?php
 include("leftMain.php");
 ?>
@@ -6,7 +6,7 @@ include("leftMain.php");
 
 
 
-<form name="runForm" id="runForm" action="">  
+<form class="runForm" id="runForm" action="">  
 
 <?php
  //Load the defaults
@@ -166,7 +166,7 @@ echo "</li>";
 </ul>
 </fieldset>
 </form>
-
+</div>
 
 
 

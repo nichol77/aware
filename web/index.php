@@ -19,7 +19,7 @@ header("Connection: keep-alive");
 <DIV class="heading">
 <h1>ARA Web Monitor</h1>
 </DIV>
-<DIV class=middle>
+<DIV class=single>
 <DIV class=content>
 <h2>ARA02</h2>
 <a href="events.php?instrument=STATION2">
@@ -207,10 +207,5 @@ if (file_exists($lastHeader)) {
 </div>
 </div>
 
-<div class="vertical" id="leftbar">
-<?php
-include("leftMain.php");
-?>
-</div>
 </body></html>
 

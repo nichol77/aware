@@ -30,6 +30,14 @@ header("Connection: keep-alive");
   $(function() {
 
 
+      var docHeight=$(window).height();
+      var docWidth=$(window).width();
+      var heightPercentage=60;
+      if(docWidth>=800) heightPercentage=80;
+
+      var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
+      $('#divEvent').height(maxPlotHeight); 
+
 
       function updateLastRun(setStartToLast) {
 	var tempString="output/"+getInstrumentNameFromForm()+"/lastEvent";
@@ -181,7 +189,7 @@ header("Connection: keep-alive");
 
 </div></div>
 
-<div class="vertical" id="leftbar">
+<div class="leftBar" id="leftbar">
 <?php
 include("leftEvent.php");
 ?>

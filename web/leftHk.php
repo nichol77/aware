@@ -1,12 +1,12 @@
+
+<div class="formDiv">
 <?php
   //First up include the really static links
 include("leftMain.php");
 ?>
 
 
-
-<form name="runForm" id="runForm" action="javascript:drawPlot(); javascript:void(0);">  
-
+<form class="runForm" id="runForm" action=" javascript:void(0);">  
 <?php
  //Load the defaults
 $defaults_array = parse_ini_file("config/defaultValues.ini", true);
@@ -58,7 +58,7 @@ echo "<br>";
 
 //Load the hkType array config file
 $hkType_array = parse_ini_file("config/hkTypeList.ini", true);
-echo 'Hk. Type: <select id="hkTypeForm">';
+echo 'Hk. Type:<br> <select id="hkTypeForm">';
 foreach($hkType_array as $inst => $properties){
   $key=$properties[name];
   $value=$properties[title];
@@ -75,13 +75,13 @@ echo "<a href=\"#openHkTypeHelp\">?</a>";
 
 echo "<br>";
 
-echo "Plot: <select id=\"plotForm\"></select>";
+echo "Plot:<br> <select id=\"plotForm\"></select>";
 echo "<br>";
 
 
 //Load the timeType array config file
 $timeType_array = parse_ini_file("config/timeTypeList.ini", true);
-echo 'Type: <select id="timeForm">';
+echo 'Type:<br> <select id="timeForm">';
 foreach($timeType_array as $inst => $properties){
   $key=$properties[name];
   $value=$properties[title];
@@ -97,14 +97,18 @@ echo "</select>";
 echo "<a href=\"#openTimeTypeHelp\">?</a>";
 echo "<br>";
 echo "</fieldset>";
+echo "</form>";
+echo "</div>";
+echo "<div class=\"formDiv\">";
+echo "<form class=\"runForm\" id=\"runForm2\" action=\" javascript:void(0);\">";
 echo "<fieldset>";
 echo "<legend>Run Range</legend>";
 echo "<label>Start:</label>";
-echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:drawPlot();\" >";
+echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\"  >";
 ?>
 <div id="endRunDiv">
 <label>End:</label>
-<input type="number" name="endRunInput" id="endRunInput" value="" min="0" max="100000" step="1" onchange="javascript:drawPlot();" >
+<input type="number" name="endRunInput" id="endRunInput" value="" min="0" max="100000" step="1" >
 </div>
 </fieldset>
 <div id="timeRangeDiv">
@@ -117,16 +121,20 @@ echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" ma
 </div>
 <div id="fullMaxDiv">
 <fieldset>
-<legend>Max Plot Points</legend>
-<input type="number" name="fullMaxForm" id="fullMaxForm" value="100" step="1" onchange="javascript:drawPlot();">
+<legend>Plot Points</legend>
+<label>Time:</label><input type="number"id="maxTimePointsForm" value="100" step="1" >
+<label>Histo:</label><input type="number"id="maxProjPointsForm" value="100" step="1" >
 </fieldset>
-</div>
 <fieldset>
 <button type="button" id="showScaleButton">Show Scale Options</button>
 </fieldset>
+</div>
 </form>
-<div id="scaleDiv" >
-<form id="scaleForm">
+</div>
+
+
+<div id="yScaleDiv" class="formDiv" >
+<form id="yScaleForm" class="scaleForm">
 <fieldset>
 <legend>y-axis</legend>
 <ul>
@@ -147,6 +155,10 @@ echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" ma
 </li>
 </ul>
 </fieldset>
+</form>
+</div>
+<div class="formDiv" id="xScaleDiv">
+<form id="xScaleForm" class="scaleForm">
 <fieldset>
 <legend>x-axis</legend>
 <ul>
