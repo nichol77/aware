@@ -15,14 +15,194 @@
 
 
 ///Here are the UI thingies
+
+/**
+ * @function Sets the maximum run on the UI form elements
+ * @params thisRun is an integer corresponding to the maximum allowed run number
+ */
 function setLastRun(thisRun) {
     document.getElementById("runInput").max=thisRun;
     document.getElementById("endRunInput").max=thisRun;
 }
 
 
+/**
+ * @function Returns a boolean corresponding to if the xAutoScale UI checkbox is ticked
+ */
+function getXAutoScale() {
+    return document.getElementById("xAutoScale").checked;
+}
+
+/**
+* @function Sets the UI xMinDateInput element to the corresponding timestamp
+* @params xmintimestamp is a javascript timestamp
+*/
+function setXMin(xmintimestamp) {   
+    var date = new Date(xmintimestamp);//xmintimestamp);
+    document.getElementById("xMinDateInput").value=getDateString(date);
+    document.getElementById("xMinTimeInput").value=getTimeString(date);
+}
+
+/**
+* @function Sets the UI xMaxDateInput element to the corresponding timestamp
+* @params xmaxtimestamp is a javascript timestamp
+*/
+function setXMax(xmaxtimestamp) {
+    var date = new Date(xmaxtimestamp);
+    document.getElementById("xMaxDateInput").value=getDateString(date);
+    document.getElementById("xMaxTimeInput").value=getTimeString(date);
+}
+
+/**
+* @function Returns the timestamp corresponding to the xMinDateInput and xMinTimeInput
+* @returns A javascript timestamp corresponding to the time in xMinDateInput and xMinTimeInput
+*/
+function getXMin() {   
+    var dateString=document.getElementById("xMinDateInput").value;
+    var timeString=document.getElementById("xMinTimeInput").value;
+    return getTimestampFromDateStringTimeString(dateString,timeString);
+}
+
+/**
+* @function Returns the timestamp corresponding to the xMaxDateInput and xMaxTimeInput
+* @returns A javascript timestamp corresponding to the time in xMaxDateInput and xMaxTimeInput
+*/
+function getXMax() {
+    var dateString=document.getElementById("xMaxDateInput").value;
+    var timeString=document.getElementById("xMaxTimeInput").value;
+    return getTimestampFromDateStringTimeString(dateString,timeString);
+}
+
+
+
+/**
+ * @function Returns a boolean corresponding to if the xAutoScale UI checkbox is ticked
+ * @returns Boolean determining if the y-scale should be autoscaled or not
+ */
+function getYAutoScale() {
+    return document.getElementById("yAutoScale").checked;
+}
+
+/**
+ * @function Sets the yMinInput UI element to ymin
+ * @params ymin is a double corresponding to the minimum y value of the time plot
+ */
+function setYMin(ymin) {
+    document.getElementById("yMinInput").value=ymin;
+}
+
+/**
+ * @function Sets the yMaxInput UI element to ymax
+ * @params ymax is a double corresponding to the maximum y value of the time plot
+ */
+function setYMax(ymax) {
+    document.getElementById("yMaxInput").value=ymax;
+}
+    
+
+/**
+ * @function Gets the value from the yMinInput UI element
+ * @returns A Number corresponding to the desired minimum y value for the time plot
+ */
+function getYMin() {
+    return Number(document.getElementById("yMinInput").value);
+}
+
+/**
+ * @function Gets the value from the yMaxInput UI element
+ * @returns A Number corresponding to the desired maximum y value for the time plot
+ */
+function getYMax() {
+    return Number(document.getElementById("yMaxInput").value);
+}
+    
+
+/**
+ * @function Gets the run number from the runInput UI element
+ * @returns The run number from the runInput UI element
+ */
+function getStartRunFromForm() {
+    return document.getElementById("runInput").value;
+} 
+
+/**
+ * @function Sets the runInput UI element to thisRun
+ * @params thisRun is the new start run number 
+ */
+function setStartRunOnForm(thisRun) { 
+    document.getElementById("runInput").value=thisRun;
+	
+} 
+
+/**
+ * @function Gets the run number from the endRunInput UI element
+ * @returns The run number from the endRunInput UI element
+ */
+function getEndRunFromForm() {
+    return document.getElementById("endRunInput").value;
+} 
+
+
+/**
+ * @function Sets the endRunInput UI element to thisRun
+ * @params thisRun is the new end run number 
+ */
+function setEndRunOnForm(thisRun) {
+    document.getElementById("endRunInput").value=thisRun;
+
+} 
+
+/**
+ * @function Gets the instrument name from the instrumentForm UI element
+ * @returns A string corresponding to the instrument name
+ */
+function getInstrumentNameFromForm() {
+    return document.getElementById("instrumentForm").value;
+}
+
+
+/**
+ * @function Gets the label for the selected value in the plotForm UI element
+ * @returns A string corresponding to the plot label
+ */
+function getPlotLabelFromForm() {
+    var elt = document.getElementById("plotForm");
+    if(elt.selectedIndex==-1)
+	return getPlotNameFromForm();
+    return elt.options[elt.selectedIndex].text;
+}
+
+/**
+ * @function Gets the keyword for the selected value in the plotForm UI element
+ * @returns A string corresponding to the plot keyword
+ */
+function getPlotNameFromForm() {
+    return document.getElementById("plotForm").value;
+}
+
+
+/**
+ * @function Gets the desired number of time points from the maxTimePointsForm UI element
+ * @returns The desired number of time points
+ */
+function getMaxTimePointsToShow() {
+    return document.getElementById("maxTimePointsForm").value;
+}
+
+/**
+ * @function Gets the desired number of bins in the projection plot from the maxProjPointsForm UI element
+ * @returns The desired number of bins in the projection plot
+ */
+function getMaxProjBins() {
+    return document.getElementById("maxProjPointsForm").value; 
+}
+
+
+/**
+* @function Utility function to convert time and date strings to javascript timestamps
+*
+*/
 function getTimestampFromDateStringTimeString(dateString,timeString) {
-    //    $('#debugContainer').append("<p>"+dateString+" -- "+timeString+"</p>");
     var year=dateString.split("/")[0];
     var month=dateString.split("/")[1]-1;
     var day=dateString.split("/")[2];
@@ -37,112 +217,31 @@ function getTimestampFromDateStringTimeString(dateString,timeString) {
 }
 
 
+
+/**
+* @function Utility function to create a string from a javascript Date object
+*
+*/
 function getDateString(dateObj) {
     var dateString = dateObj.getUTCFullYear()+"/"+pad2(dateObj.getUTCMonth()+1)+"/"+pad2(dateObj.getUTCDate());
     return dateString;
 }
 
+/**
+* @function Utility function to create a string from a javascript Date object
+*
+*/
 function getTimeString(dateObj) {
     var timeString = pad2(dateObj.getUTCHours())+":"+pad2(dateObj.getUTCMinutes())+":"+pad2(dateObj.getUTCSeconds());
     return timeString;
 }
 
-function getXAutoScale() {
-    return document.getElementById("xAutoScale").checked;
-}
 
-function setXMin(xmintimestamp) {   
-    var date = new Date(xmintimestamp);//xmintimestamp);
-    document.getElementById("xMinDateInput").value=getDateString(date);
-    document.getElementById("xMinTimeInput").value=getTimeString(date);
-}
-
-function setXMax(xmaxtimestamp) {
-    var date = new Date(xmaxtimestamp);
-    document.getElementById("xMaxDateInput").value=getDateString(date);
-    document.getElementById("xMaxTimeInput").value=getTimeString(date);
-}
-
-function getXMin() {   
-    var dateString=document.getElementById("xMinDateInput").value;
-    var timeString=document.getElementById("xMinTimeInput").value;
-    return getTimestampFromDateStringTimeString(dateString,timeString);
-}
-
-function getXMax() {
-    var dateString=document.getElementById("xMaxDateInput").value;
-    var timeString=document.getElementById("xMaxTimeInput").value;
-    return getTimestampFromDateStringTimeString(dateString,timeString);
-}
-
-function getYAutoScale() {
-    return document.getElementById("yAutoScale").checked;
-}
-
-function setYMin(ymin) {
-    document.getElementById("yMinInput").value=ymin;
-}
-
-function setYMax(ymax) {
-    document.getElementById("yMaxInput").value=ymax;
-}
-    
-
-function getYMin() {
-    return Number(document.getElementById("yMinInput").value);
-}
-
-function getYMax() {
-    return Number(document.getElementById("yMaxInput").value);
-}
-    
-
-function getStartRunFromForm() {
-    return document.getElementById("runInput").value;
-} 
-
-function setStartRunOnForm(thisRun) { 
-    document.getElementById("runInput").value=thisRun;
-	
-} 
-
-function getEndRunFromForm() {
-    return document.getElementById("endRunInput").value;
-} 
-
-
-function setEndRunOnForm(thisRun) {
-    document.getElementById("endRunInput").value=thisRun;
-
-} 
-
-
-function getInstrumentNameFromForm() {
-    return document.getElementById("instrumentForm").value;
-}
-
-function getPlotLabelFromForm() {
-    var elt = document.getElementById("plotForm");
-    if(elt.selectedIndex==-1)
-	return getPlotNameFromForm();
-    return elt.options[elt.selectedIndex].text;
-}
-
-
-function getPlotNameFromForm() {
-    return document.getElementById("plotForm").value;
-}
-
-function getMaxTimePointsToShow() {
-    return document.getElementById("maxTimePointsForm").value;; //For now fix this will make it tuneable later
-}
-
-function getMaxProjBins() {
-    return document.getElementById("maxProjPointsForm").value;; 
-}
-
-
-
+/**
+* @function Data handling function to add the timePoints from the JSON AWARE object to the time array
+* @params awareControl is the global aware control object
+* @params jsonObject is an object corresponding to an AWARE Full JSON file
+*/
 function fillFullTimeArray(awareControl,jsonObject) {
     for(var index=0;index<jsonObject.full.timeList.length;index++) {
 	var timePoint=jsonObject.full.timeList[index];
@@ -151,10 +250,12 @@ function fillFullTimeArray(awareControl,jsonObject) {
 }
 
 
-function addFullVariableToDataset(awareControl,jsonObject) {
-    
-    //    var canContainer = $("#titleContainer"); 
-
+/**
+* @function Data handling function to add data points from the JSON AWARE object to the list of datasets
+* @params awareControl is the global aware control object
+* @params jsonObject is an object corresponding to an AWARE Full JSON file
+*/
+function addFullVariableToDataset(awareControl,jsonObject) {    
     var varPoint=jsonObject.full;
     var varName=varPoint.name;
     var dataList = new Object();
@@ -163,7 +264,6 @@ function addFullVariableToDataset(awareControl,jsonObject) {
     dataList.yMin=Number.MAX_VALUE;
     dataList.yMax=-1*Number.MAX_VALUE;
 
-    //    canContainer.append("<p>");
     var maxPointsToShow=getMaxTimePointsToShow();
 
     var varTimeList=varPoint.timeList;
@@ -175,30 +275,43 @@ function addFullVariableToDataset(awareControl,jsonObject) {
 	if(dataPoint>dataList.yMax) dataList.yMax=dataPoint;
 	if(dataPoint<dataList.yMin) dataList.yMin=dataPoint;
 	dataList.data.push([timePoint,dataPoint]); ///< No stdDev for full files
-	//	canContainer.append("{"+awareControl.timeArray[index]+","+dataPoint+"},");
     }
-    //    canContainer.append("</p>");
-    //    $('#debugContainer').append("<p>"+varName+" -- "+dataList.yMin+" -- "+dataList.yMax+"</p>");
     awareControl.datasets[ varName ]=dataList;
 }
 
+/**
+* @function Utility function for time sorting data points
+*/
 function timeSortData(a,b) {
     return a[0]-b[0];
 }
 
+/**
+* @function Utility function for sorting numbers
+*/
 function numberSort(a,b) {
     return a - b;
 }
 
-function sortDataSets(awareControl) {
-    
+
+/**
+* @function Utility function that loops over the list of variables in awareControl.datasets and timesorts the data points
+* @params awareControl is the object containing the data for plotting
+*/
+function sortDataSets(awareControl) {   
     $.each(awareControl.datasets, function(key, val) {
-	       val.data.sort(timeSortData);
-	   }
-	   );
+	val.data.sort(timeSortData);
+    });
 }
 
 
+/**
+* @function This function performs two main tasks for each variable in the datasets <ol><li>It creates the projection plot using the full data set in the selected time range</li><li>It averages the data points if there are more in the range xaxisMin to xaxisMax than in the maxTimePointsForm UI element</li></ol>
+* @params awareControl is the object containing the data for plotting
+* @params xaxisMin is the minimum desired x value
+* @params xaxisMax is the maximum desired x value
+* @returns A javascript object containing the averaged data set and projected histograms
+*/
 function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     //Here the awareControl.datasets has every single point, the return of this does not    
     var smallHolder = new Object();
@@ -324,9 +437,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 	   );
     
 
-    return smallHolder;
-	       
-    
+    return smallHolder;	           
 }
 
 
