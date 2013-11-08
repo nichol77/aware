@@ -343,7 +343,6 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   if(val.yMax>projMax) projMax=val.yMax;
 	       });
     }
-    //    $('#debugContainer').append("<p>"+projMin+" -- "+projMax+"</p>");
     $.each(awareControl.datasets, function(key, val) {
 	       if(fullTimePoints.length==0) {
 		   for(var index=0;index<val.data.length;index++) {
@@ -353,7 +352,6 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 			   fullTimePoints.push(val.data[index][0]);
 		       }
 		   }
-		   //		   canContainer.append("<p>doZoom="+doZoom+" "+firstTimeIndex+" "+lastTimeIndex+"</p>");
 		   if(fullTimePoints.length>maxPointsToShow) {
 		       //Need to do some data decimation
 		       plotEvery=Math.ceil(fullTimePoints.length/maxPointsToShow);
@@ -391,8 +389,6 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   var timePoint=fullTimePoints[index-firstTimeIndex];
 		   var dataPoint=val.data[index][1];
 		   var bin=Math.floor((dataPoint-projDataList.minVal)/projDataList.binSize);
-		   //		   if(bin<0) bin=0;
-		   //		   if(bin>=projDataList.numBins) bin=projDataList.numBins-1;
 		   if(bin>=0 && bin<projDataList.numBins) {
 		       projDataList.data[bin][1]++;
 		   }
@@ -410,8 +406,6 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 			   var bin=Math.floor((dataPoint2-projDataList.minVal)/projDataList.binSize);
 			   
 			   if(bin>=0 && bin<projDataList.numBins) {
-			       //			   if(bin<0) bin=0;
-			       //			   if(bin>=projDataList.numBins) bin=projDataList.numBins-1;
 			       projDataList.data[bin][1]++;
 			   }
 
@@ -441,22 +435,22 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 }
 
 
-
-
+/**
+* @function This function loops through the variables and fills the datasets object
+* @params awareControl is the object containing the data for plotting
+* @params varNameKey is a string corresponding to the variable for the plot
+*/
 function drawSimpleHkTime(varNameKey,awareControl) {
     for(var index=0;index<awareControl.timeList.length;index++) {
 	var timePoint=awareControl.timeList[index];
 	awareControl.timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
     }
-
     
     for(var varIndex=0;varIndex<awareControl.varList.length;varIndex++) {
 	var varPoint=awareControl.varList[varIndex];
 	var varName = new String(varPoint.name);
 	var varLabel = new String(varPoint.label);
-	//	document.write(varName+"<br>");
 	if(varName.indexOf(varNameKey)>=0) {
-	    //	    document.write(varNameKey);
 	    ///Got a variable
 	    var dataList = new Object();
 	    dataList.label=varLabel;
@@ -476,49 +470,50 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 	
     }
 
-
-
-    //    canContainer.append("<p>In drawSimpleHkTime</p>");
-
     actuallyDrawTheStuff(awareControl);
 }
 
 
+
+/**
+* @function This function is the one that actually draws the time and projection plots on the canvases
+* @params awareControl is the object containing the data for 
+*/
 function actuallyDrawTheStuff(awareControl) {
     //Step one is to time sort
     sortDataSets(awareControl);
 
-    var i = 0;
+    //Step two is to assign colours to the variables for the plot
+    var colorIndex=0;
     var numPoints=0;
-    $.each(awareControl.datasets, function(key, val) {
-	       numPoints=val.data.length;
-	       val.color = i;
-	       ++i;
-	   });
+    $.each(awareControl.datasets, function(key, dataset) {
+	numPoints=val.data.length;
+	dataset.color = colorIndex;
+	++colorIndex;
+    });
     
-
     var canContainer = $("#plot-text-"+awareControl.plotId); 
     if(numPoints>getMaxTimePointsToShow()) numPoints=getMaxTimePointsToShow();
     canContainer.append("<p>The plot shows "+numPoints+" of "+awareControl.timeArray.length+" time points</p>");
-
     var timePlotCan=$("#"+awareControl.timeCanName);
     var projPlotCan=$("#"+awareControl.projCanName);
-    // insert checkboxes 
+
+    // Add some checkboxes to turn plots on and off
     var countNum=0;
     var choiceContainer = $("#choices-"+awareControl.plotId);
-    $.each(awareControl.datasets, function(key, val) {
+    $.each(awareControl.datasets, function(key, dataset) {
 	       if(countNum%4==0) {
 		   choiceContainer.append("<br />");
 	       }
 	       choiceContainer.append("<input type='checkbox' name='" + key +
 				      "' checked='checked' id='id" + key + "'></input>" +
 				      "<label for='id" + key + "'>"
-				      + val.label + "</label>");
+				      + dataset.label + "</label>");
 	       countNum++;
-	   });
-    
+	   });    
     choiceContainer.find("input").click(plotAccordingToChoices);
 
+    //Set up the options for the time and projection plots
     var timeOptions = {
 	yaxes: [{ label:"Fred"}],
 	yaxis: {  },
@@ -543,8 +538,8 @@ function actuallyDrawTheStuff(awareControl) {
 
     awareControl.zoom=false;
 
+    //This function plots the variables according to which checkboxes are ticked
     function plotAccordingToChoices() {
-
 	var timeData = [];
 	var projData = [];
 	var xmin=0;
@@ -607,7 +602,7 @@ function actuallyDrawTheStuff(awareControl) {
     
     var lastMin=0;
     var lastMax=0;
-
+    // This is where the zoom function is bound to the projection plot
     projPlotCan.bind("plotselected", function(event,ranges) {
 		     awareControl.zoom=true; 
 		     timeOptions.yaxis.min=ranges.xaxis.from;
@@ -622,24 +617,23 @@ function actuallyDrawTheStuff(awareControl) {
 			 plotAccordingToChoices();
 		     }
 		     });
-    
+
+    // This is where the zoom function is bound to the time plot
     timePlotCan.bind("plotselected", function (event, ranges) {
-		     awareControl.zoom=true; 
-		     timeOptions.xaxis.min=ranges.xaxis.from;
-		     timeOptions.xaxis.max=ranges.xaxis.to;
-		     timeOptions.yaxis.min=ranges.yaxis.from;
-		     timeOptions.yaxis.max=ranges.yaxis.to;
-		     awareControl.yMin=timeOptions.yaxis.min;
-		     awareControl.yMax=timeOptions.yaxis.max;
-
-		     if(lastMin!=timeOptions.yaxis.min || lastMax!=timeOptions.yaxis.max) {
-			 lastMin=timeOptions.yaxis.min;
-			 lastMax=timeOptions.yaxis.max;	
-
-
-			 plotAccordingToChoices();
-		     }
-		 });
+	awareControl.zoom=true; 
+	timeOptions.xaxis.min=ranges.xaxis.from;
+	timeOptions.xaxis.max=ranges.xaxis.to;
+	timeOptions.yaxis.min=ranges.yaxis.from;
+	timeOptions.yaxis.max=ranges.yaxis.to;
+	awareControl.yMin=timeOptions.yaxis.min;
+	awareControl.yMax=timeOptions.yaxis.max;
+	
+	if(lastMin!=timeOptions.yaxis.min || lastMax!=timeOptions.yaxis.max) {
+	    lastMin=timeOptions.yaxis.min;
+	    lastMax=timeOptions.yaxis.max;		    	    
+	    plotAccordingToChoices();
+	}
+    });
 
     function resetZoom() {
 	awareControl.zoom=false;
@@ -647,14 +641,11 @@ function actuallyDrawTheStuff(awareControl) {
 	timeOptions.xaxis = newxaxis;
 	var newyaxis = {};
 	timeOptions.yaxis=newyaxis;
-	//	canContainer.append("plotunselected");
 	if(lastMin!=0 || lastMax!=0) {
 	    lastMin=0;
 	    lastMax=0;
 	    plotAccordingToChoices();
 	}
-
-
     }
 
 
@@ -669,24 +660,32 @@ function actuallyDrawTheStuff(awareControl) {
 	
   
     plotAccordingToChoices();
-
-
 }
 
 
+/**
+ * @function Sets the time and variable list in the awareControl object
+ */
 function setTimeAndVarList(awareControl,jsonObject) {
     awareControl.timeList=jsonObject.timeSum.timeList;
     awareControl.varList=jsonObject.timeSum.varList;
 }
 
+
+/**
+ * @function This function calls getRunInstrumentDateAndPlot and then the simple hk time plotter
+ */
 function drawSimpleHkTimePlot(awareControl) {
     getRunInstrumentDateAndPlot(simpleHkPlotDrawer,awareControl);
 }
 
+
+/**
+ * @function This function simply updates the plot title and the URL
+ */
 function updatePlotTitle(jsonObject,awareControl) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
-    //    var currentUrl = window.location.href;
     currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&endrun="+getEndRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&plot="+getPlotNameFromForm()+"&timeType="+awareControl.timeType+"&hkType="+awareControl.hkType;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
@@ -694,15 +693,14 @@ function updatePlotTitle(jsonObject,awareControl) {
     var canContainer = $("#titleContainer"); 
     canContainer.empty();
     canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
-    //    canContainer.append("<h2> Start Time "+jsonObject.timeSum.startTime+"</h2>");
     var plotHeader = $("#plot-header-"+awareControl.plotId+" h3");
     plotHeader.text(getPlotLabelFromForm() +"-- Start Time "+jsonObject.timeSum.startTime);
-
-    $('#debugContainer').append("<p>thisPlotId"+awareControl.plotId+"</p>");
-    
 }
 
 
+/**
+ * @function This function actually draws the simple hk time plot
+ */
 function simpleHkPlotDrawer(awareControl) {
     var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
 
@@ -734,10 +732,16 @@ function simpleHkPlotDrawer(awareControl) {
 }
 
 
+/**
+ * @function This function calls getRunInstrumentDateAndPlot and then the full hk time plotter
+ */
 function drawFullHkTimePlot(awareControl) {
     getRunInstrumentDateAndPlot(fullHkPlotDrawer,awareControl);
 }
 
+/**
+ * @function This function actually draws the full hk time plot
+ */
 function fullHkPlotDrawer(awareControl) {
     var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
 
@@ -750,46 +754,46 @@ function fullHkPlotDrawer(awareControl) {
 	//Set the time and var list
 	setTimeAndVarList(awareControl,jsonObject);
 
-	//Actual do the drawing
+	//Actual fetch the full hk files
 	fetchFullHkTime(getPlotNameFromForm(),awareControl);
     }
 
-
+    //The ajax jquery function gets the JSON file from the URL and then calls file handler
     ajaxLoadingLog(simpleHkTimeUrl);
     $.ajax({
-	    url: simpleHkTimeUrl,
-		type: "GET",
-		dataType: "json",
-		success: handleHkTimeJsonFile,
-		error: handleAjaxError
-		}); 
-    
+	url: simpleHkTimeUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleHkTimeJsonFile,
+	error: handleAjaxError
+    });     
 }
 
 
+/**
+ * @function This function fetches the full hk time JSON files and then does the plotting
+ */
 function fetchFullHkTime(varNameKey,awareControl) {
-    
-
-    //    var canContainer = $("#titleContainer"); 
     var fullHkTimeUrl=getFullHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
-    //    canContainer.append("<p>"+fullHkTimeUrl+"</p>");
-    
 
     var countFilesNeeded=0;
+    var countFilesGot=0;
+
+    /**
+     * @function This function handles the unpacking of a full hk time JSON file
+     */
     function handleFullHkTimeJsonFile(jsonObject) { 
 	///First step is fill the full time list
 	fillFullTimeArray(awareControl,jsonObject);
-	//	canContainer.append("<p>"+awareControl.timeArray.length+"</p>");
-
 	for(var varIndex=0;varIndex<awareControl.varList.length;varIndex++) {
 	    var varPoint=awareControl.varList[varIndex];
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
 		var fullHkUrl=getFullHkName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,varName,awareControl.hkType);
-		//		canContainer.append("<p>"+fullHkUrl+"</p>");	
 		countFilesNeeded++;
 
+		//The jquery ajax call to fetch the full hk variable files
 		ajaxLoadingLog(fullHkUrl);
 		$.ajax({
 			url: fullHkUrl,
@@ -803,42 +807,44 @@ function fetchFullHkTime(varNameKey,awareControl) {
 	}
     }
 
-    var countFilesGot=0;
+
+
+    /**
+     * @function This function counts the number of full hk files that can not be fetched
+     */
     function handleFullHkError() {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
-
-	    //	    var canContainer = $("#titleContainer"); 
-	    //	    canContainer.append("<p>In handleFullHkError</p>");
 	    actuallyDrawTheStuff(awareControl);
 	}
     }
-
+    
+    /**
+     * @function This function counts the number of full hk files that can be fetched
+     */
     function handleFullHkJsonFile(jsonObject) { 
 	countFilesGot++;
 	addFullVariableToDataset(awareControl,jsonObject);
-	//	canContainer.append("<p>"+countFilesNeeded+ "    "+countFilesGot+"</p>");	
 	if(countFilesNeeded==countFilesGot) {
-	    //	    var canContainer = $("#titleContainer"); 
-	    //	    canContainer.append("<p>In handleFullHkJsonFile</p>");
 	    actuallyDrawTheStuff(awareControl);
 	}
-	
     }
-
-
     
+    //The jquery ajax call to fetch the full hk time file
     ajaxLoadingLog(fullHkTimeUrl);
     $.ajax({
-	    url: fullHkTimeUrl,
-		type: "GET",
-		dataType: "json",
-		success: handleFullHkTimeJsonFile,
-		error: handleAjaxError
-		}); 
+	url: fullHkTimeUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleFullHkTimeJsonFile,
+	error: handleAjaxError
+    }); 
 }
 
 
+/**
+ * @function This function gets the run number and instrument name from the UI elements. In addition the date code is obtained from the run list file
+ */
 function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
     var startRun=getStartRunFromForm();
     var plotName=getPlotNameFromForm();    
@@ -863,7 +869,7 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
 	
     }
     
-
+    //The jquery ajax query to fetch the run list file
     ajaxLoadingLog(runListFile);
     $.ajax({
 	    url: runListFile,
@@ -874,7 +880,9 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
 		});
 }
 
-
+/**
+ * @function This function is the multi run plotting master function
+ */
 function doMultiRunPlot(awareControl) {
     
     var plotName=getPlotNameFromForm();    
@@ -933,10 +941,6 @@ function doMultiRunPlot(awareControl) {
     function errorHkTimeFile() {
 	countFilesGot++;
 	if(countFilesNeeded==countFilesGot) {
-	    //	    canContainer.append("<p>"+countFilesNeeded+"  "+countFilesGot+"</p>");
-
-	    //	    var canContainer = $("#titleContainer"); 
-	    //	    canContainer.append("<p>In errorHkTimeFile</p>");
 	    actuallyDrawTheStuff(awareControl);
 	}
     }
@@ -1343,101 +1347,90 @@ function initialiseAwareHk() {
 
 
     $('#setRunRange').bind('click', function() {
-
-			       var startDate=document.getElementById("startDate").value;
-			       var startYear=startDate.split("/")[0];
-			       var startMonth=startDate.split("/")[1];
-			       var startDay=startDate.split("/")[2];
-			       var startDatecode=startMonth+startDay;
 	
-
-			       var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);
-
-			       var endDate=document.getElementById("endDate").value;
-			       var endYear=endDate.split("/")[0];
-			       var endMonth=endDate.split("/")[1];
-			       var endDay=endDate.split("/")[2];
-			       var endDatecode=endMonth+endDay;
-			       var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
-
-
-			       var numGot=0;
-			       function handleStartDateRunList(jsonObject) {
-				   for(var i=0;i<jsonObject.runList.length;i++) {
-				       var thisRun=jsonObject.runList[i];
-				       setStartRunOnForm(Number(thisRun));	    
-				       break;
-				   }
-				   numGot++;
-				   if(numGot==2) drawPlot(plotControl);
-			       }
-
-			       function handleEndDateRunList(jsonObject) {
-				   for(var i=0;i<jsonObject.runList.length;i++) {
-				       var thisRun=jsonObject.runList[i];
-				       setEndRunOnForm(Number(thisRun));	    
-				   }
-				   numGot++;
-				   if(numGot==2) drawPlot(plotControl);
-			       }
-	
-			       function handleFailure() {
-				   numGot++;
-				   if(numGot==2) drawPlot(plotControl);
-			       }
-	   	   
-	
-			       $.ajax({
-				       url: startDateRunListUrl,
-					   type: "GET",
-					   dataType: "json",
-					   success: handleStartDateRunList,
-					   error: handleFailure
-					   });
-	
-			       $.ajax({
-				       url: endDateRunListUrl,
-					   type: "GET",
-					   dataType: "json",
-					   success: handleEndDateRunList,
-					   error: handleFailure
-					   });
+	var startDate=document.getElementById("startDate").value;
+	var startYear=startDate.split("/")[0];
+	var startMonth=startDate.split("/")[1];
+	var startDay=startDate.split("/")[2];
+	var startDatecode=startMonth+startDay;	
+	var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);	
+	var endDate=document.getElementById("endDate").value;
+	var endYear=endDate.split("/")[0];
+	var endMonth=endDate.split("/")[1];
+	var endDay=endDate.split("/")[2];
+	var endDatecode=endMonth+endDay;
+	var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
 	
 	
+	var numGot=0;
+	function handleStartDateRunList(jsonObject) {
+	    for(var i=0;i<jsonObject.runList.length;i++) {
+		var thisRun=jsonObject.runList[i];
+		setStartRunOnForm(Number(thisRun));	    
+		break;
+	    }
+	    numGot++;
+	    if(numGot==2) drawPlot(plotControl);
+	}
 	
-			   });
+	function handleEndDateRunList(jsonObject) {
+	    for(var i=0;i<jsonObject.runList.length;i++) {
+		var thisRun=jsonObject.runList[i];
+		setEndRunOnForm(Number(thisRun));	    
+	    }
+	    numGot++;
+	    if(numGot==2) drawPlot(plotControl);
+	}
+	
+	function handleFailure() {
+	    numGot++;
+	    if(numGot==2) drawPlot(plotControl);
+	}
+	
+	
+	$.ajax({
+	    url: startDateRunListUrl,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleStartDateRunList,
+	    error: handleFailure
+	});
+	
+	$.ajax({
+	    url: endDateRunListUrl,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleEndDateRunList,
+	    error: handleFailure
+	});			
+    });
 
 
     $('#endRunDiv').hide();
-    $('#timeRangeDiv').hide();
-      
+    $('#timeRangeDiv').hide();      
     $( "#startDate" ).change(function(e) {			      
-				 e.stopPropagation();
-			     });
-
+	e.stopPropagation();
+    });
+    
     $( "#endDate" ).change(function(e) {			      
-			       e.stopPropagation();
-			   });
-
-     
+	e.stopPropagation();
+    });
+    
+    
     $( "#startDate" ).datepicker({
-	    dateFormat:"yy/mm/dd",
-		maxDate:0,
-		onClose: function( selectedDate ) {
-		$( "#endDate" ).datepicker( "option", "minDate", selectedDate );
-	    }
-	});     
+	dateFormat:"yy/mm/dd",
+	maxDate:0,
+	onClose: function( selectedDate ) {
+	    $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+	}
+    });     
     $( "#endDate" ).datepicker({
-	    dateFormat:"yy/mm/dd",
-		maxDate:0,
-		onClose: function( selectedDate ) {
-		$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
-	    }
-	});
-
-
-
-      
+	dateFormat:"yy/mm/dd",
+	maxDate:0,
+	onClose: function( selectedDate ) {
+	    $( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+	}
+    });
 
     $('#fullMaxDiv').show();
     if(timeType == "multiRun")
@@ -1449,7 +1442,4 @@ function initialiseAwareHk() {
 
     updateHkType(hkType);
     if(!runAlreadySet) updateLastRun(true);
-
-
-    //      drawPlot(plotControl);
 }

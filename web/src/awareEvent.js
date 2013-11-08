@@ -930,7 +930,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
 	  dataObject.label=grLabel;
        }
        else {
-	  delete dataObject.label;
+	   dataObject.label=null;
        }
        if(showXaxis) {
 	  //	  options.xaxis.show=true;
