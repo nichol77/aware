@@ -471,6 +471,7 @@ function actuallyDrawTheStuff(awareControl) {
 						       }
 						   });
 	
+	$('#debugContainer').append("<p>timeData.length  "+timeData.length+"</p>");
 	if (timeData.length > 0) {
 	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 	    projPlot=$.plot(projPlotCan,projData,projOptions);
@@ -944,7 +945,7 @@ function initialiseAwareHk() {
 
 
     $('#divProjection-1').show();
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
 
      
     $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
