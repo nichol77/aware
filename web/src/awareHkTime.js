@@ -1443,11 +1443,4 @@ function initialiseAwareHk() {
 
     updateHkType(hkType);
     if(!runAlreadySet) updateLastRun(true);
-<<<<<<< HEAD
 }
-=======
-
-
-    //      drawPlot(plotControl);
-}
->>>>>>> b3121716b9bb5c0b21e9fd5789401fd7a46e540f
