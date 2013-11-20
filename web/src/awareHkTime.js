@@ -945,7 +945,7 @@ function initialiseAwareHk() {
 
 
     $('#divProjection-1').show();
-    $('#debugContainer').show();
+    $('#debugContainer').hide();
 
      
     $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
