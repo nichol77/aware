@@ -1,11 +1,9 @@
-//////////////////////////////////////////////////////////////////////////////
-/////                                                                    /////
-/////   awareUtils.js                                                    /////
-/////                                                                    /////
-/////   Gerneric useful functions for the AWARE web plotting library     /////
-/////                                                                    /////
-/////   March 2013, r.nichol@ucl.ac.uk                                   /////
-//////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Generic useful functions for the AWARE web plotting library 
+ * @file awareUtils.js
+ * @author Ryan Nichol <r.nichol@ucl.ac.uk>
+ */
 
 
 /**
