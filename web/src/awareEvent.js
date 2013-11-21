@@ -1,6 +1,6 @@
 /**
  * A simple javascript module for displaying waveform event data using the Flot library
- * @module awareEvent 
+ * @file awareEvent.js
  * @author Ryan Nichol <r.nichol@ucl.ac.uk>
  */
 
@@ -29,20 +29,6 @@ AwareEvent.chanRowColArray;
 AwareEvent.showXaxis;
 AwareEvent.showYaxis;
 
-
-/**
- * Thie timeSortData is a sorting algorithm which is used to sort arrays by time.
- */
-function timeSortData(a,b) {
-    return a[0]-b[0];
-}
-
-/**
- * Thie voltageSortData is a sorting algorithm which is used to sort arrays by voltage.
- */
-function voltageSortData(a,b) {
-    return b[1]-a[1];
-}
 
 
 /**

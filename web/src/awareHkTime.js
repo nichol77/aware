@@ -1,23 +1,17 @@
-//////////////////////////////////////////////////////////////////////////////
-/////                                                                    /////
-/////   awareHkTime.js                                                   /////
-/////                                                                    /////
-/////   Simple javascript for getting housekeeping data in JSON format   /////
-/////   and plotting using the flot library.                             /////
-/////                                                                    /////
-/////   March 2013, r.nichol@ucl.ac.uk                                   /////
-//////////////////////////////////////////////////////////////////////////////
 /**
- * @fileoverview Simple javascript for getting housekeeping data in JSON format and plotting using the flot library. 
- * @author r.nichol@ucl.ac.uk (Ryan Nichol)
+ * A simple javascript module for getting housekeeping data in JSON format and
+ * plotting using the <a href="www.flotcharts.org">Flot Library</a>.
+ * @file awareHkTime 
+ * @author Ryan Nichol <r.nichol@ucl.ac.uk>
  */
+
 
 
 
 ///Here are the UI thingies
 
 /**
- * @function Sets the maximum run on the UI form elements
+ * Sets the maximum run on the UI form elements
  * @params thisRun is an integer corresponding to the maximum allowed run number
  */
 function setLastRun(thisRun) {
@@ -27,14 +21,14 @@ function setLastRun(thisRun) {
 
 
 /**
- * @function Returns a boolean corresponding to if the xAutoScale UI checkbox is ticked
+ * Returns a boolean corresponding to if the xAutoScale UI checkbox is ticked
  */
 function getXAutoScale() {
     return document.getElementById("xAutoScale").checked;
 }
 
 /**
-* @function Sets the UI xMinDateInput element to the corresponding timestamp
+* Sets the UI xMinDateInput element to the corresponding timestamp
 * @params xmintimestamp is a javascript timestamp
 */
 function setXMin(xmintimestamp) {   
@@ -44,7 +38,7 @@ function setXMin(xmintimestamp) {
 }
 
 /**
-* @function Sets the UI xMaxDateInput element to the corresponding timestamp
+* Sets the UI xMaxDateInput element to the corresponding timestamp
 * @params xmaxtimestamp is a javascript timestamp
 */
 function setXMax(xmaxtimestamp) {
@@ -54,7 +48,7 @@ function setXMax(xmaxtimestamp) {
 }
 
 /**
-* @function Returns the timestamp corresponding to the xMinDateInput and xMinTimeInput
+* Returns the timestamp corresponding to the xMinDateInput and xMinTimeInput
 * @returns A javascript timestamp corresponding to the time in xMinDateInput and xMinTimeInput
 */
 function getXMin() {   
@@ -64,7 +58,7 @@ function getXMin() {
 }
 
 /**
-* @function Returns the timestamp corresponding to the xMaxDateInput and xMaxTimeInput
+* Returns the timestamp corresponding to the xMaxDateInput and xMaxTimeInput
 * @returns A javascript timestamp corresponding to the time in xMaxDateInput and xMaxTimeInput
 */
 function getXMax() {
@@ -76,7 +70,7 @@ function getXMax() {
 
 
 /**
- * @function Returns a boolean corresponding to if the xAutoScale UI checkbox is ticked
+ * Returns a boolean corresponding to if the xAutoScale UI checkbox is ticked
  * @returns Boolean determining if the y-scale should be autoscaled or not
  */
 function getYAutoScale() {
@@ -84,7 +78,7 @@ function getYAutoScale() {
 }
 
 /**
- * @function Sets the yMinInput UI element to ymin
+ * Sets the yMinInput UI element to ymin
  * @params ymin is a double corresponding to the minimum y value of the time plot
  */
 function setYMin(ymin) {
@@ -92,7 +86,7 @@ function setYMin(ymin) {
 }
 
 /**
- * @function Sets the yMaxInput UI element to ymax
+ * Sets the yMaxInput UI element to ymax
  * @params ymax is a double corresponding to the maximum y value of the time plot
  */
 function setYMax(ymax) {
@@ -101,7 +95,7 @@ function setYMax(ymax) {
     
 
 /**
- * @function Gets the value from the yMinInput UI element
+ * Gets the value from the yMinInput UI element
  * @returns A Number corresponding to the desired minimum y value for the time plot
  */
 function getYMin() {
@@ -109,7 +103,7 @@ function getYMin() {
 }
 
 /**
- * @function Gets the value from the yMaxInput UI element
+ * Gets the value from the yMaxInput UI element
  * @returns A Number corresponding to the desired maximum y value for the time plot
  */
 function getYMax() {
@@ -118,7 +112,7 @@ function getYMax() {
     
 
 /**
- * @function Gets the run number from the runInput UI element
+ * Gets the run number from the runInput UI element
  * @returns The run number from the runInput UI element
  */
 function getStartRunFromForm() {
@@ -126,7 +120,7 @@ function getStartRunFromForm() {
 } 
 
 /**
- * @function Sets the runInput UI element to thisRun
+ * Sets the runInput UI element to thisRun
  * @params thisRun is the new start run number 
  */
 function setStartRunOnForm(thisRun) { 
@@ -135,7 +129,7 @@ function setStartRunOnForm(thisRun) {
 } 
 
 /**
- * @function Gets the run number from the endRunInput UI element
+ * Gets the run number from the endRunInput UI element
  * @returns The run number from the endRunInput UI element
  */
 function getEndRunFromForm() {
@@ -144,7 +138,7 @@ function getEndRunFromForm() {
 
 
 /**
- * @function Sets the endRunInput UI element to thisRun
+ * Sets the endRunInput UI element to thisRun
  * @params thisRun is the new end run number 
  */
 function setEndRunOnForm(thisRun) {
@@ -153,7 +147,7 @@ function setEndRunOnForm(thisRun) {
 } 
 
 /**
- * @function Gets the instrument name from the instrumentForm UI element
+ * Gets the instrument name from the instrumentForm UI element
  * @returns A string corresponding to the instrument name
  */
 function getInstrumentNameFromForm() {
@@ -162,7 +156,7 @@ function getInstrumentNameFromForm() {
 
 
 /**
- * @function Gets the label for the selected value in the plotForm UI element
+ * Gets the label for the selected value in the plotForm UI element
  * @returns A string corresponding to the plot label
  */
 function getPlotLabelFromForm() {
@@ -173,7 +167,7 @@ function getPlotLabelFromForm() {
 }
 
 /**
- * @function Gets the keyword for the selected value in the plotForm UI element
+ * Gets the keyword for the selected value in the plotForm UI element
  * @returns A string corresponding to the plot keyword
  */
 function getPlotNameFromForm() {
@@ -182,7 +176,7 @@ function getPlotNameFromForm() {
 
 
 /**
- * @function Gets the desired number of time points from the maxTimePointsForm UI element
+ * Gets the desired number of time points from the maxTimePointsForm UI element
  * @returns The desired number of time points
  */
 function getMaxTimePointsToShow() {
@@ -190,7 +184,7 @@ function getMaxTimePointsToShow() {
 }
 
 /**
- * @function Gets the desired number of bins in the projection plot from the maxProjPointsForm UI element
+ * Gets the desired number of bins in the projection plot from the maxProjPointsForm UI element
  * @returns The desired number of bins in the projection plot
  */
 function getMaxProjBins() {
@@ -199,7 +193,7 @@ function getMaxProjBins() {
 
 
 /**
-* @function Utility function to convert time and date strings to javascript timestamps
+* Utility function to convert time and date strings to javascript timestamps
 *
 */
 function getTimestampFromDateStringTimeString(dateString,timeString) {
@@ -219,7 +213,7 @@ function getTimestampFromDateStringTimeString(dateString,timeString) {
 
 
 /**
-* @function Utility function to create a string from a javascript Date object
+* Utility function to create a string from a javascript Date object
 *
 */
 function getDateString(dateObj) {
@@ -228,7 +222,7 @@ function getDateString(dateObj) {
 }
 
 /**
-* @function Utility function to create a string from a javascript Date object
+* Utility function to create a string from a javascript Date object
 *
 */
 function getTimeString(dateObj) {
@@ -238,7 +232,7 @@ function getTimeString(dateObj) {
 
 
 /**
-* @function Data handling function to add the timePoints from the JSON AWARE object to the time array
+* Data handling function to add the timePoints from the JSON AWARE object to the time array
 * @params awareControl is the global aware control object
 * @params jsonObject is an object corresponding to an AWARE Full JSON file
 */
@@ -251,7 +245,7 @@ function fillFullTimeArray(awareControl,jsonObject) {
 
 
 /**
-* @function Data handling function to add data points from the JSON AWARE object to the list of datasets
+* Data handling function to add data points from the JSON AWARE object to the list of datasets
 * @params awareControl is the global aware control object
 * @params jsonObject is an object corresponding to an AWARE Full JSON file
 */
@@ -279,23 +273,9 @@ function addFullVariableToDataset(awareControl,jsonObject) {
     awareControl.datasets[ varName ]=dataList;
 }
 
-/**
-* @function Utility function for time sorting data points
-*/
-function timeSortData(a,b) {
-    return a[0]-b[0];
-}
 
 /**
-* @function Utility function for sorting numbers
-*/
-function numberSort(a,b) {
-    return a - b;
-}
-
-
-/**
-* @function Utility function that loops over the list of variables in awareControl.datasets and timesorts the data points
+* Utility function that loops over the list of variables in awareControl.datasets and timesorts the data points
 * @params awareControl is the object containing the data for plotting
 */
 function sortDataSets(awareControl) {   
@@ -306,7 +286,7 @@ function sortDataSets(awareControl) {
 
 
 /**
-* @function This function performs two main tasks for each variable in the datasets <ol><li>It creates the projection plot using the full data set in the selected time range</li><li>It averages the data points if there are more in the range xaxisMin to xaxisMax than in the maxTimePointsForm UI element</li></ol>
+* This function performs two main tasks for each variable in the datasets. <ol><li>It creates the projection plot using the full data set in the selected time range.</li><li> It averages the data points if there are more in the range xaxisMin to xaxisMax than in the maxTimePointsForm UI element.</li></ol>
 * @params awareControl is the object containing the data for plotting
 * @params xaxisMin is the minimum desired x value
 * @params xaxisMax is the maximum desired x value
@@ -436,7 +416,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 
 
 /**
-* @function This function loops through the variables and fills the datasets object
+* This function loops through the variables and fills the datasets object
 * @params awareControl is the object containing the data for plotting
 * @params varNameKey is a string corresponding to the variable for the plot
 */
@@ -476,7 +456,7 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 
 
 /**
-* @function This function is the one that actually draws the time and projection plots on the canvases
+* This function is the one that actually draws the time and projection plots on the canvases
 * @params awareControl is the object containing the data for 
 */
 function actuallyDrawTheStuff(awareControl) {
@@ -665,7 +645,7 @@ function actuallyDrawTheStuff(awareControl) {
 
 
 /**
- * @function Sets the time and variable list in the awareControl object
+ * Sets the time and variable list in the awareControl object
  */
 function setTimeAndVarList(awareControl,jsonObject) {
     awareControl.timeList=jsonObject.timeSum.timeList;
@@ -674,7 +654,7 @@ function setTimeAndVarList(awareControl,jsonObject) {
 
 
 /**
- * @function This function calls getRunInstrumentDateAndPlot and then the simple hk time plotter
+ * This function calls getRunInstrumentDateAndPlot and then the simple hk time plotter
  */
 function drawSimpleHkTimePlot(awareControl) {
     getRunInstrumentDateAndPlot(simpleHkPlotDrawer,awareControl);
@@ -682,7 +662,7 @@ function drawSimpleHkTimePlot(awareControl) {
 
 
 /**
- * @function This function simply updates the plot title and the URL
+ * This function simply updates the plot title and the URL
  */
 function updatePlotTitle(jsonObject,awareControl) {
     //Also update the page URL
@@ -700,7 +680,7 @@ function updatePlotTitle(jsonObject,awareControl) {
 
 
 /**
- * @function This function actually draws the simple hk time plot
+ * This function actually draws the simple hk time plot
  */
 function simpleHkPlotDrawer(awareControl) {
     var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
@@ -734,14 +714,14 @@ function simpleHkPlotDrawer(awareControl) {
 
 
 /**
- * @function This function calls getRunInstrumentDateAndPlot and then the full hk time plotter
+ * This function calls getRunInstrumentDateAndPlot and then the full hk time plotter
  */
 function drawFullHkTimePlot(awareControl) {
     getRunInstrumentDateAndPlot(fullHkPlotDrawer,awareControl);
 }
 
 /**
- * @function This function actually draws the full hk time plot
+ * This function actually draws the full hk time plot
  */
 function fullHkPlotDrawer(awareControl) {
     var simpleHkTimeUrl=getHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
@@ -772,7 +752,7 @@ function fullHkPlotDrawer(awareControl) {
 
 
 /**
- * @function This function fetches the full hk time JSON files and then does the plotting
+ * This function fetches the full hk time JSON files and then does the plotting
  */
 function fetchFullHkTime(varNameKey,awareControl) {
     var fullHkTimeUrl=getFullHkTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
@@ -781,7 +761,7 @@ function fetchFullHkTime(varNameKey,awareControl) {
     var countFilesGot=0;
 
     /**
-     * @function This function handles the unpacking of a full hk time JSON file
+     * This function handles the unpacking of a full hk time JSON file
      */
     function handleFullHkTimeJsonFile(jsonObject) { 
 	///First step is fill the full time list
@@ -811,7 +791,7 @@ function fetchFullHkTime(varNameKey,awareControl) {
 
 
     /**
-     * @function This function counts the number of full hk files that can not be fetched
+     * This function counts the number of full hk files that can not be fetched
      */
     function handleFullHkError() {
 	countFilesGot++; ///For now will just do this silly thing	
@@ -821,7 +801,7 @@ function fetchFullHkTime(varNameKey,awareControl) {
     }
     
     /**
-     * @function This function counts the number of full hk files that can be fetched
+     * This function counts the number of full hk files that can be fetched
      */
     function handleFullHkJsonFile(jsonObject) { 
 	countFilesGot++;
@@ -844,7 +824,7 @@ function fetchFullHkTime(varNameKey,awareControl) {
 
 
 /**
- * @function This function gets the run number and instrument name from the UI elements. In addition the date code is obtained from the run list file
+ * This function gets the run number and instrument name from the UI elements. In addition the date code is obtained from the run list file
  */
 function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
     var startRun=getStartRunFromForm();
@@ -882,7 +862,7 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
 }
 
 /**
- * @function This function is the multi run plotting master function
+ * This function is the multi run plotting master function
  */
 function doMultiRunPlot(awareControl) {
     
