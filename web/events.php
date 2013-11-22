@@ -8,6 +8,7 @@ header("Connection: keep-alive");
 <head>
 <meta name="viewport" 
   content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="StyleSheet" href="styles/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
@@ -17,7 +18,7 @@ header("Connection: keep-alive");
 <script src="src/awareUtils.js"></script>
 <script src="src/awareEvent.js"></script>
 <script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
-<script type="text/javascript" src="src/flot/examples/shared/jquery-ui/jquery-ui.min.js.gz"></script>
+<script type="text/javascript" src="src/jqueryui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>

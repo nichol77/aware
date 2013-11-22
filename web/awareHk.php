@@ -5,7 +5,7 @@ header("Connection: keep-alive");
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="StyleSheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
