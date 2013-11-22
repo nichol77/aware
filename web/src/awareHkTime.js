@@ -467,7 +467,7 @@ function actuallyDrawTheStuff(awareControl) {
     var colorIndex=0;
     var numPoints=0;
     $.each(awareControl.datasets, function(key, dataset) {
-	numPoints=val.data.length;
+	numPoints=dataset.data.length;
 	dataset.color = colorIndex;
 	++colorIndex;
     });
