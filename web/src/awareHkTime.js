@@ -1178,7 +1178,7 @@ function initialiseAwareHk() {
 
 
     $('#xAutoScale').change(function() {
-				if($('#yAutoScale').prop('checked')) {
+				if($('#xAutoScale').prop('checked')) {
 				    //Switching to autoscale
 				    $('#xMinDateInput').attr('disabled','disabled');
 				    $('#xMaxDateInput').attr('disabled','disabled');
