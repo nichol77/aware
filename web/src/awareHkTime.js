@@ -1029,6 +1029,8 @@ function drawPlot(plotControl) {
 
 
 
+
+
 function initialiseAwareHk() {
 
     var docHeight=$(window).height();
@@ -1042,7 +1044,7 @@ function initialiseAwareHk() {
     $('#divProjection-1').show();
     $('#debugContainer').hide();
 
-     
+    //This is actually for the time plot stuff
     $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
 	.resizable()
 	.find( ".plot-header" )
@@ -1073,7 +1075,7 @@ function initialiseAwareHk() {
     $("#layoutRadio").buttonset();
 
     
-
+    //Why do we do the same thing twice
     $.urlParam = function(name){
 	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
 	if(results != null) {
@@ -1087,8 +1089,8 @@ function initialiseAwareHk() {
 
       
     var timeType=document.getElementById("timeForm").value;
-    if("timeType" in urlVars) {
-	timeType=urlVars["timeType"];
+    if($.urlParam('timeType')) {
+	timeType=$.urlParam('timeType');//urlVars["timeType"];
     }
 
     var hkType=document.getElementById("hkTypeForm").value;
@@ -1098,20 +1100,20 @@ function initialiseAwareHk() {
 
 
     var instrument=document.getElementById("instrumentForm").value;
-    if("instrument" in urlVars) {
-	instrument=urlVars["instrument"];
+    if($.urlParam('instrument')) {
+	instrument=$.urlParam('instrument');//urlVars["instrument"];
     }
 
     var run=document.getElementById("runForm").value;
     var runAlreadySet=false;
-    if("run" in urlVars) {
-	run=urlVars["run"];
+    if($.urlParam('run')) {
+	run=$.urlParam('run');//urlVars["run"];
 	runAlreadySet=true;
     }
 
     var endrun=run;
-    if("endrun" in urlVars) {
-	endrun=urlVars["endrun"];
+    if($.urlParam('endrun')) {
+	endrun=$.urlParam('endrun');
     }
 
     updateLastRun(false);
