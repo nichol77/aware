@@ -224,3 +224,426 @@ function voltageSortData(a,b) {
 function numberSort(a,b) {
     return a - b;
 }
+
+
+/**
+* Utility function that returns the value of a URL variable or null
+* @returns {String}
+*/
+$.urlParam = function(name){
+    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if(results != null) {
+	return results[1];
+    }
+    return null;
+};
+
+
+
+/**
+* Utility function that initialises the left menu of the hk pages
+* @returns {Object}
+*/
+function initialiseHkMenu(doTimeType) {
+    var hkValues = new Object();
+
+
+    hkValues.hkType=document.getElementById("hkTypeForm").value;
+    if($.urlParam('hkType')) {
+	hkValues.hkType=$.urlParam('hkType');
+    }
+
+    hkValues.instrument=document.getElementById("instrumentForm").value;
+    if($.urlParam('instrument')) {
+	hkValues.instrument=$.urlParam('instrument');//urlVars["instrument"];
+    }
+
+    hkValues.run=document.getElementById("runForm").value;
+    hkValues.runAlreadySet=false;
+    if($.urlParam('run')) {
+	hkValues.run=$.urlParam('run');//urlVars["run"];
+	hkValues.runAlreadySet=true;
+    }
+
+
+    if(doTimeType) {
+	hkValues.timeType=document.getElementById("timeForm").value;
+	if($.urlParam('timeType')) {
+	    hkValues.timeType=$.urlParam('timeType');//urlVars["timeType"];
+	}
+
+	
+	hkValues.endrun=run;
+	if($.urlParam('endrun')) {
+	    hkValues.endrun=$.urlParam('endrun');
+	}
+	
+	updateLastRun(false);
+    }
+
+    return hkValues;
+}
+
+
+
+
+/**
+* Utility function that initialises the plot form on the left menu
+*/
+function fillPlotForm(array) {
+    $('#plotForm').empty();
+    for (i=0;i<array.length;i++){             
+	$('<option/>').val(array[i].sym).html(array[i].desc).appendTo('#plotForm');
+    }
+}
+
+
+
+/**
+* Utility function that initialises the the aware hk thingymejig
+*/
+function initialiseAwareHk() {
+
+    var docHeight=$(window).height();
+    var docWidth=$(window).width();
+    var heightPercentage=60;
+    if(docWidth>=800) heightPercentage=80;
+    var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
+    $('#plot-holder-1').height(maxPlotHeight); 
+
+
+    $('#divProjection-1').show();
+    $('#debugContainer').hide();
+
+    //This is actually for the time plot stuff
+    $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+	.resizable()
+	.find( ".plot-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+	.find( ".plot-content" );        
+      
+      
+    $( ".plot-header .ui-icon" ).click(function() {
+					   $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+					   $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).toggle();
+					   if($( this ).parents( ".plot-holder:first" ).height()>maxPlotHeight) {
+					       maxPlotHeight=$( this ).parents( ".plot-holder:first" ).height();
+					   }
+					     
+
+					   toggleHeight=100;
+					   if( $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).is(':visible')) {
+					       toggleHeight=maxPlotHeight;
+					   }
+					   $( this ).parents( ".plot-holder:first" ).height( toggleHeight );
+				       });
+      
+
+
+    var hkValues=initialiseHkMenu();
+
+    $("#layoutRadio").buttonset();
+
+   
+    
+    var plotControl = new Object();
+    plotControl.hkType=hkValues.hkType;
+    plotControl.plotId=1;
+    plotControl.timeType=hkValues.timeType;
+    plotControl.timeCanName='divTime-1';
+    plotControl.projCanName='divProjection-1';
+
+
+    $("input:radio[name=layoutRadio]").click(function(){
+	var str=$(this).val();	;
+	if(str.indexOf("both")>=0) {
+	    $('#divTime-1').width("70%");
+	    $('#divProjection-1').width("30%");
+	    $('#divTime-1').show();
+	    $('#divProjection-1').show();
+	    
+	}
+	else if(str.indexOf("time")>=0) {
+	    $('#divTime-1').width("100%");
+	    $('#divTime-1').show();
+	    $('#divProjection-1').hide();
+	    
+						 }
+	else if(str.indexOf("projection")>=0) {
+	    $('#divProjection-1').width("100%");
+	    $('#divTime-1').hide();
+	    $('#divProjection-1').show();
+	}
+	
+    });
+    
+    
+
+
+
+    ///Here is the logic for delaying with the scale buttons
+    $('#xScaleDiv').hide();
+    $('#yScaleDiv').hide();
+
+    $('#showScaleButton').click( function() {
+				     $('#xScaleDiv').toggle();
+				     $('#yScaleDiv').toggle();
+				 });
+    
+    $('#yAutoScale').change(function() {
+				if($('#yAutoScale').prop('checked')) {
+				$('#debugContainer').append("<p>yAutoScale checked</p>");
+				    //Switching to autoscale
+				    $('#yMinInput').attr('disabled','disabled');
+				    $('#yMaxInput').attr('disabled','disabled');
+				}
+				else {
+				$('#debugContainer').append("<p>yAutoScale not checked</p>");
+				    //Switching to fixed scale
+				    $('#yMinInput').removeAttr('disabled');
+				    $('#yMaxInput').removeAttr('disabled');
+				}
+			    });
+
+
+    $('#xAutoScale').change(function() {
+				if($('#xAutoScale').prop('checked')) {
+				    //Switching to autoscale
+				    $('#xMinDateInput').attr('disabled','disabled');
+				    $('#xMaxDateInput').attr('disabled','disabled');
+				    $('#xMinTimeInput').attr('disabled','disabled');
+				    $('#xMaxTimeInput').attr('disabled','disabled');
+				}
+				else {
+				    //Switching to fixed scale
+				    $('#xMinDateInput').removeAttr('disabled');
+				    $('#xMaxDateInput').removeAttr('disabled');
+				    $('#xMinTimeInput').removeAttr('disabled');
+				    $('#xMaxTimeInput').removeAttr('disabled');
+				}
+			    });
+      
+    $('#refreshButton').click(function() {
+	drawPlot(plotControl);
+    });
+    
+    
+    $('#runInput').change(function() {			      
+	//When run input changes we can update end run
+	if(document.getElementById("runInput").value>=
+	   document.getElementById("endRunInput").value) {
+	    document.getElementById("endRunInput").value=
+		document.getElementById("runInput").value;
+	}
+	//And set the minimum for endRunInput to the start run
+	document.getElementById("endRunInput").min=
+	    document.getElementById("runInput").value;
+    });
+    
+    
+
+    
+    function updateHkType(thisHkType) {
+	hkValues.hkType=thisHkType;
+	plotControl.hkType=thisHkType;
+	
+	
+	function actuallyUpdateHkType(plotFormArray) {
+	    var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
+	    fillPlotForm(tempArray);
+	    drawPlot(plotControl);	   
+	}
+		
+	$.ajax({
+	    url: "config/plotTypeList.json",
+	    type: "GET",
+	    dataType: "json", 
+	    success: actuallyUpdateHkType
+	}); 
+	
+    }
+
+    function updateLastRun(setStartToLast) {
+	//	var tempString="output/"+instrument+"/lastRun";
+	var tempString="output/"+instrument+"/last"+capitaliseFirstLetter(hkValues.hkType);
+
+
+	function actuallyUpdateLastRun(runString) {
+	    setLastRun(Number(runString));
+	    if(setStartToLast) {
+		setStartRunOnForm(Number(runString));
+		setEndRunOnForm(Number(runString));
+		drawPlot(plotControl);
+	    }
+	}
+
+
+	$.ajax({
+		url: tempString,
+		    type: "GET",
+		    dataType: "text", 
+		    success: actuallyUpdateLastRun
+		    }); 
+	
+    }
+
+
+    $('#runForm').change(function() {
+			     drawPlot(plotControl);
+			 });
+
+
+    $('#runForm2').change(function() {
+			      drawPlot(plotControl);
+			  });				
+      
+
+    $('#instrumentForm').change(function(e) {
+				    instrument=$(this).val();
+				    runAlreadySet=false;
+				    e.stopPropagation();
+				    updateLastRun(true);
+				});	
+
+    $('#hkTypeForm').change(function(e) {
+				var selectedValue = $(this).val();
+				e.stopPropagation();
+				updateHkType(selectedValue);
+	   
+			    });
+      
+			
+        
+
+    $('#timeForm').change(function(e) {			      
+			      hkValues.timeType = $(this).val();
+			      e.stopPropagation();
+			      if(hkValues.timeType == "timeRange") {
+				  $('#endRunDiv').show();
+				  $('#timeRangeDiv').show();	     
+			      }
+			      else if(hkValues.timeType == "multiRun") {
+				  $('#endRunDiv').show();
+				  $('#fullMaxDiv').show();
+				  $('#timeRangeDiv').hide();
+			      }
+			      else {
+				  $('#endRunDiv').hide();
+				  if(hkValues.timeType == "full") {
+				      $('#fullMaxDiv').show();
+				      $('#timeRangeDiv').hide();
+				  }
+				  else {
+				      $('#fullMaxDiv').show();
+				      $('#timeRangeDiv').hide();
+				  }
+	       
+			      }
+
+
+			      plotControl.timeType=hkValues.timeType;
+			      drawPlot(plotControl);
+			  });
+
+    setEndRunOnForm(endrun);
+
+
+    $('#setRunRange').bind('click', function() {
+	
+	var startDate=document.getElementById("startDate").value;
+	var startYear=startDate.split("/")[0];
+	var startMonth=startDate.split("/")[1];
+	var startDay=startDate.split("/")[2];
+	var startDatecode=startMonth+startDay;	
+	var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);	
+	var endDate=document.getElementById("endDate").value;
+	var endYear=endDate.split("/")[0];
+	var endMonth=endDate.split("/")[1];
+	var endDay=endDate.split("/")[2];
+	var endDatecode=endMonth+endDay;
+	var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
+	
+	
+	var numGot=0;
+	function handleStartDateRunList(jsonObject) {
+	    for(var i=0;i<jsonObject.runList.length;i++) {
+		var thisRun=jsonObject.runList[i];
+		setStartRunOnForm(Number(thisRun));	    
+		break;
+	    }
+	    numGot++;
+	    if(numGot==2) drawPlot(plotControl);
+	}
+	
+	function handleEndDateRunList(jsonObject) {
+	    for(var i=0;i<jsonObject.runList.length;i++) {
+		var thisRun=jsonObject.runList[i];
+		setEndRunOnForm(Number(thisRun));	    
+	    }
+	    numGot++;
+	    if(numGot==2) drawPlot(plotControl);
+	}
+	
+	function handleFailure() {
+	    numGot++;
+	    if(numGot==2) drawPlot(plotControl);
+	}
+	
+	
+	$.ajax({
+	    url: startDateRunListUrl,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleStartDateRunList,
+	    error: handleFailure
+	});
+	
+	$.ajax({
+	    url: endDateRunListUrl,
+	    type: "GET",
+	    dataType: "json",
+	    success: handleEndDateRunList,
+	    error: handleFailure
+	});			
+    });
+
+
+    $('#endRunDiv').hide();
+    $('#timeRangeDiv').hide();      
+    $( "#startDate" ).change(function(e) {			      
+	e.stopPropagation();
+    });
+    
+    $( "#endDate" ).change(function(e) {			      
+	e.stopPropagation();
+    });
+    
+    
+    $( "#startDate" ).datepicker({
+	dateFormat:"yy/mm/dd",
+	maxDate:0,
+	onClose: function( selectedDate ) {
+	    $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+	}
+    });     
+    $( "#endDate" ).datepicker({
+	dateFormat:"yy/mm/dd",
+	maxDate:0,
+	onClose: function( selectedDate ) {
+	    $( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+	}
+    });
+
+    $('#fullMaxDiv').show();
+    if(hkValues.timeType == "multiRun")
+	$('#endRunDiv').show();
+    if(hkValues.timeType == "timeRange") {
+	$('#endRunDiv').show();
+	$('#timeRangeDiv').show();	  
+    }
+
+    updateHkType(hkValues.hkType);
+    if(!runAlreadySet) updateLastRun(true);
+}
