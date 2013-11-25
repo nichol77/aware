@@ -344,7 +344,7 @@ function initialiseAwareHk() {
       
 
 
-    var hkValues=initialiseHkMenu();
+    var hkValues=initialiseHkMenu(1);
 
     $("#layoutRadio").buttonset();
 
