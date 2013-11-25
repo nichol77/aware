@@ -549,7 +549,7 @@ function initialiseAwareHk() {
 			      drawPlot(plotControl);
 			  });
 
-    setEndRunOnForm(endrun);
+    setEndRunOnForm(hkValues.endrun);
 
 
     $('#setRunRange').bind('click', function() {
