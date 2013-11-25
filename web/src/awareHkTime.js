@@ -10,14 +10,6 @@
 
 ///Here are the UI thingies
 
-/**
- * Sets the maximum run on the UI form elements
- * @params thisRun is an integer corresponding to the maximum allowed run number
- */
-function setLastRun(thisRun) {
-    document.getElementById("runInput").max=thisRun;
-    document.getElementById("endRunInput").max=thisRun;
-}
 
 
 /**
@@ -110,23 +102,6 @@ function getYMax() {
     return Number(document.getElementById("yMaxInput").value);
 }
     
-
-/**
- * Gets the run number from the runInput UI element
- * @returns The run number from the runInput UI element
- */
-function getStartRunFromForm() {
-    return document.getElementById("runInput").value;
-} 
-
-/**
- * Sets the runInput UI element to thisRun
- * @params thisRun is the new start run number 
- */
-function setStartRunOnForm(thisRun) { 
-    document.getElementById("runInput").value=thisRun;
-	
-} 
 
 /**
  * Gets the run number from the endRunInput UI element

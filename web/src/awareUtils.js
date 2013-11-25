@@ -315,6 +315,18 @@ function fillPlotForm(array) {
 */
 function initialiseTimeViewButtons() {
 
+    $('#runInput').change(function() {			      
+	//When run input changes we can update end run
+	if(document.getElementById("runInput").value>=
+	   document.getElementById("endRunInput").value) {
+	    document.getElementById("endRunInput").value=
+		document.getElementById("runInput").value;
+	}
+	//And set the minimum for endRunInput to the start run
+	document.getElementById("endRunInput").min=
+	    document.getElementById("runInput").value;
+    });
+
     $("#layoutRadio").buttonset();
 
     $("input:radio[name=layoutRadio]").click(function(){
@@ -582,7 +594,9 @@ function updateLastRun(setStartToLast) {
 	setLastRun(Number(runString));
 	if(setStartToLast) {
 	    setStartRunOnForm(Number(runString));
-	    setEndRunOnForm(Number(runString));
+	    if(typeof(setEndRunOnForm) == "function") {
+		setEndRunOnForm(Number(runString));
+	    }
 	    drawPlot(AwareUtils);
 	}
     }
@@ -599,17 +613,7 @@ function updateLastRun(setStartToLast) {
 
 function initialiseMenuButtions() {
   
-    $('#runInput').change(function() {			      
-	//When run input changes we can update end run
-	if(document.getElementById("runInput").value>=
-	   document.getElementById("endRunInput").value) {
-	    document.getElementById("endRunInput").value=
-		document.getElementById("runInput").value;
-	}
-	//And set the minimum for endRunInput to the start run
-	document.getElementById("endRunInput").min=
-	    document.getElementById("runInput").value;
-    });
+   
 
     
     $('#runForm').change(function() {
@@ -630,6 +634,36 @@ function initialiseMenuButtions() {
     });
 
 }
+
+
+/**
+ * Sets the maximum run on the UI form elements
+ * @params thisRun is an integer corresponding to the maximum allowed run number
+ */
+function setLastRun(thisRun) {
+    document.getElementById("runInput").max=thisRun;
+    document.getElementById("endRunInput").max=thisRun;
+}
+
+
+/**
+ * Gets the run number from the runInput UI element
+ * @returns The run number from the runInput UI element
+ */
+function getStartRunFromForm() {
+    return document.getElementById("runInput").value;
+} 
+
+/**
+ * Sets the runInput UI element to thisRun
+ * @params thisRun is the new start run number 
+ */
+function setStartRunOnForm(thisRun) { 
+    document.getElementById("runInput").value=thisRun;
+	
+} 
+
+
 
 /**
 * Utility function that initialises the the aware hk time plotting thing
