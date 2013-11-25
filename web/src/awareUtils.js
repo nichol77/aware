@@ -468,8 +468,8 @@ function initialiseAwareHk() {
     }
 
     function updateLastRun(setStartToLast) {
-	//	var tempString="output/"+instrument+"/lastRun";
-	var tempString="output/"+instrument+"/last"+capitaliseFirstLetter(hkValues.hkType);
+	//	var tempString="output/"+hkValues.instrument+"/lastRun";
+	var tempString="output/"+hkValues.instrument+"/last"+capitaliseFirstLetter(hkValues.hkType);
 
 
 	function actuallyUpdateLastRun(runString) {
@@ -503,8 +503,8 @@ function initialiseAwareHk() {
       
 
     $('#instrumentForm').change(function(e) {
-				    instrument=$(this).val();
-				    runAlreadySet=false;
+				    hkValues.instrument=$(this).val();
+				    hkValues.runAlreadySet=false;
 				    e.stopPropagation();
 				    updateLastRun(true);
 				});	
@@ -559,13 +559,13 @@ function initialiseAwareHk() {
 	var startMonth=startDate.split("/")[1];
 	var startDay=startDate.split("/")[2];
 	var startDatecode=startMonth+startDay;	
-	var startDateRunListUrl=getDateRunListName(instrument,startYear,startDatecode);	
+	var startDateRunListUrl=getDateRunListName(hkValues.instrument,startYear,startDatecode);	
 	var endDate=document.getElementById("endDate").value;
 	var endYear=endDate.split("/")[0];
 	var endMonth=endDate.split("/")[1];
 	var endDay=endDate.split("/")[2];
 	var endDatecode=endMonth+endDay;
-	var endDateRunListUrl=getDateRunListName(instrument,endYear,endDatecode);
+	var endDateRunListUrl=getDateRunListName(hkValues.instrument,endYear,endDatecode);
 	
 	
 	var numGot=0;
@@ -647,5 +647,5 @@ function initialiseAwareHk() {
     }
 
     updateHkType(hkValues.hkType);
-    if(!runAlreadySet) updateLastRun(true);
+    if(!hkValues.runAlreadySet) updateLastRun(true);
 }
