@@ -651,6 +651,7 @@ function initialiseAwareHk() {
     AwareUtils.runAlreadySet=hkValues.runAlreadySet;
     AwareUtils.timeCanName='divTime-1';
     AwareUtils.projCanName='divProjection-1';
+    AwareUtils.plotId=1;
 
     initialiseMenuButtions();
     initialiseTimeViewButtons();
