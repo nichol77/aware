@@ -637,7 +637,7 @@ function initialiseMenuButtions() {
 function initialiseAwareHk() {
 
 
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
 
     //First initialise the plot-holder div
     initialisePlotHolder();
@@ -651,7 +651,8 @@ function initialiseAwareHk() {
     AwareUtils.runAlreadySet=hkValues.runAlreadySet;
     AwareUtils.timeCanName='divTime-1';
     AwareUtils.projCanName='divProjection-1';
-
+    AwareUtils.plotId=1;
+    
     initialiseMenuButtions();
     initialiseTimeViewButtons();
                
