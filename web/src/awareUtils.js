@@ -389,20 +389,20 @@ function initialiseTimeViewButtons() {
       			        
 
     $('#timeForm').change(function(e) {			      
-	hkValues.timeType = $(this).val();
+	AwareUtils.timeType = $(this).val();
 	e.stopPropagation();
-	if(hkValues.timeType == "timeRange") {
+	if(AwareUtils.timeType == "timeRange") {
 	    $('#endRunDiv').show();
 	    $('#timeRangeDiv').show();	     
 	}
-	else if(hkValues.timeType == "multiRun") {
+	else if(AwareUtils.timeType == "multiRun") {
 	    $('#endRunDiv').show();
 	    $('#fullMaxDiv').show();
 	    $('#timeRangeDiv').hide();
 	}
 	else {
 	    $('#endRunDiv').hide();
-	    if(hkValues.timeType == "full") {
+	    if(AwareUtils.timeType == "full") {
 		$('#fullMaxDiv').show();
 		$('#timeRangeDiv').hide();
 	    }
@@ -413,7 +413,6 @@ function initialiseTimeViewButtons() {
 	    
 	}
 		
-	AwareUtils.timeType=hkValues.timeType;
 	drawPlot(AwareUtils);
     });
 
@@ -431,13 +430,13 @@ function initialiseTimeViewButtons() {
 	var startMonth=startDate.split("/")[1];
 	var startDay=startDate.split("/")[2];
 	var startDatecode=startMonth+startDay;	
-	var startDateRunListUrl=getDateRunListName(hkValues.instrument,startYear,startDatecode);	
+	var startDateRunListUrl=getDateRunListName(AwareUtils.instrument,startYear,startDatecode);	
 	var endDate=document.getElementById("endDate").value;
 	var endYear=endDate.split("/")[0];
 	var endMonth=endDate.split("/")[1];
 	var endDay=endDate.split("/")[2];
 	var endDatecode=endMonth+endDay;
-	var endDateRunListUrl=getDateRunListName(hkValues.instrument,endYear,endDatecode);
+	var endDateRunListUrl=getDateRunListName(AwareUtils.instrument,endYear,endDatecode);
 		
 	var numGot=0;
 	function handleStartDateRunList(jsonObject) {
@@ -510,9 +509,9 @@ function initialiseTimeViewButtons() {
     });
 
     $('#fullMaxDiv').show();
-    if(hkValues.timeType == "multiRun")
+    if(AwareUtils.timeType == "multiRun")
 	$('#endRunDiv').show();
-    if(hkValues.timeType == "timeRange") {
+    if(AwareUtils.timeType == "timeRange") {
 	$('#endRunDiv').show();
 	$('#timeRangeDiv').show();	  
     }
@@ -648,6 +647,7 @@ function initialiseAwareHk() {
     AwareUtils.hkType=hkValues.hkType;
     AwareUtils.instrument=hkValues.instrument;
     AwareUtils.timeType=hkValues.timeType;
+    AwareUtils.run=hkValues.run;
     AwareUtils.runAlreadySet=hkValues.runAlreadySet;
     AwareUtils.timeCanName='divTime-1';
     AwareUtils.projCanName='divProjection-1';
