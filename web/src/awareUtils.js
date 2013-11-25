@@ -279,8 +279,6 @@ function initialiseHkMenu(doTimeType) {
 	if($.urlParam('endrun')) {
 	    hkValues.endrun=$.urlParam('endrun');
 	}
-	
-	updateLastRun(false);
     }
 
     return hkValues;
@@ -491,7 +489,10 @@ function initialiseAwareHk() {
 	
     }
 
-
+    
+    updateLastRun(false);
+    
+    
     $('#runForm').change(function() {
 			     drawPlot(plotControl);
 			 });
