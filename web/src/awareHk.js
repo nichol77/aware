@@ -11,14 +11,8 @@
 
 
 /* Globals */
-var instrumentName;
-var runNumber;
-var startTime;
-var duration;
 
-var dpList = new Array();
-
-function drawHk(canName,varNameKey,colour) {
+function drawHk(canName,varNameKey,colour,dpList) {
     var dataArray = [];
     var dataArrayErrors = [];
     var countData=0;
@@ -63,40 +57,27 @@ function drawHk(canName,varNameKey,colour) {
 
 
 
-function drawL1Hk(canName) {    
-    drawHk(canName,"singleChannelRate","orange");	
-}
-
-
-
-function drawThresholdHk(canName) {
-    drawHk(canName,"singleChannelThreshold","green");
-	
-}
-
-
-function setDpList(jsonObject) {
-    dpList=jsonObject.runsum.varList;
-}
-
-
  
 
-function drawRunSummaryHkJSON(l1Name,threshName,instrument,run) {
+function drawRunSummaryHkJSON(instrument,run) {
     
     var dataurl=getHkName(instrument,run);
 
     function onDataReceived(jsonObject) {
-	setDpList(jsonObject);
-	drawL1Hk(l1Name);
-	drawThresholdHk(threshName);
+	drawHk("plot-content-1","singleChannelThreshold","green",jsonObject.runsum.varList;)
     }
 
     
     $.ajax({
-	    url: dataurl,
-		type: "GET",
-		dataType: "json",
-		success: onDataReceived
-		}); 
+	url: dataurl,
+	type: "GET",
+	dataType: "json",
+	success: onDataReceived
+    }); 
+}
+
+
+function drawPlots(plotControl) {
+    drawRunSummaryHkJSON(plotControl.instrument,plotControl.run);
+
 }

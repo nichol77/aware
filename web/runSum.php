@@ -46,7 +46,7 @@ header("Connection: keep-alive");
 
 <div id="plot-holder-1" class="plot-holder"  >
 <div id="plot-header-1" class="plot-header">
-<h3>Time Plot</h3>
+<h3>Run Summary</h3>
 </div>
 <div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; "></div>
 </div>
