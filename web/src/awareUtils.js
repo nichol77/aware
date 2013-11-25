@@ -226,18 +226,6 @@ function numberSort(a,b) {
 }
 
 
-/**
-* Utility function that returns the value of a URL variable or null
-* @returns {String}
-*/
-$.urlParam = function(name){
-    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    if(results != null) {
-	return results[1];
-    }
-    return null;
-};
-
 
 
 /**
@@ -246,6 +234,20 @@ $.urlParam = function(name){
 */
 function initialiseHkMenu(doTimeType) {
     var hkValues = new Object();
+
+
+    /**
+     * Utility function that returns the value of a URL variable or null
+     * @returns {String}
+     */
+    $.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if(results != null) {
+	    return results[1];
+	}
+	return null;
+    };
+    
 
 
     hkValues.hkType=document.getElementById("hkTypeForm").value;
