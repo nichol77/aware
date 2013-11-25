@@ -6,6 +6,15 @@
  */
 
 
+
+
+/**
+ * The AwareUtils namespace
+ * @namespace
+ */
+var AwareUtils = {};// new Object();
+
+
 /**
 * Utility function that capitalises the first letter of the string
  * @param string {String}
@@ -281,6 +290,10 @@ function initialiseHkMenu(doTimeType) {
 	}
     }
 
+
+  
+    
+
     return hkValues;
 }
 
@@ -297,64 +310,12 @@ function fillPlotForm(array) {
     }
 }
 
-
-
 /**
-* Utility function that initialises the the aware hk thingymejig
+* Utitlity function that draws the UI buttons for time view
 */
-function initialiseAwareHk() {
-
-    var docHeight=$(window).height();
-    var docWidth=$(window).width();
-    var heightPercentage=60;
-    if(docWidth>=800) heightPercentage=80;
-    var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
-    $('#plot-holder-1').height(maxPlotHeight); 
-
-
-    $('#divProjection-1').show();
-    $('#debugContainer').hide();
-
-    //This is actually for the time plot stuff
-    $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-	.resizable()
-	.find( ".plot-header" )
-        .addClass( "ui-widget-header ui-corner-all" )
-        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
-        .end()
-	.find( ".plot-content" );        
-      
-      
-    $( ".plot-header .ui-icon" ).click(function() {
-					   $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
-					   $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).toggle();
-					   if($( this ).parents( ".plot-holder:first" ).height()>maxPlotHeight) {
-					       maxPlotHeight=$( this ).parents( ".plot-holder:first" ).height();
-					   }
-					     
-
-					   toggleHeight=100;
-					   if( $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).is(':visible')) {
-					       toggleHeight=maxPlotHeight;
-					   }
-					   $( this ).parents( ".plot-holder:first" ).height( toggleHeight );
-				       });
-      
-
-
-    var hkValues=initialiseHkMenu(1);
+function initialiseTimeViewButtons() {
 
     $("#layoutRadio").buttonset();
-
-   
-    
-    var plotControl = new Object();
-    plotControl.hkType=hkValues.hkType;
-    plotControl.plotId=1;
-    plotControl.timeType=hkValues.timeType;
-    plotControl.timeCanName='divTime-1';
-    plotControl.projCanName='divProjection-1';
-
 
     $("input:radio[name=layoutRadio]").click(function(){
 	var str=$(this).val();	;
@@ -375,13 +336,8 @@ function initialiseAwareHk() {
 	    $('#divProjection-1').width("100%");
 	    $('#divTime-1').hide();
 	    $('#divProjection-1').show();
-	}
-	
+	}	
     });
-    
-    
-
-
 
     ///Here is the logic for delaying with the scale buttons
     $('#xScaleDiv').hide();
@@ -393,168 +349,83 @@ function initialiseAwareHk() {
 				 });
     
     $('#yAutoScale').change(function() {
-				if($('#yAutoScale').prop('checked')) {
-				$('#debugContainer').append("<p>yAutoScale checked</p>");
-				    //Switching to autoscale
-				    $('#yMinInput').attr('disabled','disabled');
-				    $('#yMaxInput').attr('disabled','disabled');
-				}
-				else {
-				$('#debugContainer').append("<p>yAutoScale not checked</p>");
-				    //Switching to fixed scale
-				    $('#yMinInput').removeAttr('disabled');
-				    $('#yMaxInput').removeAttr('disabled');
-				}
-			    });
-
+	if($('#yAutoScale').prop('checked')) {
+	    $('#debugContainer').append("<p>yAutoScale checked</p>");
+	    //Switching to autoscale
+	    $('#yMinInput').attr('disabled','disabled');
+	    $('#yMaxInput').attr('disabled','disabled');
+	}
+	else {
+	    $('#debugContainer').append("<p>yAutoScale not checked</p>");
+	    //Switching to fixed scale
+	    $('#yMinInput').removeAttr('disabled');
+	    $('#yMaxInput').removeAttr('disabled');
+	}
+    });
+    
 
     $('#xAutoScale').change(function() {
-				if($('#xAutoScale').prop('checked')) {
-				    //Switching to autoscale
-				    $('#xMinDateInput').attr('disabled','disabled');
-				    $('#xMaxDateInput').attr('disabled','disabled');
-				    $('#xMinTimeInput').attr('disabled','disabled');
-				    $('#xMaxTimeInput').attr('disabled','disabled');
-				}
-				else {
-				    //Switching to fixed scale
-				    $('#xMinDateInput').removeAttr('disabled');
-				    $('#xMaxDateInput').removeAttr('disabled');
-				    $('#xMinTimeInput').removeAttr('disabled');
-				    $('#xMaxTimeInput').removeAttr('disabled');
-				}
-			    });
-      
-    $('#refreshButton').click(function() {
-	drawPlot(plotControl);
+	if($('#xAutoScale').prop('checked')) {
+	    //Switching to autoscale
+	    $('#xMinDateInput').attr('disabled','disabled');
+	    $('#xMaxDateInput').attr('disabled','disabled');
+	    $('#xMinTimeInput').attr('disabled','disabled');
+	    $('#xMaxTimeInput').attr('disabled','disabled');
+	}
+	else {
+	    //Switching to fixed scale
+	    $('#xMinDateInput').removeAttr('disabled');
+	    $('#xMaxDateInput').removeAttr('disabled');
+	    $('#xMinTimeInput').removeAttr('disabled');
+	    $('#xMaxTimeInput').removeAttr('disabled');
+	}
     });
-    
-    
-    $('#runInput').change(function() {			      
-	//When run input changes we can update end run
-	if(document.getElementById("runInput").value>=
-	   document.getElementById("endRunInput").value) {
-	    document.getElementById("endRunInput").value=
-		document.getElementById("runInput").value;
-	}
-	//And set the minimum for endRunInput to the start run
-	document.getElementById("endRunInput").min=
-	    document.getElementById("runInput").value;
-    });
-    
-    
 
-    
-    function updateHkType(thisHkType) {
-	hkValues.hkType=thisHkType;
-	plotControl.hkType=thisHkType;
-	
-	
-	function actuallyUpdateHkType(plotFormArray) {
-	    var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
-	    fillPlotForm(tempArray);
-	    drawPlot(plotControl);	   
-	}
-		
-	$.ajax({
-	    url: "config/plotTypeList.json",
-	    type: "GET",
-	    dataType: "json", 
-	    success: actuallyUpdateHkType
-	}); 
-	
-    }
-
-    function updateLastRun(setStartToLast) {
-	//	var tempString="output/"+hkValues.instrument+"/lastRun";
-	var tempString="output/"+hkValues.instrument+"/last"+capitaliseFirstLetter(hkValues.hkType);
-
-
-	function actuallyUpdateLastRun(runString) {
-	    setLastRun(Number(runString));
-	    if(setStartToLast) {
-		setStartRunOnForm(Number(runString));
-		setEndRunOnForm(Number(runString));
-		drawPlot(plotControl);
-	    }
-	}
-
-
-	$.ajax({
-		url: tempString,
-		    type: "GET",
-		    dataType: "text", 
-		    success: actuallyUpdateLastRun
-		    }); 
-	
-    }
-
-    
-    updateLastRun(false);
-    
-    
-    $('#runForm').change(function() {
-			     drawPlot(plotControl);
-			 });
 
 
     $('#runForm2').change(function() {
-			      drawPlot(plotControl);
-			  });				
-      
-
-    $('#instrumentForm').change(function(e) {
-				    hkValues.instrument=$(this).val();
-				    hkValues.runAlreadySet=false;
-				    e.stopPropagation();
-				    updateLastRun(true);
-				});	
-
-    $('#hkTypeForm').change(function(e) {
-				var selectedValue = $(this).val();
-				e.stopPropagation();
-				updateHkType(selectedValue);
-	   
-			    });
-      
-			
-        
+	drawPlot(AwareUtils);
+    });				
+      			        
 
     $('#timeForm').change(function(e) {			      
-			      hkValues.timeType = $(this).val();
-			      e.stopPropagation();
-			      if(hkValues.timeType == "timeRange") {
-				  $('#endRunDiv').show();
-				  $('#timeRangeDiv').show();	     
-			      }
-			      else if(hkValues.timeType == "multiRun") {
-				  $('#endRunDiv').show();
-				  $('#fullMaxDiv').show();
-				  $('#timeRangeDiv').hide();
-			      }
-			      else {
-				  $('#endRunDiv').hide();
-				  if(hkValues.timeType == "full") {
-				      $('#fullMaxDiv').show();
-				      $('#timeRangeDiv').hide();
-				  }
-				  else {
-				      $('#fullMaxDiv').show();
-				      $('#timeRangeDiv').hide();
-				  }
-	       
-			      }
+	hkValues.timeType = $(this).val();
+	e.stopPropagation();
+	if(hkValues.timeType == "timeRange") {
+	    $('#endRunDiv').show();
+	    $('#timeRangeDiv').show();	     
+	}
+	else if(hkValues.timeType == "multiRun") {
+	    $('#endRunDiv').show();
+	    $('#fullMaxDiv').show();
+	    $('#timeRangeDiv').hide();
+	}
+	else {
+	    $('#endRunDiv').hide();
+	    if(hkValues.timeType == "full") {
+		$('#fullMaxDiv').show();
+		$('#timeRangeDiv').hide();
+	    }
+	    else {
+		$('#fullMaxDiv').show();
+		$('#timeRangeDiv').hide();
+	    }
+	    
+	}
+		
+	AwareUtils.timeType=hkValues.timeType;
+	drawPlot(AwareUtils);
+    });
 
 
-			      plotControl.timeType=hkValues.timeType;
-			      drawPlot(plotControl);
-			  });
-
-    setEndRunOnForm(hkValues.endrun);
+      
+    $('#refreshButton').click(function() {
+	drawPlot(AwareUtils);
+    });
+    
 
 
     $('#setRunRange').bind('click', function() {
-	
 	var startDate=document.getElementById("startDate").value;
 	var startYear=startDate.split("/")[0];
 	var startMonth=startDate.split("/")[1];
@@ -567,8 +438,7 @@ function initialiseAwareHk() {
 	var endDay=endDate.split("/")[2];
 	var endDatecode=endMonth+endDay;
 	var endDateRunListUrl=getDateRunListName(hkValues.instrument,endYear,endDatecode);
-	
-	
+		
 	var numGot=0;
 	function handleStartDateRunList(jsonObject) {
 	    for(var i=0;i<jsonObject.runList.length;i++) {
@@ -577,7 +447,7 @@ function initialiseAwareHk() {
 		break;
 	    }
 	    numGot++;
-	    if(numGot==2) drawPlot(plotControl);
+	    if(numGot==2) drawPlot(AwareUtils);
 	}
 	
 	function handleEndDateRunList(jsonObject) {
@@ -586,12 +456,12 @@ function initialiseAwareHk() {
 		setEndRunOnForm(Number(thisRun));	    
 	    }
 	    numGot++;
-	    if(numGot==2) drawPlot(plotControl);
+	    if(numGot==2) drawPlot(AwareUtils);
 	}
 	
 	function handleFailure() {
 	    numGot++;
-	    if(numGot==2) drawPlot(plotControl);
+	    if(numGot==2) drawPlot(AwareUtils);
 	}
 	
 	
@@ -647,6 +517,147 @@ function initialiseAwareHk() {
 	$('#timeRangeDiv').show();	  
     }
 
-    updateHkType(hkValues.hkType);
-    if(!hkValues.runAlreadySet) updateLastRun(true);
+}
+
+
+function initialisePlotHolder() {
+    var docHeight=$(window).height();
+    var docWidth=$(window).width();
+    var heightPercentage=60;
+    if(docWidth>=800) heightPercentage=80;
+    var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
+    $('#plot-holder-1').height(maxPlotHeight); 
+
+
+    $('#divProjection-1').show();
+
+    //This is actually for the time plot stuff ... or maybe it isn't maybe this is for any plot-holder
+    $( ".plot-holder" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+	.resizable()
+	.find( ".plot-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+	.find( ".plot-content" );        
+      
+      
+    $( ".plot-header .ui-icon" ).click(function() {
+	$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+	$( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).toggle();
+	if($( this ).parents( ".plot-holder:first" ).height()>maxPlotHeight) {
+	    maxPlotHeight=$( this ).parents( ".plot-holder:first" ).height();
+	}
+					     
+	
+	toggleHeight=100;
+	if( $( this ).parents( ".plot-holder:first" ).find( ".plot-content" ).is(':visible')) {
+	    toggleHeight=maxPlotHeight;
+	}
+	$( this ).parents( ".plot-holder:first" ).height( toggleHeight );
+    });
+    
+}
+
+function updateHkType(thisHkType) {
+    AwareUtils.hkType=thisHkType;	
+    
+    function actuallyUpdateHkType(plotFormArray) {
+	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
+	fillPlotForm(tempArray);
+	drawPlot(AwareUtils);	   
+    }
+    
+    $.ajax({
+	url: "config/plotTypeList.json",
+	type: "GET",
+	dataType: "json", 
+	success: actuallyUpdateHkType
+    });      
+ }
+
+function updateLastRun(setStartToLast) {
+    //	var tempString="output/"+hkValues.instrument+"/lastRun";
+    var tempString="output/"+AwareUtils.instrument+"/last"+capitaliseFirstLetter(AwareUtils.hkType);
+
+    function actuallyUpdateLastRun(runString) {
+	setLastRun(Number(runString));
+	if(setStartToLast) {
+	    setStartRunOnForm(Number(runString));
+	    setEndRunOnForm(Number(runString));
+	    drawPlot(AwareUtils);
+	}
+    }
+    
+    
+    $.ajax({
+	url: tempString,
+	type: "GET",
+	dataType: "text", 
+	success: actuallyUpdateLastRun
+    });     
+}
+
+
+function initialiseMenuButtions() {
+  
+    $('#runInput').change(function() {			      
+	//When run input changes we can update end run
+	if(document.getElementById("runInput").value>=
+	   document.getElementById("endRunInput").value) {
+	    document.getElementById("endRunInput").value=
+		document.getElementById("runInput").value;
+	}
+	//And set the minimum for endRunInput to the start run
+	document.getElementById("endRunInput").min=
+	    document.getElementById("runInput").value;
+    });
+
+    
+    $('#runForm').change(function() {
+	drawPlot(AwareUtils);
+    });
+    
+    $('#instrumentForm').change(function(e) {
+	AwareUtils.instrument=$(this).val();
+	AwareUtils.runAlreadySet=false;
+	e.stopPropagation();
+	updateLastRun(true);
+    });	
+
+    $('#hkTypeForm').change(function(e) {
+	var selectedValue = $(this).val();
+	e.stopPropagation();
+	updateHkType(selectedValue);	
+    });
+
+}
+
+/**
+* Utility function that initialises the the aware hk thingymejig
+*/
+function initialiseAwareHk() {
+
+
+    $('#debugContainer').hide();
+
+    //First initialise the plot-holder div
+    initialisePlotHolder();
+    
+    //Now initialise the other bits of the UI
+    var hkValues=initialiseHkMenu(1);
+    AwareUtils.hkType=hkValues.hkType;
+    AwareUtils.instrument=hkValues.instrument;
+    AwareUtils.timeType=hkValues.timeType;
+    AwareUtils.runAlreadySet=hkValues.runAlreadySet;
+    AwareUtils.timeCanName='divTime-1';
+    AwareUtils.projCanName='divProjection-1';
+
+    initialiseMenuButtions();
+    initialiseTimeViewButtons();
+               
+    updateLastRun(false);
+    setEndRunOnForm(hkValues.endrun);
+        
+    updateHkType(AwareUtils.hkType);
+    if(!AwareUtils.runAlreadySet) updateLastRun(true);
 }
