@@ -632,9 +632,9 @@ function initialiseMenuButtions() {
 }
 
 /**
-* Utility function that initialises the the aware hk thingymejig
+* Utility function that initialises the the aware hk time plotting thing
 */
-function initialiseAwareHk() {
+function initialiseAwareHkTime() {
 
 
     $('#debugContainer').show();
@@ -652,7 +652,6 @@ function initialiseAwareHk() {
     AwareUtils.timeCanName='divTime-1';
     AwareUtils.projCanName='divProjection-1';
     AwareUtils.plotId=1;
-    
     initialiseMenuButtions();
     initialiseTimeViewButtons();
                
@@ -661,4 +660,31 @@ function initialiseAwareHk() {
         
     updateHkType(AwareUtils.hkType);
     if(!AwareUtils.runAlreadySet) updateLastRun(true);
+}
+
+/**
+* Utility function that initialises the the aware hk time plotting thing
+*/
+function initialiseRunSummary() {
+
+
+    $('#debugContainer').show();
+
+    
+    //Now initialise the other bits of the UI
+    var hkValues=initialiseHkMenu(0);
+    AwareUtils.hkType=hkValues.hkType;
+    AwareUtils.instrument=hkValues.instrument;
+    AwareUtils.run=hkValues.run;
+    AwareUtils.runAlreadySet=hkValues.runAlreadySet;
+    initialiseMenuButtions();
+                     
+    updateHkType(AwareUtils.hkType);
+
+    if(!AwareUtils.runAlreadySet) {
+	updateLastRun(true);
+    }
+    else {	
+	updateLastRun(false);  
+    }
 }

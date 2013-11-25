@@ -24,7 +24,7 @@ header("Connection: keep-alive");
 <script type="text/javascript">
 
   $(function() {
-      initialiseAwareHk();
+      initialiseRunSummary();
   });  
 
 </script>
