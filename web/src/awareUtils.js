@@ -396,7 +396,7 @@ function initialiseTimeViewButtons() {
 
 
     $('#runForm2').change(function() {
-	drawPlot(AwareUtils);
+	drawPlots(AwareUtils);
     });				
       			        
 
@@ -425,13 +425,13 @@ function initialiseTimeViewButtons() {
 	    
 	}
 		
-	drawPlot(AwareUtils);
+	drawPlots(AwareUtils);
     });
 
 
       
     $('#refreshButton').click(function() {
-	drawPlot(AwareUtils);
+	drawPlots(AwareUtils);
     });
     
 
@@ -458,7 +458,7 @@ function initialiseTimeViewButtons() {
 		break;
 	    }
 	    numGot++;
-	    if(numGot==2) drawPlot(AwareUtils);
+	    if(numGot==2) drawPlots(AwareUtils);
 	}
 	
 	function handleEndDateRunList(jsonObject) {
@@ -467,12 +467,12 @@ function initialiseTimeViewButtons() {
 		setEndRunOnForm(Number(thisRun));	    
 	    }
 	    numGot++;
-	    if(numGot==2) drawPlot(AwareUtils);
+	    if(numGot==2) drawPlots(AwareUtils);
 	}
 	
 	function handleFailure() {
 	    numGot++;
-	    if(numGot==2) drawPlot(AwareUtils);
+	    if(numGot==2) drawPlots(AwareUtils);
 	}
 	
 	
@@ -575,7 +575,7 @@ function updateHkType(thisHkType) {
     function actuallyUpdateHkType(plotFormArray) {
 	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
 	fillPlotForm(tempArray);
-	drawPlot(AwareUtils);	   
+	drawPlots(AwareUtils);	   
     }
     
     $.ajax({
@@ -597,7 +597,7 @@ function updateLastRun(setStartToLast) {
 	    if(typeof(setEndRunOnForm) == "function") {
 		setEndRunOnForm(Number(runString));
 	    }
-	    drawPlot(AwareUtils);
+	    drawPlots(AwareUtils);
 	}
     }
     
@@ -617,7 +617,7 @@ function initialiseMenuButtions() {
 
     
     $('#runForm').change(function() {
-	drawPlot(AwareUtils);
+	drawPlots(AwareUtils);
     });
     
     $('#instrumentForm').change(function(e) {
@@ -642,7 +642,8 @@ function initialiseMenuButtions() {
  */
 function setLastRun(thisRun) {
     document.getElementById("runInput").max=thisRun;
-    document.getElementById("endRunInput").max=thisRun;
+    if(typeof(document.getElementById("endRunInput").max)!="undefined") 
+	document.getElementById("endRunInput").max=thisRun;
 }
 
 
@@ -704,6 +705,8 @@ function initialiseRunSummary() {
 
     $('#debugContainer').show();
 
+    //First initialise the plot-holder div
+    initialisePlotHolder();
     
     //Now initialise the other bits of the UI
     var hkValues=initialiseHkMenu(0);
@@ -719,6 +722,6 @@ function initialiseRunSummary() {
 	updateLastRun(true);
     }
     else {	
-	updateLastRun(false);  
+	updateLastRun(true);  
     }
 }

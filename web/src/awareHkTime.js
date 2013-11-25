@@ -972,7 +972,7 @@ function doMultiRunPlot(awareControl) {
 
 
 
-function drawPlot(plotControl) {   
+function drawPlots(plotControl) {   
 
     var awareControl = plotControl;
     awareControl.year=2013;
