@@ -275,7 +275,7 @@ function initialiseHkMenu(doTimeType) {
 	}
 
 	
-	hkValues.endrun=run;
+	hkValues.endrun=hkValues.run;
 	if($.urlParam('endrun')) {
 	    hkValues.endrun=$.urlParam('endrun');
 	}
