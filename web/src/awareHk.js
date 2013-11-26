@@ -64,7 +64,7 @@ function drawRunSummaryHkJSON(instrument,run) {
     var dataurl=getHkName(instrument,run);
 
     function onDataReceived(jsonObject) {
-	drawHk("plot-content-1","singleChannelThreshold","green",jsonObject.runsum.varList;)
+	drawHk("plot-content-1","singleChannelThreshold","green",jsonObject.runsum.varList);
     }
 
     
