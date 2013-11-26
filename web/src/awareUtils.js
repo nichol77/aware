@@ -203,6 +203,17 @@ function handleAjaxError(jqXHR, exception) {
 
 
 
+
+/**
+ * Gets the instrument name from the instrumentForm UI element
+ * @returns A string corresponding to the instrument name
+ */
+function getInstrumentNameFromForm() {
+    return document.getElementById("instrumentForm").value;
+}
+
+
+
 /**
  * This is a sorting algorithm which is used to sort arrays by time (zeroth index).
  * @param {Array} a
@@ -642,7 +653,7 @@ function initialiseMenuButtions() {
  */
 function setLastRun(thisRun) {
     document.getElementById("runInput").max=thisRun;
-    if(typeof(document.getElementById("endRunInput").max)!="undefined") 
+    if(typeof(document.getElementById("endRunInput"))!="undefined") 
 	document.getElementById("endRunInput").max=thisRun;
 }
 
@@ -697,6 +708,47 @@ function initialiseAwareHkTime() {
     if(!AwareUtils.runAlreadySet) updateLastRun(true);
 }
 
+
+/**
+ * This function gets the run number and instrument name from the UI elements. In addition the date code is obtained from the run list file
+ */
+function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
+    var startRun=getStartRunFromForm();
+    var plotName=getPlotNameFromForm();    
+    var instrumentName=getInstrumentNameFromForm();
+    var runListFile=getRunListName(instrumentName,startRun);
+    function handleRunList(jsonObject) {
+	var gotRun=0;
+	for(var i=0;i<jsonObject.runList.length;i++) {
+	    if(jsonObject.runList[i][0]==startRun) {
+		awareControl.year=jsonObject.runList[i][1];
+		awareControl.dateCode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
+		gotRun=1;
+		plotFunc(awareControl);
+		break;
+	    }
+	}
+	if(gotRun==0 ) {
+	    var timePlotCan=$("#"+awareControl.timeCanName);
+	    timePlotCan.empty();
+	    timePlotCan.append("<h2>Don't have data for run "+startRun+"</h2>");
+	}
+	
+    }
+    
+    //The jquery ajax query to fetch the run list file
+    ajaxLoadingLog(runListFile);
+    $.ajax({
+	url: runListFile,
+	type: "GET",
+	dataType: "json",
+	success: handleRunList,
+	error: handleAjaxError
+    });
+}
+
+
+
 /**
 * Utility function that initialises the the aware hk time plotting thing
 */
@@ -714,6 +766,7 @@ function initialiseRunSummary() {
     AwareUtils.instrument=hkValues.instrument;
     AwareUtils.run=hkValues.run;
     AwareUtils.runAlreadySet=hkValues.runAlreadySet;
+
     initialiseMenuButtions();
                      
     updateHkType(AwareUtils.hkType);
