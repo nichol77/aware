@@ -68,8 +68,9 @@ foreach($hkType_array as $inst => $properties){
 echo "</select>";
 echo "<a href=\"#openHkTypeHelp\">?</a>";
 echo "<br>";
+echo "<div id=\"plotDiv\">";
 echo "Plot:<br> <select id=\"plotForm\"></select>";
-echo "<br>";
+echo "</div>";
 echo "<label>Run:</label>";
 echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\"  >";
 ?>

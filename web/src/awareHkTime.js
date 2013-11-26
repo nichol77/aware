@@ -121,25 +121,6 @@ function setEndRunOnForm(thisRun) {
 
 } 
 
-/**
- * Gets the label for the selected value in the plotForm UI element
- * @returns A string corresponding to the plot label
- */
-function getPlotLabelFromForm() {
-    var elt = document.getElementById("plotForm");
-    if(elt.selectedIndex==-1)
-	return getPlotNameFromForm();
-    return elt.options[elt.selectedIndex].text;
-}
-
-/**
- * Gets the keyword for the selected value in the plotForm UI element
- * @returns A string corresponding to the plot keyword
- */
-function getPlotNameFromForm() {
-    return document.getElementById("plotForm").value;
-}
-
 
 /**
  * Gets the desired number of time points from the maxTimePointsForm UI element

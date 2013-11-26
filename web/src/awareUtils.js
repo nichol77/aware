@@ -213,6 +213,49 @@ function getInstrumentNameFromForm() {
 }
 
 
+/**
+ * Gets the label for the selected value in the plotForm UI element
+ * @returns A string corresponding to the plot label
+ */
+function getPlotLabelFromForm() {
+    var elt = document.getElementById("plotForm");
+    if(elt.selectedIndex==-1)
+	return getPlotNameFromForm();
+    return elt.options[elt.selectedIndex].text;
+}
+
+/**
+ * Gets the keyword for the selected value in the plotForm UI element
+ * @returns A string corresponding to the plot keyword
+ */
+function getPlotNameFromForm() {
+    return document.getElementById("plotForm").value;
+}
+
+
+
+/**
+ * Gets the keyword for the selected value in the hkTypeForm UI element
+ * @returns A string corresponding to the hk type keyword
+ */
+function getHkTypeFromForm() {
+    return document.getElementById("hkTypeForm").value;
+}
+
+
+/**
+ * Gets the label for the selected value in the hkType UI element
+ * @returns A string corresponding to the hk type label
+ */
+function getHkLabelFromForm() {
+    var elt = document.getElementById("hkTypeForm");
+    if(elt.selectedIndex==-1)
+	return getHkTypeFromForm();
+    return elt.options[elt.selectedIndex].text;
+}
+
+
+
 
 /**
  * This is a sorting algorithm which is used to sort arrays by time (zeroth index).
@@ -246,6 +289,18 @@ function numberSort(a,b) {
 }
 
 
+/**
+     * Utility function that returns the value of a URL variable or null
+     * @returns {String}
+     */
+    function getUrlParameter(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if(results != null) {
+	    return results[1];
+	}
+	return null;
+    };
+
 
 
 /**
@@ -256,48 +311,39 @@ function initialiseHkMenu(doTimeType) {
     var hkValues = new Object();
 
 
-    /**
-     * Utility function that returns the value of a URL variable or null
-     * @returns {String}
-     */
-    $.urlParam = function(name){
-	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	if(results != null) {
-	    return results[1];
-	}
-	return null;
-    };
+    
     
 
 
     hkValues.hkType=document.getElementById("hkTypeForm").value;
-    if($.urlParam('hkType')) {
-	hkValues.hkType=$.urlParam('hkType');
+    if(getUrlParameter('hkType')) {
+	hkValues.hkType=getUrlParameter('hkType');
     }
 
+
     hkValues.instrument=document.getElementById("instrumentForm").value;
-    if($.urlParam('instrument')) {
-	hkValues.instrument=$.urlParam('instrument');//urlVars["instrument"];
+    if(getUrlParameter('instrument')) {
+	hkValues.instrument=getUrlParameter('instrument');//urlVars["instrument"];
     }
 
     hkValues.run=document.getElementById("runForm").value;
     hkValues.runAlreadySet=false;
-    if($.urlParam('run')) {
-	hkValues.run=$.urlParam('run');//urlVars["run"];
+    if(getUrlParameter('run')) {
+	hkValues.run=getUrlParameter('run');//urlVars["run"];
 	hkValues.runAlreadySet=true;
     }
 
 
     if(doTimeType) {
 	hkValues.timeType=document.getElementById("timeForm").value;
-	if($.urlParam('timeType')) {
-	    hkValues.timeType=$.urlParam('timeType');//urlVars["timeType"];
+	if(getUrlParameter('timeType')) {
+	    hkValues.timeType=getUrlParameter('timeType');//urlVars["timeType"];
 	}
 
 	
 	hkValues.endrun=hkValues.run;
-	if($.urlParam('endrun')) {
-	    hkValues.endrun=$.urlParam('endrun');
+	if(getUrlParameter('endrun')) {
+	    hkValues.endrun=getUrlParameter('endrun');
 	}
     }
 
@@ -315,10 +361,22 @@ function initialiseHkMenu(doTimeType) {
 * Utility function that initialises the plot form on the left menu
 */
 function fillPlotForm(array) {
+    var urlValue=getUrlParameter('plot');
+    var gotUrlMatch=false;
     $('#plotForm').empty();
-    for (i=0;i<array.length;i++){             
+    for (i=0;i<array.length;i++){ 
+	if(getUrlParameter('plot')) {
+	    if(urlValue.indexOf(array[i].sym)>=0) {
+		gotUrlMatch=true;
+	    }
+	}
 	$('<option/>').val(array[i].sym).html(array[i].desc).appendTo('#plotForm');
     }
+    if(gotUrlMatch) {
+	$('#plotForm').val(urlValue);
+    }
+	
+    
 }
 
 /**
@@ -407,6 +465,9 @@ function initialiseTimeViewButtons() {
 
 
     $('#runForm2').change(function() {
+			      
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>runForm2... drawPlots</p>");
 	drawPlots(AwareUtils);
     });				
       			        
@@ -436,12 +497,17 @@ function initialiseTimeViewButtons() {
 	    
 	}
 		
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>timeForm... drawPlots</p>");
 	drawPlots(AwareUtils);
     });
 
 
       
     $('#refreshButton').click(function() {
+
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>refreshButton... drawPlots</p>");
 	drawPlots(AwareUtils);
     });
     
@@ -586,6 +652,9 @@ function updateHkType(thisHkType) {
     function actuallyUpdateHkType(plotFormArray) {
 	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
 	fillPlotForm(tempArray);
+
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>actuallyUpdateHkType... drawPlots</p>");
 	drawPlots(AwareUtils);	   
     }
     
@@ -608,7 +677,7 @@ function updateLastRun(setStartToLast) {
 	    if(typeof(setEndRunOnForm) == "function") {
 		setEndRunOnForm(Number(runString));
 	    }
-	    drawPlots(AwareUtils);
+
 	}
     }
     
@@ -628,6 +697,9 @@ function initialiseMenuButtions() {
 
     
     $('#runForm').change(function() {
+
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>runForm... drawPlots</p>");
 	drawPlots(AwareUtils);
     });
     
@@ -653,8 +725,9 @@ function initialiseMenuButtions() {
  */
 function setLastRun(thisRun) {
     document.getElementById("runInput").max=thisRun;
-    if(typeof(document.getElementById("endRunInput"))!="undefined") 
+    if(AwareUtils.hasEndRun) {
 	document.getElementById("endRunInput").max=thisRun;
+    }
 }
 
 
@@ -683,7 +756,7 @@ function setStartRunOnForm(thisRun) {
 function initialiseAwareHkTime() {
 
 
-    $('#debugContainer').show();
+    $('#debugContainer').hide();
 
     //First initialise the plot-holder div
     initialisePlotHolder();
@@ -698,14 +771,15 @@ function initialiseAwareHkTime() {
     AwareUtils.timeCanName='divTime-1';
     AwareUtils.projCanName='divProjection-1';
     AwareUtils.plotId=1;
+    AwareUtils.hasEndRun=1;
     initialiseMenuButtions();
     initialiseTimeViewButtons();
                
     updateLastRun(false);
     setEndRunOnForm(hkValues.endrun);
         
-    updateHkType(AwareUtils.hkType);
     if(!AwareUtils.runAlreadySet) updateLastRun(true);
+    updateHkType(AwareUtils.hkType);
 }
 
 
@@ -755,7 +829,8 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
 function initialiseRunSummary() {
 
 
-    $('#debugContainer').show();
+    $('#debugContainer').hide();
+    $('#plotDiv').hide();
 
     //First initialise the plot-holder div
     initialisePlotHolder();
@@ -766,15 +841,30 @@ function initialiseRunSummary() {
     AwareUtils.instrument=hkValues.instrument;
     AwareUtils.run=hkValues.run;
     AwareUtils.runAlreadySet=hkValues.runAlreadySet;
+    AwareUtils.hasEndRun=0;
 
     initialiseMenuButtions();
-                     
-    updateHkType(AwareUtils.hkType);
 
     if(!AwareUtils.runAlreadySet) {
 	updateLastRun(true);
     }
     else {	
-	updateLastRun(true);  
+	updateLastRun(false);  
     }
+    updateHkType(AwareUtils.hkType);
+}
+
+function getPlotNameLabelList() {
+
+    var plotList= new Array();
+
+    $("#plotForm option").each(function() {
+				   //$("#debugContainer").append("<p>"+this.value+"</p>");
+				   var item = new Object();
+				   item.name=this.value;
+				   item.label=this.text;
+				   plotList.push(item);
+    });
+
+    return plotList;
 }

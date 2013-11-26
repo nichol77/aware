@@ -348,3 +348,6 @@ border: 0px solid black;
 td.legendLabel { font-size: 50%; }
 
 p.choiceList {font-size: 50%;}
+
+.runsum-header { height:10%; width:100%;padding: 0.1em; margin:0em; margin-bottom:0.25em}
+.runsum-cont { height:90%; width:100%; padding: 0.1em; margin:0em}

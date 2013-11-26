@@ -14,4 +14,10 @@ accesskey="C">Events</a>
 <a class=
 "leftBar" title="Housekeeping" href="awareHk.php"
 accesskey="C">Housekeeping</a>
+
+
+
+<a class=
+"leftBar" title="Summary" href="runSum.php"
+accesskey="C">Summary</a>
 </p>
