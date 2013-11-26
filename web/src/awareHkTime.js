@@ -122,15 +122,6 @@ function setEndRunOnForm(thisRun) {
 } 
 
 /**
- * Gets the instrument name from the instrumentForm UI element
- * @returns A string corresponding to the instrument name
- */
-function getInstrumentNameFromForm() {
-    return document.getElementById("instrumentForm").value;
-}
-
-
-/**
  * Gets the label for the selected value in the plotForm UI element
  * @returns A string corresponding to the plot label
  */
@@ -797,44 +788,6 @@ function fetchFullHkTime(varNameKey,awareControl) {
     }); 
 }
 
-
-/**
- * This function gets the run number and instrument name from the UI elements. In addition the date code is obtained from the run list file
- */
-function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
-    var startRun=getStartRunFromForm();
-    var plotName=getPlotNameFromForm();    
-    var instrumentName=getInstrumentNameFromForm();
-    var runListFile=getRunListName(instrumentName,startRun);
-    function handleRunList(jsonObject) {
-	var gotRun=0;
-	for(var i=0;i<jsonObject.runList.length;i++) {
-	    if(jsonObject.runList[i][0]==startRun) {
-		awareControl.year=jsonObject.runList[i][1];
-		awareControl.dateCode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-		gotRun=1;
-		plotFunc(awareControl);
-		break;
-	    }
-	}
-	if(gotRun==0 ) {
-	    var timePlotCan=$("#"+awareControl.timeCanName);
-	    timePlotCan.empty();
-	    timePlotCan.append("<h2>Don't have data for run "+startRun+"</h2>");
-	}
-	
-    }
-    
-    //The jquery ajax query to fetch the run list file
-    ajaxLoadingLog(runListFile);
-    $.ajax({
-	    url: runListFile,
-		type: "GET",
-		dataType: "json",
-		success: handleRunList,
-		error: handleAjaxError
-		});
-}
 
 /**
  * This function is the multi run plotting master function
