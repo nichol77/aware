@@ -379,6 +379,27 @@ function fillPlotForm(array) {
     
 }
 
+
+/**
+* Utility function that initialises the layout form on the left menu
+*/
+function fillLayoutForm(array) {
+    var urlValue=getUrlParameter('layoutType');
+    var gotUrlMatch=false;
+    $('#layoutForm').empty();
+    for (i=0;i<array.length;i++){ 
+	if(getUrlParameter('layoutType')) {
+	    if(urlValue.indexOf(array[i].sym)>=0) {
+		gotUrlMatch=true;
+	    }
+	}
+	$('<option/>').val(array[i].sym).html(array[i].desc).appendTo('#layoutForm');
+    }
+    if(gotUrlMatch) {
+	$('#layoutForm').val(urlValue);
+    }	    
+}
+
 /**
 * Utitlity function that draws the UI buttons for time view
 */
@@ -659,14 +680,16 @@ function updateHkType(thisHkType) {
     }
     
     $.ajax({
-	url: "config/plotTypeList.json",
+	    url: "config/"+getInstrumentNameFromForm()+"/plotTypeList.json",
 	type: "GET",
 	dataType: "json", 
 	success: actuallyUpdateHkType
     });      
  }
 
-function updateLastRun(setStartToLast) {
+
+
+function updateLastRun(setStartToLast, doUpdateHk) {
     //	var tempString="output/"+hkValues.instrument+"/lastRun";
     var tempString="output/"+AwareUtils.instrument+"/last"+capitaliseFirstLetter(AwareUtils.hkType);
 
@@ -678,6 +701,9 @@ function updateLastRun(setStartToLast) {
 		setEndRunOnForm(Number(runString));
 	    }
 
+	}
+	if(doUpdateHk) {
+	    updateHkType(AwareUtils.hkType); 
 	}
     }
     
@@ -707,7 +733,7 @@ function initialiseMenuButtions() {
 	AwareUtils.instrument=$(this).val();
 	AwareUtils.runAlreadySet=false;
 	e.stopPropagation();
-	updateLastRun(true);
+	updateLastRun(true,false);
     });	
 
     $('#hkTypeForm').change(function(e) {
@@ -775,11 +801,11 @@ function initialiseAwareHkTime() {
     initialiseMenuButtions();
     initialiseTimeViewButtons();
                
-    updateLastRun(false);
+    updateLastRun(false,false);
     setEndRunOnForm(hkValues.endrun);
         
-    if(!AwareUtils.runAlreadySet) updateLastRun(true);
-    updateHkType(AwareUtils.hkType);
+    if(!AwareUtils.runAlreadySet) updateLastRun(true,true);
+    else updateHkType(AwareUtils.hkType);
 }
 
 
@@ -829,7 +855,7 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
 function initialiseRunSummary() {
 
 
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
     $('#plotDiv').hide();
 
     //First initialise the plot-holder div
@@ -846,12 +872,12 @@ function initialiseRunSummary() {
     initialiseMenuButtions();
 
     if(!AwareUtils.runAlreadySet) {
-	updateLastRun(true);
+	updateLastRun(true,true);
     }
     else {	
-	updateLastRun(false);  
+	updateLastRun(false,false); 
+	updateHkType(AwareUtils.hkType); 
     }
-    updateHkType(AwareUtils.hkType);
 }
 
 function getPlotNameLabelList() {

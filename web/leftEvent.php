@@ -65,19 +65,7 @@ echo "</li>";
 
 echo "<li>";
 ///Load the instrument array config file
-$layout_array = parse_ini_file("config/layoutList.ini", true);
 echo '<label>Layout:</label> <select id="layoutForm" >';
-foreach($layout_array as $layout => $properties){
-  $key=$properties[name];
-  $value=$properties[title];
-  $pos = strpos($layoutType,$key);
-  if($pos !== false) {
-  echo "<option value=$key selected=\"selected\" label=\"$value\">$value</option>";
-  }
-  else {
-    echo "<option value=$key label=\"$value\">$value</option>";    
-  }         
-}
 echo "</select>";
 echo "<a href=\"#openLayoutHelp\">?</a>";
 echo "</li>";

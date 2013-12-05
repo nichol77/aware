@@ -47,7 +47,7 @@ header("Connection: keep-alive");
 	  setLastRun(Number(runString));
 	  if(setStartToLast) {
 	    setRunOnForm(Number(runString));
-	    readEventLayout();
+	    updateLayoutForm();
 	  }
 	}
 	
@@ -75,6 +75,24 @@ header("Connection: keep-alive");
 	return null;
       }
 
+      
+      function updateLayoutForm() {
+	
+	function actuallyUpdateLayoutForm(layoutFormArray) {	   
+	  fillLayoutForm(layoutFormArray);
+	  readEventLayout();
+	}
+	
+	$.ajax({
+	  url: "config/"+getInstrumentNameFromForm()+"/layoutList.json",
+	      type: "GET",
+	      dataType: "json", 
+	      success: actuallyUpdateLayoutForm
+	      });      
+      }
+
+
+
   
       function readEventLayout() {	
 	function actuallyReadEventLayout(jsonObject) {
@@ -86,7 +104,7 @@ header("Connection: keep-alive");
 	
 	$.ajax({
 	    //url: "config/eventLayout5by4.json",
-	  url: "config/"+eventLayout+".json",
+	  url: "config/"+getInstrumentNameFromForm()+"/"+eventLayout+".json",
 	      type: "GET",
 	      dataType: "json", 
 	      success: actuallyReadEventLayout
@@ -112,7 +130,7 @@ header("Connection: keep-alive");
 	updateLastRun(true);
       }
       else {
-	readEventLayout();
+	updateLayoutForm();
       }
 
 
@@ -121,8 +139,8 @@ header("Connection: keep-alive");
       $('#instrumentForm').change(function() {
 				    setEventIndexOnForm(0);
 				    runAlreadySet=false;
+				    updateLayoutForm();
 				    updateLastRun(true);
-				    readEventLayout();
 				  });
 
 

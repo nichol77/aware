@@ -1,0 +1,13 @@
+{
+	"numRows" : 4,
+	"numCols" : 2,
+	"rowContLabel" : "4up",
+	"colContLabel" : "2up",
+	"containerLabel" : "4x2up",
+	"rowLabels" : ["V","V","V","S"],
+	"colLabels" : ["1/3/5","2/4/6"],
+	"chanOrder" : [[3,2],[4,6],[8,10],[14,15]],
+	"showXaxis" : [[1,1],[1,1],[1,1],[1,1]],
+	"showYaxis" : [[1,1],[1,1],[1,1],[1,1]],
+	"chanScale" : [0,0,1,1,1,0,1,0,1,0,1,0,0,0,1,1]
+}

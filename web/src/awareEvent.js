@@ -761,7 +761,6 @@ function plotTheEvent() {
 	for(var i=0; i<AwareEvent.plotChans; i++) {
 
 	    var plotCan=$("#"+"divChan"+i);
-	    plotCan.empty();	    
 	    
 	    var row=Math.floor(i/AwareEvent.nCols);
 	    var col=(i%AwareEvent.nCols);
@@ -839,6 +838,8 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
     var showYaxis=showY;
     var showLabel=false;
     
+    //    $("#debugContainer").append("<p>"+divChanName+" "+divContName+" "+showX+" "+showY+" "+xMin+" "+xMax+" "+yMin+" "+yMax+" "+grLabel+"</p>");
+
     var titleContainer = $("#titleContainer"); 
     //    titleContainer.append("<p>"+divContName+"</p>");
     //titleContainer.append("<p>The plot has "+dataArray.length+" time points</p>");
@@ -847,12 +848,12 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
     //    titleContainer.append("<p>Second point "+dataArray[1][0] +","+dataArray[1][1]+"</p>");
     //    titleContainer.append("<p>Last point "+dataArray[dataArray.length-1][0] +","+dataArray[dataArray.length-1][1]+"</p>");
     var plotCan=$("#"+divChanName);
+    plotCan.empty();	    
+
     var plotCont=$("#"+divContName);
-//    plotCont.append("<p>Boo</p>");
  
     var plotWidth=plotCont.width();
     var plotHeight=plotCont.height();
-    //titleContainer.append("<p>"+plotWidth+"</p>");
     
     var subDataArray=dataArray;
 
@@ -900,7 +901,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
     
     var plot;
     function doThePlot() {
-       //	titleContainer.append("<p>Double? "++"</p>");
+	//       	$("#debugContainer").append("<p>doThePlot </p>");
        if(!plotCont.hasClass('double')) {
 	  //Do the data reduction
 	  subDataArray=dataArray;//reduceWaveformSamples(dataArray,64,64);
@@ -1022,7 +1023,7 @@ function setupEventDisplay(jsonObject) {
    }
    
     AwareEvent.chanToScaleGroup = new Array(jsonObject.chanScale.length);
-    AwareEvent.chanRowColArray= jsonObject.chanOrder;
+    AwareEvent.chanRowColArray=jsonObject.chanOrder;
     AwareEvent.showXaxis=jsonObject.showXaxis;
     AwareEvent.showYaxis=jsonObject.showYaxis;
        

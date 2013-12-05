@@ -1,0 +1,6 @@
+[			  
+	{"sym":"eventLayout8by2","desc":"8x2"},
+	{"sym":"eventLayout4by4","desc":"4x4"},
+	{"sym":"eventLayoutJustVPol","desc":"VPol Only"},
+	{"sym":"eventLayoutJustHPol","desc":"HPol Only"},
+	{"sym":"eventLayoutVPolCSum","desc":"Test"}]
