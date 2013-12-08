@@ -6,7 +6,7 @@
 	"containerLabel" : "1up",
 	"rowLabels" : ["CS","Map"],
 	"colLabels" : ["VPol"],
-	"inputChanList" : [3,2,4,6,8,10],
+	"inputChanList" : [3,2,4,6],
 	"chanOrder" : [["CSum"],["Map"]],
 	"showXaxis" : [[1],[1]],
 	"showYaxis" : [[1],[1]],

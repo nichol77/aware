@@ -527,6 +527,8 @@ function eventPlotter() {
 	    var dataChanArray = new Array();
 	    var labelArray = new Array();	
 	    
+	    //	    $("#debugContainer").append("nChans = "+AwareEvent.nChans);
+	    
 	    for(var inputChan=0; inputChan<AwareEvent.nChans; inputChan++) {
 		
 		var chan=AwareEvent.inputChanList[inputChan];
@@ -646,16 +648,21 @@ function makeCoherentSum() {
 	if(AwareEvent.waveformArray[index].length>numPoints) {
 	    numPoints=AwareEvent.waveformArray[index].length;
 	}
-
     }
     //Now we sort the data in terms of the squared voltage
     chanV2Array.sort(voltageSortData);
     for(var index=0;index<chanV2Array.length;index++) {
+	//	$('#debugContainer').append("<p>Channel "+AwareEvent.waveformArray[chanV2Array[index][0]].length+"</p>");
+	
+	//This code zero pads the data
 	while(AwareEvent.waveformArray[chanV2Array[index][0]].length<numPoints) {
 	    AwareEvent.waveformArray[chanV2Array[index][0]].push([2*AwareEvent.waveformArray[chanV2Array[index][0]][AwareEvent.waveformArray[chanV2Array[index][0]].length-1][0]-AwareEvent.waveformArray[chanV2Array[index][0]][AwareEvent.waveformArray[chanV2Array[index][0]].length-2][0],0]);	    
 	}
-	//	$('#titleContainer').append("<p>Channel "+chanV2Array[index][0]+" with V^2="+chanV2Array[index][1]+" num points "+AwareEvent.waveformArray[chanV2Array[index][0]].length+"</p>");
+	//	$('#debugContainer').append("<p>Channel "+chanV2Array[index][0]+" with V^2="+chanV2Array[index][1]+" num points "+AwareEvent.waveformArray[chanV2Array[index][0]].length+"</p>");
+
     }
+
+
     
     AwareEvent.csumArray=AwareEvent.waveformArray[chanV2Array[0][0]];
     var vMaxTimeCSum=AwareEvent.voltMinMaxTimeArray[chanV2Array[0][0]][1];
@@ -667,27 +674,35 @@ function makeCoherentSum() {
     AwareEvent.csumCorrArray[chanV2Array[0][0]]=0;
     for(var index=1;index<chanV2Array.length;index++) {
 	var corrArray=makeCorrelation(AwareEvent.csumArray,
-				      AwareEvent.waveformArray[chanV2Array[index][0]]);
+				      AwareEvent.waveformArray[chanV2Array[index][0]],
+				      -500,500);
+	
 	var maxCor=-1*Number.MAX_VALUE;
 	var maxCorTime=0;
 	var maxCorIndex=0;
+	var zeroTime=Number.MAX_VALUE;
+	var zeroIndex=0;
+	var cableDiff=AwareEvent.csumArray[0][0]-AwareEvent.waveformArray[chanV2Array[index][0]][0][0];
 	for(var i=0;i<corrArray.length;i++) {
+	    //	    if(index==1) 
+	    //		$("#debugContainer").append("<p>"+corrArray[i][0]+" "+corrArray[i][1]+"</p>");
+	    if(Math.abs(corrArray[i][0]-cableDiff)<zeroTime) {
+		zeroTime=Math.abs(corrArray[i][0]-cableDiff);
+		zeroIndex=i;
+	    }
 	    if(corrArray[i][1]>maxCor) {
 		maxCor=corrArray[i][1];
 		maxCorIndex=i;
 		maxCorTime=corrArray[i][0];
 	    }
 	}
-	var offset=maxCorIndex;
+	var offset=maxCorIndex-zeroIndex;
+	//	$("#debugContainer").append("<p>"+zeroIndex+" "+maxCorIndex+" "+offset+" "+maxCorTime+" "+maxCor+"</p>");
+	//	$("#debugContainer").append("<p>"+cableDiff+"</p>");
 	var vMaxTime=AwareEvent.voltMinMaxTimeArray[chanV2Array[index][0]][1];
-	if(offset>corrArray.length/2) {
-	    offset-=corrArray.length;
-	    maxCorTime-=corrArray.length*(corrArray[1][0]-corrArray[0][0]);
-	}
 	AwareEvent.csumDeltaTArray[chanV2Array[index][0]]=maxCorTime;
 	AwareEvent.csumCorrArray[chanV2Array[index][0]]=maxCor;
-	var deltaT=AwareEvent.csumArray[1][0]-
-	    AwareEvent.csumArray[0][0];
+	var deltaT=AwareEvent.csumArray[1][0]-AwareEvent.csumArray[0][0];
 	var firstT=AwareEvent.csumArray[0][0];
 	AwareEvent.testArray= new Array();
 	for(var i=0;i<numPoints;i++) {
@@ -1040,7 +1055,7 @@ function setupEventDisplay(jsonObject) {
     
     if('inputChanList' in jsonObject) {
 	AwareEvent.inputChanList=jsonObject.inputChanList;
-	AwareEvent.nChans=AwareEvent.inputChanList.length;
+	AwareEvent.nChans=AwareEvent.inputChanList.length;	
 	AwareEvent.plotChans=AwareEvent.nRows*AwareEvent.nCols;
     }
     else {

@@ -295,27 +295,27 @@ function correlateReal(xreal, yreal, outreal) {
 
 
 
-/**
- * Return the correlation of two vectors
- *
- */
-function makeCorrelation(aArray,bArray) {
-    var numPoints=aArray.length;
-    var correlationArray = new Array(numPoints);
-    var val1 = new Array(numPoints);
-    var val2 = new Array(numPoints);
+// /**
+//  * Return the correlation of two vectors
+//  *
+//  */
+// function makeCorrelation(aArray,bArray) {
+//     var numPoints=aArray.length;
+//     var correlationArray = new Array(numPoints);
+//     var val1 = new Array(numPoints);
+//     var val2 = new Array(numPoints);
     
-    var deltaCable=aArray[0][0]-bArray[0][0];
-    for(var i=0;i<numPoints;i++) {
-	val1[i]=aArray[i][1];
-	val2[i]=bArray[i][1];
-    }
-    correlateReal(val1,val2,correlationArray);
+//     var deltaCable=aArray[0][0]-bArray[0][0];
+//     for(var i=0;i<numPoints;i++) {
+// 	val1[i]=aArray[i][1];
+// 	val2[i]=bArray[i][1];
+//     }
+//     correlateReal(val1,val2,correlationArray);
     
-    var returnArray = new Array();
-    var deltaT=aArray[1][0]-aArray[0][0];
-    for(var i=0;i<numPoints;i++) {
-	returnArray.push([(deltaT*i)+deltaCable,correlationArray[i]]);	
-    }
-    return returnArray;
-}
+//     var returnArray = new Array();
+//     var deltaT=aArray[1][0]-aArray[0][0];
+//     for(var i=0;i<numPoints;i++) {
+// 	returnArray.push([(deltaT*i)+deltaCable,correlationArray[i]]);	
+//     }
+//     return returnArray;
+// }
