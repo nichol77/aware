@@ -1094,7 +1094,7 @@ function readInstrumentGeom() {
 
 function findBestLocation()
 {
-    
+    $("#debugContainer").append("<p>findBestLocation</p>");
     var minDelta=Number.MAX_VALUE;
     var refIndex=0;
     var relLocationArray = new Array();
@@ -1111,7 +1111,7 @@ function findBestLocation()
     for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
 	var rawLocation=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location;
 	relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
-	$("#debugContainer").add("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
+	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
     }
 
 }
