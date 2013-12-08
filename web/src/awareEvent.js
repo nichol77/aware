@@ -612,6 +612,7 @@ function eventPlotter() {
 	}
 	if(getCoherentSumFlag()) {
 	    makeCoherentSum();
+	    findBestLocation();
 	}
 	
 	plotTheEvent();
