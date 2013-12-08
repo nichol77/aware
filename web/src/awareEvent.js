@@ -1029,7 +1029,7 @@ function fillEventDivWithWaveformContainers(chanArray,rowContLabel,colContLabel,
 */
 function setupEventDisplay(jsonObject) {
    $('#divEvent').empty();	   	
-
+    readInstrumentGeom();
    if('waveformArray' in AwareEvent) {
        AwareEvent.waveformArray=null;
    }
@@ -1073,4 +1073,44 @@ function setupEventDisplay(jsonObject) {
 
    
    fillEventDivWithWaveformContainers(jsonObject.chanOrder,jsonObject.rowContLabel,jsonObject.colContLabel,jsonObject.containerLabel,jsonObject.chanScale);
+}
+
+function readInstrumentGeom() {
+//going to read the location of the antennas from config/INSTRUMENT/instrumentGeom.json
+    
+   function actuallyReadInstrumentGeom(instrumentGeom) {
+       AwareEvent.instrumentGeom=instrumentGeom;
+   }
+    
+    $.ajax({
+	url: "config/"+getInstrumentNameFromForm()+"/instrumentGeom.json",
+	type: "GET",
+	dataType: "json", 
+	success: actuallyReadInstrumentGeom
+    });  
+}
+
+
+function findBestLocation()
+{
+    
+    var minDelta=Number.MAX_VALUE;
+    var refIndex=0;
+    var relLocationArray = new Array();
+
+    for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
+	var num= new Number(AwareEvent.csumDeltaTArray[index]);
+	if(num<minDelta) {
+	    minDelta=num;
+	    refIndex=index;
+	}
+    }
+    var refLocation=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location;
+    //refIndex defines the antenna which all deltas are measured against    
+    for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
+	var rawLocation=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location;
+	relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
+	$("#debugContainer").add("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
+    }
+
 }

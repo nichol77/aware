@@ -1,0 +1,128 @@
+{
+"instrument":"STATION2",
+"numAntennas":20,
+"antList":[
+{
+"id":0,
+"label": "BH1 TVPol",
+"location":[9.3863,2.70953,-29.6795]
+},
+{
+"id":1,
+"label": "BH2 TVPol",
+"location":[3.6224,-10.0177,-28.2408]
+},
+{
+"id":2,
+"label": "BH3 TVPol",
+"location":[-3.8831,9.05083,-28.1384]
+},
+{
+"id":3,
+"label": "BH4 TVPol",
+"location":[-8.9243,-4.10077,-28.4237]
+},
+{
+"id":4,
+"label": "BH1 BVPol",
+"location":[9.3862,2.70913,-47.2542]
+},
+{
+"id":5,
+"label": "BH2 BVPol",
+"location":[3.6223,-10.0181,-47.2941]
+},
+{
+"id":6,
+"label": "BH3 BVPol",
+"location":[-3.8832,9.05044,-47.1914]
+},
+{
+"id":7,
+"label": "BH4 BVPol",
+"location":[-8.9245,-4.10107,-47.3127]
+},
+{
+"id":8,
+"label": "BH1 THPol",
+"location":[9.3863,2.67914,-25.2446]
+},
+{
+"id":9,
+"label": "BH2 THPol",
+"location":[3.6224,-10.0177,-25.3223]
+},
+{
+"id":10,
+"label": "BH3 THPol",
+"location":[-3.8831,9.05093,-25.0175]
+},
+{
+"id":11,
+"label": "BH4 THPol",
+"location":[-8.9243,-4.10066,-25.4671]
+},
+{
+"id":12,
+"label": "BH1 BHPol",
+"location":[9.3862,2.70924,-44.2979]
+},
+{
+"id":13,
+"label": "BH2 BHPol",
+"location":[3.6223,-10.0181,-44.0089]
+},
+{
+"id":14,
+"label": "BH3 BHPol",
+"location":[-3.8832,9.05044,-44.0708]
+},
+{
+"id":15,
+"label": "BH4 BHPol",
+"location":[-8.9243,-4.10107,-44.0275]
+},
+{
+"id":16,
+"label": "S1 SA1",
+"location":[-0.2011,2.36633,145.248]
+},
+{
+"id":17,
+"label": "S2 SA2",
+"location":[-0.2011,2.36633,145.248]
+},
+{
+"id":18,
+"label": "S3 SA3",
+"location":[-0.2011,2.36633,145.248]
+},
+{
+"id":19,
+"label": "S4 SA4",
+"location":[-0.2011,2.36633,145.248]
+}
+],
+"calAntList":[
+{
+"id":0,
+"label": "BH5 Horizontal",
+"location":[36.6735,-17.6845,-47.3928]
+},
+{
+"id":1,
+"label": "BH5 Vertical",
+"location":[36.6735,-17.6845,-50.678]
+},
+{
+"id":2,
+"label": "BH6 Horizontal",
+"location":[16.5466,35.7022,-22.4062]
+},
+{
+"id":3,
+"label": "BH6 Vertical",
+"location":[16.5466,35.7022,-25.6914]
+}
+]
+}
