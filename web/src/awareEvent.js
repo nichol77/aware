@@ -1099,6 +1099,11 @@ function findBestLocation()
     var refIndex=0;
     var relLocationArray = new Array();
 
+    var orderIndex = new Array (AwareEvent.csumDeltaTArray.length);
+    for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
+	orderIndex[index]=-1;
+    }
+
     for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
 	var num= new Number(AwareEvent.csumDeltaTArray[index]);
 	if(Math.abs(num)<minDelta) {
@@ -1106,6 +1111,25 @@ function findBestLocation()
 	    refIndex=new Number(index);
 	}
     }
+    
+    orderIndex[0]=refIndex;
+    for(var index=1;index<orderIndex.length;index++) {
+	var maxCor=0;
+	var maxIndex=0;
+	for(var i=0;i<AwareEvent.csumDeltaTArray.length;i++) {
+	    if(orderIndex[i]>=0) continue;
+	    if(AwareEvent.csumCorrArray[i]>maxCor) {
+		maxCor=AwareEvent.csumCorrArray[i];
+		maxIndex=i;
+	    }
+	}
+	orderIndex[index]=maxIndex;
+    }
+    for(var index=1;index<orderIndex.length;index++) {
+	$("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
+    }
+    
+
   //  $("#debugContainer").append("<p>"+refIndex+" "+minDelta+" "+AwareEvent.inputChanList[refIndex]+"</p>");
   var refLocation=new Array(3); 
     refLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0]);
