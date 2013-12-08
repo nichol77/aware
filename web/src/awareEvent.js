@@ -1100,6 +1100,7 @@ function findBestLocation()
     var relLocationArray = new Array();
 
     var orderIndex = new Array (AwareEvent.csumDeltaTArray.length);
+    var otherIndex = new Array (AwareEvent.csumDeltaTArray.length);
     for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
 	orderIndex[index]=-1;
     }
@@ -1112,6 +1113,7 @@ function findBestLocation()
 	}
     }
     
+    otherIndex[refIndex]=0;
     orderIndex[0]=refIndex;
     for(var index=1;index<orderIndex.length;index++) {
 	var maxCor=0;
@@ -1124,6 +1126,7 @@ function findBestLocation()
 	    }
 	}
 	orderIndex[index]=maxIndex;
+	otherIndex[maxIndex]=index;
     }
     for(var index=1;index<orderIndex.length;index++) {
 	$("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
