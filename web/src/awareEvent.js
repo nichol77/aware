@@ -1108,7 +1108,7 @@ function findBestLocation()
     }
     $("#debugContainer").append("<p>"+refIndex+" "+minDelta+"</p>");
     var refLocation=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location;
-    $("#debugContainer").append("<p>"+refLocation[0]+" "+refLocation[1]+" "+refLocation[2]-+"</p>");
+    $("#debugContainer").append("<p>"+refLocation[0]+" "+AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]+" "+refLocation[2]-+"</p>");
     //refIndex defines the antenna which all deltas are measured against    
     for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
 	var rawLocation=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location;
