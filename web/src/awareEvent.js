@@ -1101,8 +1101,8 @@ function findBestLocation()
 
     for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
 	var num= new Number(AwareEvent.csumDeltaTArray[index]);
-	if(num<minDelta) {
-	    minDelta=num;
+	if(Math.abs(num)<minDelta) {
+	    minDelta=Math.abs(num);
 	    refIndex=index;
 	}
     }
