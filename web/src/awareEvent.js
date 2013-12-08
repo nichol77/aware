@@ -1106,14 +1106,22 @@ function findBestLocation()
 	    refIndex=new Number(index);
 	}
     }
-    $("#debugContainer").append("<p>"+refIndex+" "+minDelta+" "+AwareEvent.inputChanList[refIndex]+"</p>");
-    var refLocationX=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0];
-    $("#debugContainer").append("<p>"+refLocationX+" "+AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]+" "+refLocation[2]-+"</p>");
-    //refIndex defines the antenna which all deltas are measured against    
-    for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
-	var rawLocation=AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location;
+  //  $("#debugContainer").append("<p>"+refIndex+" "+minDelta+" "+AwareEvent.inputChanList[refIndex]+"</p>");
+  var refLocation=new Array(3); 
+    refLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0]);
+    refLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]);
+    refLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[2]);
+   // $("#debugContainer").append("<p>"+refLocation[1]+"</p>"); 
+
+
+//refIndex defines the antenna which all deltas are measured against    
+    for(var index=new Number(0);index<AwareEvent.csumDeltaTArray.length;index++) {
+	var rawLocation= new Array(3);	
+	 rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
+	rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
+	rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
 	relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
-	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]-+"</p>");
+//	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
     }
 
 }
