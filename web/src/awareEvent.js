@@ -1119,7 +1119,7 @@ function findBestLocation()
 	var maxCor=0;
 	var maxIndex=0;
 	for(var i=0;i<AwareEvent.csumDeltaTArray.length;i++) {
-	    if(orderIndex[i]>=0) continue;
+	    if(otherIndex[i]>=0) continue;
 	    if(AwareEvent.csumCorrArray[i]>maxCor) {
 		maxCor=AwareEvent.csumCorrArray[i];
 		maxIndex=i;
