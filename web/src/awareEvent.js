@@ -29,7 +29,7 @@ AwareEvent.chanRowColArray;
 AwareEvent.showXaxis;
 AwareEvent.showYaxis;
 
-var Clight=0.299792458/1.48;
+var Cinice=0.299792458/1.48;
 
 /**
  * The reduceWaveformSamples function is @deprecated
@@ -650,77 +650,74 @@ function makeCoherentSum() {
 	    numPoints=AwareEvent.waveformArray[index].length;
 	}
     }
-    //Now we sort the data in terms of the squared voltage
+    //Now we sort the data in terms of the squared voltage, so that we loop through the channels in order of decreasing signal size
     chanV2Array.sort(voltageSortData);
+    var refIndex=chanV2Array[0][0];
+    
     for(var index=0;index<chanV2Array.length;index++) {
-	//	$('#debugContainer').append("<p>Channel "+AwareEvent.waveformArray[chanV2Array[index][0]].length+"</p>");
-	
-	//This code zero pads the data
+	//This code zero pads the data... might fix this requirement at some point in the future
 	while(AwareEvent.waveformArray[chanV2Array[index][0]].length<numPoints) {
 	    AwareEvent.waveformArray[chanV2Array[index][0]].push([2*AwareEvent.waveformArray[chanV2Array[index][0]][AwareEvent.waveformArray[chanV2Array[index][0]].length-1][0]-AwareEvent.waveformArray[chanV2Array[index][0]][AwareEvent.waveformArray[chanV2Array[index][0]].length-2][0],0]);	    
 	}
-	//	$('#debugContainer').append("<p>Channel "+chanV2Array[index][0]+" with V^2="+chanV2Array[index][1]+" num points "+AwareEvent.waveformArray[chanV2Array[index][0]].length+"</p>");
-
     }
 
 
-    
-    AwareEvent.csumArray=AwareEvent.waveformArray[chanV2Array[0][0]];
-    var vMaxTimeCSum=AwareEvent.voltMinMaxTimeArray[chanV2Array[0][0]][1];
+    AwareEvent.flotCsumArray=new Array();
+    AwareEvent.csumArray=new Array(numPoints);    
+    for(var i=0;i<numPoints;i++) {
+	AwareEvent.csumArray[i]=[AwareEvent.waveformArray[refIndex][i][0],AwareEvent.waveformArray[refIndex][i][1]];
+    }
 
 
     AwareEvent.csumDeltaTArray = new Array(chanV2Array.length);
-    AwareEvent.csumDeltaTArray[chanV2Array[0][0]]=0;
+    AwareEvent.csumDeltaTArray[refIndex]=0;
     AwareEvent.csumCorrArray = new Array(chanV2Array.length);
-    AwareEvent.csumCorrArray[chanV2Array[0][0]]=0;
+    AwareEvent.csumCorrArray[refIndex]=0;
+    AwareEvent.csumOffsetArray = new Array(chanV2Array.length);
+    AwareEvent.csumOffsetArray[refIndex]=0;
     for(var index=1;index<chanV2Array.length;index++) {
-	var corrArray=makeCorrelation(AwareEvent.csumArray,
-				      AwareEvent.waveformArray[chanV2Array[index][0]],
-				      -500,500);
-	
-	var maxCor=-1*Number.MAX_VALUE;
-	var maxCorTime=0;
-	var maxCorIndex=0;
-	var zeroTime=Number.MAX_VALUE;
-	var zeroIndex=0;
-	var cableDiff=AwareEvent.csumArray[0][0]-AwareEvent.waveformArray[chanV2Array[index][0]][0][0];
-	for(var i=0;i<corrArray.length;i++) {
-	    //	    if(index==1) 
-	    //		$("#debugContainer").append("<p>"+corrArray[i][0]+" "+corrArray[i][1]+"</p>");
-	    if(Math.abs(corrArray[i][0]-cableDiff)<zeroTime) {
-		zeroTime=Math.abs(corrArray[i][0]-cableDiff);
-		zeroIndex=i;
-	    }
-	    if(corrArray[i][1]>maxCor) {
-		maxCor=corrArray[i][1];
-		maxCorIndex=i;
-		maxCorTime=corrArray[i][0];
-	    }
-	}
-	var offset=maxCorIndex-zeroIndex;
-	//	$("#debugContainer").append("<p>"+zeroIndex+" "+maxCorIndex+" "+offset+" "+maxCorTime+" "+maxCor+"</p>");
-	//	$("#debugContainer").append("<p>"+cableDiff+"</p>");
-	var vMaxTime=AwareEvent.voltMinMaxTimeArray[chanV2Array[index][0]][1];
-	AwareEvent.csumDeltaTArray[chanV2Array[index][0]]=maxCorTime;
-	AwareEvent.csumCorrArray[chanV2Array[index][0]]=maxCor;
-	var deltaT=AwareEvent.csumArray[1][0]-AwareEvent.csumArray[0][0];
-	var firstT=AwareEvent.csumArray[0][0];
-	AwareEvent.testArray= new Array();
-	for(var i=0;i<numPoints;i++) {
-	    var value=AwareEvent.csumArray[i][1];
-	    if(i-offset>=0 && i-offset<numPoints) {
-		value+=AwareEvent.waveformArray[chanV2Array[index][0]][i-offset][1];
-	    }
-	    AwareEvent.testArray.push([deltaT*i+firstT,value]);	
-	}
-	AwareEvent.csumArray=AwareEvent.testArray;
+	//Loop over the waveforms and add them coherently
+	var realIndex=chanV2Array[index][0];	
+	var infoBlock=addCoherently(AwareEvent.csumArray,AwareEvent.waveformArray[realIndex]);
+	AwareEvent.csumDeltaTArray[realIndex]=infoBlock.deltaT;
+	AwareEvent.csumCorrArray[realIndex]=infoBlock.csumXCor;
+	AwareEvent.csumOffsetArray[realIndex]=infoBlock.offset;
     }
 
 
-    AwareEvent.csumXMin=AwareEvent.csumArray[0][0];
-    AwareEvent.csumXMax=AwareEvent.csumArray[AwareEvent.csumArray[AwareEvent.csumArray.length-1][0]];
+//     for(var index=1;index<chanV2Array.length;index++) {
+// 	//Loop over the waveforms, subtract them and then add them coherently
+// 	var realIndex=chanV2Array[index][0];	
+// 	subtractWithOffset(AwareEvent.csumArray,AwareEvent.waveformArray[realIndex],AwareEvent.csumOffsetArray[realIndex]);
+// 	var infoBlock=addCoherently(AwareEvent.csumArray,AwareEvent.waveformArray[realIndex]);
+// 	AwareEvent.csumDeltaTArray[realIndex]=infoBlock.deltaT;
+// 	AwareEvent.csumCorrArray[realIndex]=infoBlock.csumXCor;
+// 	AwareEvent.csumOffsetArray[realIndex]=infoBlock.offset;
+//     }
+ 
+    for(var i=0;i<numPoints;i++) {
+	AwareEvent.csumArray[i][1]/=chanV2Array.length;
+    }	
+    var flotData= { data:AwareEvent.csumArray }
+    AwareEvent.flotCsumArray.push(flotData);
     AwareEvent.csumYMin=Number.MAX_VALUE;
     AwareEvent.csumYMax=-1*Number.MAX_VALUE;
+    for(var index=0;index<AwareEvent.csumOffsetArray.length;index++) {
+	var newChanArray=new Array();
+	for(var i=0;i<AwareEvent.waveformArray[index].length;i++) {
+	    newChanArray.push([AwareEvent.waveformArray[index][i][0]-AwareEvent.csumDeltaTArray[index],AwareEvent.waveformArray[index][i][1]]);
+	    AwareEvent.csumYMin=Math.min(AwareEvent.waveformArray[index][i][1],AwareEvent.csumYMin);
+	    AwareEvent.csumYMax=Math.max(AwareEvent.waveformArray[index][i][1],AwareEvent.csumYMax);
+	}
+	var flotObj = {data:newChanArray};		
+	AwareEvent.flotCsumArray.push(flotObj);
+    }
+
+    
+    
+
+    AwareEvent.csumXMin=AwareEvent.csumArray[0][0];
+    AwareEvent.csumXMax=AwareEvent.csumArray[AwareEvent.csumArray[AwareEvent.csumArray.length-1][0]];
     for(var i=0;i<AwareEvent.csumArray.length;i++) {
 	if(AwareEvent.csumArray[i][1]>AwareEvent.csumYMax)
 	    AwareEvent.csumYMax=AwareEvent.csumArray[i][1];	
@@ -805,15 +802,19 @@ function plotTheEvent() {
 		}		
 		htmlString+="</tr></tbody></table>";
 		$('#titleContainer').html($('#titleContainer').html()+htmlString);
+		$("#titleContainer").append("Best fit: "+Number(AwareEvent.bestPoint[0]).toFixed(2)+"m "+Number(AwareEvent.bestPoint[1]).toFixed(2)+"m "+Number(AwareEvent.bestPoint[2]).toFixed(2)+"m -- ChiSq="+Number(AwareEvent.bestChiSq).toExponential(3)+"</p>");
 		
 		var divName="divChan"+chan;
 		var contName="waveform-container"+chan;
 		var grLabel="Coherent Sum";
-		plotSingleChannel(divName,contName,AwareEvent.csumArray,AwareEvent.csumXMin,AwareEvent.csumXMax,AwareEvent.csumYMin,AwareEvent.csumYMax,grLabel,showX,showY);
+		var flotData=new Object();
+		plotSinglePanel(divName,contName,AwareEvent.flotCsumArray,AwareEvent.csumXMin,AwareEvent.csumXMax,AwareEvent.csumYMin,AwareEvent.csumYMax,grLabel,showX,showY);
 	    }
 	    else if(chan=="Map") {
 		
-
+		var divName="divChan"+chan;
+		var contName="waveform-container"+chan;
+		drawStationMap(divName,contName);
 
 	    }
 	    else {
@@ -825,9 +826,10 @@ function plotTheEvent() {
 		var contName="waveform-container"+chan;
 		//	    var grLabel="RFCHAN"+chan;  ///Need to fix this
 		var grLabel=AwareEvent.labelArray[i];  ///Need to fix this
-		
-		//	    plotSingleChannel(divName,contName,jsonObject.event.channelList[chan].data,yMin[scaleGroup],yMax[scaleGroup],grLabel);
-		plotSingleChannel(divName,contName,dataChanArray[i],xMin,xMax,yMin[scaleGroup],yMax[scaleGroup],grLabel,showX,showY);
+		var flotData=new Object();
+		flotData.data=dataChanArray[i];
+		//	    plotSinglePanel(divName,contName,jsonObject.event.channelList[chan].data,yMin[scaleGroup],yMax[scaleGroup],grLabel);
+		plotSinglePanel(divName,contName,[flotData],xMin,xMax,yMin[scaleGroup],yMax[scaleGroup],grLabel,showX,showY);
 	    }
 	}
 }
@@ -848,7 +850,7 @@ function plotTheEvent() {
  * @param showY -- A boolean determining if the y-axis is shown
 
 */
-function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax,grLabel,showX,showY) {
+function plotSinglePanel(divChanName,divContName,flotDataArray,xMin,xMax,yMin,yMax,grLabel,showX,showY) {
   
     var showXaxis=showX;
     var showYaxis=showY;
@@ -858,11 +860,11 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
 
     var titleContainer = $("#titleContainer"); 
     //    titleContainer.append("<p>"+divContName+"</p>");
-    //titleContainer.append("<p>The plot has "+dataArray.length+" time points</p>");
+    //titleContainer.append("<p>The plot has "+flotDataArray.length+" time points</p>");
     //    titleContainer.append("<p>"+yMin+" "+yMax+"</p>");
-    //    titleContainer.append("<p>First point "+dataArray[0][0] +","+dataArray[0][1]+"</p>");
-    //    titleContainer.append("<p>Second point "+dataArray[1][0] +","+dataArray[1][1]+"</p>");
-    //    titleContainer.append("<p>Last point "+dataArray[dataArray.length-1][0] +","+dataArray[dataArray.length-1][1]+"</p>");
+    //    titleContainer.append("<p>First point "+flotDataArray[0][0] +","+flotDataArray[0][1]+"</p>");
+    //    titleContainer.append("<p>Second point "+flotDataArray[1][0] +","+flotDataArray[1][1]+"</p>");
+    //    titleContainer.append("<p>Last point "+flotDataArray[flotDataArray.length-1][0] +","+flotDataArray[flotDataArray.length-1][1]+"</p>");
     var plotCan=$("#"+divChanName);
     plotCan.empty();	    
 
@@ -871,8 +873,6 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
     var plotWidth=plotCont.width();
     var plotHeight=plotCont.height();
     
-    var subDataArray=dataArray;
-
     plotCont.off('dblclick');
     plotCont.on('dblclick',  function() {
 //	titleContainer.append("<p>"+divContName+"<\p>");
@@ -892,11 +892,10 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
 
 
 
-    var dataObject = {
-	color : 6,
-	data: subDataArray,
-	label: ""
-    }
+    //    var dataObject = {
+    //	data: flotDataArray,
+    //	label: ""
+    //    }
 
     var options = {
        yaxis: { min: yMin, max: yMax},
@@ -917,24 +916,15 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
     
     var plot;
     function doThePlot() {
-	//       	$("#debugContainer").append("<p>doThePlot </p>");
-       if(!plotCont.hasClass('double')) {
-	  //Do the data reduction
-	  subDataArray=dataArray;//reduceWaveformSamples(dataArray,64,64);
-	  dataObject.data=subDataArray;	    
-       }
-       else {
-	  dataObject.data=dataArray;
-       }
+
        
        
-       
-       if(showLabel) {
-	  dataObject.label=grLabel;
-       }
-       else {
-	   dataObject.label=null;
-       }
+//        if(showLabel) {
+// 	  dataObject.label=grLabel;
+//        }
+//        else {
+// 	   dataObject.label=null;
+//        }
        if(showXaxis) {
 	  //	  options.xaxis.show=true;
 	  //	  delete options.xaxis.tickFomatter;
@@ -962,7 +952,7 @@ function plotSingleChannel(divChanName,divContName,dataArray,xMin,xMax,yMin,yMax
 	  options.yaxis.font={size:1,lineHeight:1};
 
        }
-       plot=$.plot(plotCan, [dataObject],options);
+       plot=$.plot(plotCan, flotDataArray,options);
     }
     
     plotCan.unbind("plotselected");
@@ -1094,7 +1084,7 @@ function readInstrumentGeom() {
 
 function findBestLocation()
 {
-    $("#debugContainer").append("<p>findBestLocation</p>");
+    //    $("#debugContainer").append("<p>findBestLocation</p>");
     var minDelta=Number.MAX_VALUE;
     var refIndex=0;
     var relLocationArray = new Array();
@@ -1141,11 +1131,13 @@ function findBestLocation()
 //refIndex defines the antenna which all deltas are measured against    
     for(var index=new Number(0);index<AwareEvent.csumDeltaTArray.length;index++) {
 	var rawLocation= new Array(3);	
-	 rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
+	rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
 	rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
 	rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
 	relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
 //	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
+	var maxDeltat=Math.sqrt((rawLocation[0]-refLocation[0])*(rawLocation[0]-refLocation[0]) + (rawLocation[1]-refLocation[1])*(rawLocation[1]-refLocation[1]) + (rawLocation[2]-refLocation[2])*(rawLocation[2]-refLocation[2]))/Cinice;
+	//	$("#debugContainer").append("<p>"+AwareEvent.labelArray[index]+" -- "+maxDeltat+"ns</p>");
     }
     
     var Ai = new Array(orderIndex.length);
@@ -1156,11 +1148,11 @@ function findBestLocation()
     for(var index=2;index<orderIndex.length;index++) {
 	var i1=orderIndex[1];
 	var i=orderIndex[index];
-	$("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
-	Ai[index] = (2*relLocationArray[i][0])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Clight*AwareEvent.csumDeltaTArray[i1]);
-	Bi[index] = (2*relLocationArray[i][1])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Clight*AwareEvent.csumDeltaTArray[i1]);
-	Ci[index] = (2*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
-	Di[index] = Clight*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) + (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
+	//	$("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
+	Ai[index] = (2*relLocationArray[i][0])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+	Bi[index] = (2*relLocationArray[i][1])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+	Ci[index] = (2*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+	Di[index] = Cinice*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) - (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
     }
 
 //Now need to find the vector in the direction of the line of intersection
@@ -1168,11 +1160,268 @@ function findBestLocation()
 //    var n2 =[Ai[2],Bi[2],Ci[2]];
 //    var n3 =[Ai[3],Bi[3],Ci[3]];
     var ni= [ (Bi[2]*Ci[3]-Ci[2]*Bi[3]), (Ci[2]*Ai[3]-Ai[2]*Ci[3]), (Ai[2]*Bi[3]-Bi[2]*Ai[3])];
-    
+    var niSize=Math.sqrt(ni[0]*ni[0]+ni[1]*ni[1]+ni[2]*ni[2]);
+    ni[0]/=niSize;
+    ni[1]/=niSize;
+    ni[2]/=niSize;
+
+
     var point= new Array(3);
     point[0]=(Di[3]*Bi[2]-Di[2]*Bi[3])/(Ai[2]*Bi[3]-Ai[3]*Bi[2]);
     point[1]=(-Ai[2]*point[0] - Di[2])/Bi[2];
     point[2]=0;
-    $("#debugContainer").append("<p>Line of best fit: "+ni[0]+" + "+ni[1]+" + "+ni[2]+"</p>");
-    $("#debugContainer").append("<p>Point on line of best fit: "+point[0]+" + "+point[1]+" + "+point[2]+"</p>");
+    //    $("#debugContainer").append("<p>Line of best fit: "+ni[0]+" + "+ni[1]+" + "+ni[2]+"</p>");
+    //    $("#debugContainer").append("<p>Point on line of best fit: "+(point[0]+refLocation[0])+" + "+(point[1]+refLocation[1])+" + "+(point[2]+refLocation[2])+"</p>");
+
+    
+
+    function calculateChiSquared(testPoint) {
+	var refR=Math.sqrt(testPoint[0]*testPoint[0]+testPoint[1]*testPoint[1]+testPoint[2]*testPoint[2]);
+	var chiSq=0;
+
+	//	$("#debugContainer").append("<p>Test point: "+testPoint[0]+" + "+testPoint[1]+" + "+testPoint[2]+"</p>");
+	for(var index=1;index<relLocationArray.length;index++) {
+	    var i=orderIndex[index];
+	    var relX=(relLocationArray[i][0]-testPoint[0]);
+	    var relY=(relLocationArray[i][1]-testPoint[1]);
+	    var relZ=(relLocationArray[i][2]-testPoint[2]);
+	    var relR=Math.sqrt(relX*relX+relY*relY+relZ*relZ);
+	    var deltaT=(relR-refR)/Cinice;
+	    chiSq+=(deltaT-AwareEvent.csumDeltaTArray[i])*(deltaT-AwareEvent.csumDeltaTArray[i]);
+	    //	    $("#debugContainer").append("<p>Ant i: "+i+" + "+deltaT+" + "+AwareEvent.csumDeltaTArray[i]+"</p>");
+	    
+	}	
+	return chiSq;
+
+    }
+
+    function getTestPointChiSquared() {
+	//This function calculates the chi-squared of the measured delta-ts to the position on the line
+	//defined by point + step*ni
+	var testPoint=[point[0]+step*ni[0],point[1]+step*ni[1],point[2]+step*ni[2]];
+
+	return calculateChiSquared(testPoint);
+    }
+
+    var stepStart=-100;
+    var stepEnd=+100;
+    var stepSize=2;
+    var bestChiSq=Number.MAX_VALUE;
+    var bestStep=-100;
+    while(stepSize>0.1) {
+	for(var step=stepStart;step<=stepEnd;step+=stepSize) {
+	    var chiSq=getTestPointChiSquared(step);
+	    //	    $("#debugContainer").append("<p>"+step+" -- "+chiSq+"</p>");
+	    if(chiSq<bestChiSq) {
+		bestChiSq=chiSq;
+		bestStep=step;
+	    }
+	}
+	stepStart=bestStep-2*stepSize;
+	stepEnd=bestStep+2*stepSize;
+	stepSize/=2;
+    }
+        
+    var startPoint=[(point[0]+bestStep*ni[0]),(point[1]+bestStep*ni[1]),(point[2]+bestStep*ni[2])];
+    var bestPoint=startPoint;
+//     for(var tryX=startPoint[0]-5;tryX<=startPoint[0]+5;tryX+=1) {
+// 	for(var tryY=startPoint[1]-5;tryY<=startPoint[1]+5;tryY+=1) {
+// 	    for(var tryZ=startPoint[2]-5;tryZ<=startPoint[2]+5;tryZ+=1) {
+// 		var testPoint=[tryX,tryY,tryZ];
+// 		var chiSq=calculateChiSquared(testPoint);
+// 		if(chiSq<bestChiSq) {
+// 		    bestChiSq=chiSq;
+// 		    bestPoint=testPoint;
+// 		}
+// 	    }
+// 	}
+//     }
+    AwareEvent.bestPoint=[bestPoint[0]+refLocation[0],bestPoint[1]+refLocation[1],bestPoint[2]+refLocation[2]];
+    AwareEvent.bestChiSq=bestChiSq;
+
+
+    //    $("#debugContainer").append("<p>Best point: "+AwareEvent.bestPoint[0]+" + "+AwareEvent.bestPoint[1]+" + "+AwareEvent.bestPoint[2]+" -- "+AwareEvent.bestChiSq+"</p>");
+}
+
+
+
+function drawStationMap(divChanName,divContName) {
+  
+    var showXaxis=true;
+    var showYaxis=true;
+    var showLabel=false;
+    var xMin=-50;
+    var yMin=-50;
+    var xMax=+50;
+    var yMax=+50;
+    
+    var titleContainer = $("#titleContainer"); 
+    var plotCan=$("#"+divChanName);
+    plotCan.empty();	    
+
+    var plotCont=$("#"+divContName);
+ 
+    var plotWidth=plotCont.width();
+    var plotHeight=plotCont.height();
+    
+    var antDataArray = [];    
+    for(var index=0;index<AwareEvent.csumDeltaTArray.length;index++) {
+	var antObject= new Object();
+	antObject.data=new Array();
+	var rawLocation= new Array(3);	
+	rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
+	rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
+	rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
+	antObject.data.push([rawLocation[0],rawLocation[1]]);
+	antObject.label=AwareEvent.labelArray[index];
+	antObject.points= { symbol:"circle"};
+	antDataArray.push(antObject);
+    }
+
+    var bestObject = new Object();
+    bestObject.data= new Array();
+    bestObject.data.push([AwareEvent.bestPoint[0],AwareEvent.bestPoint[1]]);
+    bestObject.label="Best Fit";
+    bestObject.points= { symbol:"cross"};
+    antDataArray.push(bestObject);
+
+
+    for(var index=0;index<AwareEvent.instrumentGeom.calAntList.length;index++) {
+	var antObject= new Object();
+	antObject.data=new Array();
+	var rawLocation= new Array(3);	
+	rawLocation[0]=new Number(AwareEvent.instrumentGeom.calAntList[index].location[0]);
+	rawLocation[1]=new Number(AwareEvent.instrumentGeom.calAntList[index].location[1]);
+	rawLocation[2]=new Number(AwareEvent.instrumentGeom.calAntList[index].location[2]);
+	antObject.data.push([rawLocation[0],rawLocation[1]]);
+	antObject.label=AwareEvent.instrumentGeom.calAntList[index].label;
+	antObject.points= { symbol:"square"};
+	antDataArray.push(antObject);
+    }
+    
+
+    plotCont.off('dblclick');
+    plotCont.on('dblclick',  function() {
+//	titleContainer.append("<p>"+divContName+"<\p>");
+	plotCont.toggleClass('double');
+	if(plotCont.hasClass('double')) {
+	   showXaxis=true;
+	   showYaxis=true;
+	   showLabel=true;	   	   
+	}
+	else {
+	   showXaxis=showX;
+	   showYaxis=showY;
+	   showLabel=false;	   	  
+	}
+	doThePlot();
+    });
+
+
+
+
+    var options = {
+       yaxis: { min: yMin, max: yMax},
+       xaxis: { min: xMin, max: xMax},
+       series: {
+	   lines: {
+	       show: true
+	   },
+	   points: {
+	       show: true
+	   }
+       },
+       selection : { mode : "xy" },
+       grid: { 
+	   show: true,
+	   hoverable: true,
+	   clickable: true,
+	   borderWidth: 0,
+	   minBorderMargin: 2,
+	   labelMargin: 2,
+	   axisMargin:2,
+	   margin: { top: 7, left: 0, right :0, bottom: 0},
+       } 
+    }
+
+    $("<div id='tooltip'></div>").css({
+	    position: "absolute",
+		display: "none",
+		border: "1px solid #fdd",
+		padding: "2px",
+		"background-color": "#fee",
+		opacity: 0.80
+		}).appendTo("body");
+    
+
+
+    var plot;
+    function doThePlot() {
+
+       
+       if(showXaxis) {
+	  //	  options.xaxis.show=true;
+	  //	  delete options.xaxis.tickFomatter;
+	  delete options.xaxis.font;
+	  delete options.xaxis.labelWidth;
+	  delete options.xaxis.labelHeight;
+       }
+       else {
+	  //	  options.xaxis.show=false;
+	  options.xaxis.labelHeight=5;
+	  options.xaxis.labelWidth=5;
+	  options.xaxis.font={size:1,lineHeight:1};
+       }
+       if(showYaxis) {
+	  //	  options.yaxis.show=true;
+	  //	  delete options.yaxis.tickFomatter;
+	  delete options.yaxis.font;
+	  delete options.yaxis.labelWidth;
+	  delete options.yaxis.labelHeight;	 
+       }
+       else {
+	  //	  options.yaxis.show=false;
+	  options.yaxis.labelHeight=5;
+	  options.yaxis.labelWidth=5;
+	  options.yaxis.font={size:1,lineHeight:1};
+
+       }
+       plot=$.plot(plotCan, antDataArray,options);
+    }
+    
+    plotCan.unbind("plotselected");
+    plotCan.bind("plotselected", function (event, ranges) {
+	options.xaxis.min=ranges.xaxis.from;
+	options.xaxis.max=ranges.xaxis.to;
+	options.yaxis.min=ranges.yaxis.from;
+	options.yaxis.max=ranges.yaxis.to;
+	doThePlot();
+    });
+
+    plotCan.unbind("plotunselected");
+    plotCan.bind("plotunselected", function (event, ranges) {
+	options.xaxis.min=xMin;
+	options.xaxis.max=xMax;
+	options.yaxis.min=yMin;
+	options.yaxis.max=yMax;
+	doThePlot();
+    });
+
+    plotCan.unbind("plothover");
+    plotCan.bind("plothover",function(event,pos,item) {
+		     
+    if (item) {
+	var x = item.datapoint[0].toFixed(2),
+	    y = item.datapoint[1].toFixed(2);
+	
+	$("#tooltip").html(item.series.label + " of " + x + " = " + y)
+	    .css({top: item.pageY+5, left: item.pageX+5})
+	    .fadeIn(200);
+    } else {
+	$("#tooltip").hide();
+    }
+		 });
+	 
+    doThePlot();
+
 }
