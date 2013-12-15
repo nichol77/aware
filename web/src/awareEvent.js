@@ -1156,7 +1156,6 @@ function findBestLocation()
     for(var index=2;index<orderIndex.length;index++) {
 	var i1=orderIndex[1];
 	var i=orderIndex[index];
-	$("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
 	Ai[index] = (2*relLocationArray[i][0])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Clight*AwareEvent.csumDeltaTArray[i1]);
 	Bi[index] = (2*relLocationArray[i][1])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Clight*AwareEvent.csumDeltaTArray[i1]);
 	Ci[index] = (2*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
