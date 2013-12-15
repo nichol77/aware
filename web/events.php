@@ -26,6 +26,7 @@ header("Connection: keep-alive");
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.resize.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.symbol.js.gz"></script>
 
 <script type="text/javascript">
 
