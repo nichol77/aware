@@ -1121,38 +1121,50 @@ function findBestLocation()
     
 
   var refLocation=new Array(3); 
-  refLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0]);
-  refLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]);
-  refLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[2]);
-  
-  
-  //refIndex defines the antenna which all deltas are measured against    
-  for(var index=new Number(0);index<AwareEvent.csumDeltaTArray.length;index++) {
-      var rawLocation= new Array(3);	
-      rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
-      rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
-      rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
-      relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
-      //	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
-      var maxDeltat=Math.sqrt((rawLocation[0]-refLocation[0])*(rawLocation[0]-refLocation[0]) + (rawLocation[1]-refLocation[1])*(rawLocation[1]-refLocation[1]) + (rawLocation[2]-refLocation[2])*(rawLocation[2]-refLocation[2]))/Cinice;
-      //	$("#debugContainer").append("<p>"+AwareEvent.labelArray[index]+" -- "+maxDeltat+"ns</p>");
-  }
-  
-  var Ai = new Array(orderIndex.length);
-  var Bi = new Array(orderIndex.length);
-  var Ci = new Array(orderIndex.length);
-  var Di = new Array(orderIndex.length);
-  
-  for(var index=2;index<orderIndex.length;index++) {
-      var i1=orderIndex[1];
-      var i=orderIndex[index];
-      //      $("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
-      Ai[index] = (2*relLocationArray[i][0])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-      Bi[index] = (2*relLocationArray[i][1])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-      Ci[index] = (2*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-      Di[index] = Cinice*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) - (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-  }
-  
+
+
+    refLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0]);
+    refLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]);
+    refLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[2]);
+   // $("#debugContainer").append("<p>"+refLocation[1]+"</p>"); 
+
+
+//refIndex defines the antenna which all deltas are measured against    
+    for(var index=new Number(0);index<AwareEvent.csumDeltaTArray.length;index++) {
+	var rawLocation= new Array(3);	
+	rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
+	rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
+	rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
+	relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
+//	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
+	var maxDeltat=Math.sqrt((rawLocation[0]-refLocation[0])*(rawLocation[0]-refLocation[0]) + (rawLocation[1]-refLocation[1])*(rawLocation[1]-refLocation[1]) + (rawLocation[2]-refLocation[2])*(rawLocation[2]-refLocation[2]))/Cinice;
+	//	$("#debugContainer").append("<p>"+AwareEvent.labelArray[index]+" -- "+maxDeltat+"ns</p>");
+    }
+    
+    var Ai = new Array(orderIndex.length);
+    var Bi = new Array(orderIndex.length);
+    var Ci = new Array(orderIndex.length);
+    var Di = new Array(orderIndex.length);
+
+    for(var index=2;index<orderIndex.length;index++) {
+	var i1=orderIndex[1];
+	var i=orderIndex[index];
+	Ai[index] = (2*relLocationArray[i][0])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Clight*AwareEvent.csumDeltaTArray[i1]);
+	Bi[index] = (2*relLocationArray[i][1])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Clight*AwareEvent.csumDeltaTArray[i1]);
+	Ci[index] = (2*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
+	Di[index] = Clight*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) + (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
+    }
+
+//Now need to find the vector in the direction of the line of intersection
+//will arbitrarily pick the point at z=0;
+//    var n2 =[Ai[2],Bi[2],Ci[2]];
+//    var n3 =[Ai[3],Bi[3],Ci[3]];
+    var ni= [ (Bi[2]*Ci[3]-Ci[2]*Bi[3]), (Ci[2]*Ai[3]-Ai[2]*Ci[3]), (Ai[2]*Bi[3]-Bi[2]*Ai[3])];
+    var niSize=Math.sqrt(ni[0]*ni[0]+ni[1]*ni[1]+ni[2]*ni[2]);
+    ni[0]/=niSize;
+    ni[1]/=niSize;
+    ni[2]/=niSize;
+
 
 
     
