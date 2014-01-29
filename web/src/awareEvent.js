@@ -29,7 +29,7 @@ AwareEvent.chanRowColArray;
 AwareEvent.showXaxis;
 AwareEvent.showYaxis;
 
-var Cinice=0.299792458/1.48;
+var Cinice=0.299792458/1.78;
 
 /**
  * The reduceWaveformSamples function is @deprecated
@@ -1120,58 +1120,40 @@ function findBestLocation()
     }
     
 
-  //  $("#debugContainer").append("<p>"+refIndex+" "+minDelta+" "+AwareEvent.inputChanList[refIndex]+"</p>");
   var refLocation=new Array(3); 
-    refLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0]);
-    refLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]);
-    refLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[2]);
-   // $("#debugContainer").append("<p>"+refLocation[1]+"</p>"); 
+  refLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[0]);
+  refLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[1]);
+  refLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[refIndex]].location[2]);
+  
+  
+  //refIndex defines the antenna which all deltas are measured against    
+  for(var index=new Number(0);index<AwareEvent.csumDeltaTArray.length;index++) {
+      var rawLocation= new Array(3);	
+      rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
+      rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
+      rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
+      relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
+      //	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
+      var maxDeltat=Math.sqrt((rawLocation[0]-refLocation[0])*(rawLocation[0]-refLocation[0]) + (rawLocation[1]-refLocation[1])*(rawLocation[1]-refLocation[1]) + (rawLocation[2]-refLocation[2])*(rawLocation[2]-refLocation[2]))/Cinice;
+      //	$("#debugContainer").append("<p>"+AwareEvent.labelArray[index]+" -- "+maxDeltat+"ns</p>");
+  }
+  
+  var Ai = new Array(orderIndex.length);
+  var Bi = new Array(orderIndex.length);
+  var Ci = new Array(orderIndex.length);
+  var Di = new Array(orderIndex.length);
+  
+  for(var index=2;index<orderIndex.length;index++) {
+      var i1=orderIndex[1];
+      var i=orderIndex[index];
+      //      $("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
+      Ai[index] = (2*relLocationArray[i][0])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+      Bi[index] = (2*relLocationArray[i][1])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+      Ci[index] = (2*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+      Di[index] = Cinice*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) - (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+  }
+  
 
-
-//refIndex defines the antenna which all deltas are measured against    
-    for(var index=new Number(0);index<AwareEvent.csumDeltaTArray.length;index++) {
-	var rawLocation= new Array(3);	
-	rawLocation[0]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[0]);
-	rawLocation[1]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[1]);
-	rawLocation[2]=new Number(AwareEvent.instrumentGeom.antList[AwareEvent.inputChanList[index]].location[2]);
-	relLocationArray.push([rawLocation[0]-refLocation[0],rawLocation[1]-refLocation[1],rawLocation[2]-refLocation[2]]);
-//	$("#debugContainer").append("<p>"+rawLocation[0]+" "+rawLocation[1]+" "+rawLocation[2]+"</p>");
-	var maxDeltat=Math.sqrt((rawLocation[0]-refLocation[0])*(rawLocation[0]-refLocation[0]) + (rawLocation[1]-refLocation[1])*(rawLocation[1]-refLocation[1]) + (rawLocation[2]-refLocation[2])*(rawLocation[2]-refLocation[2]))/Cinice;
-	//	$("#debugContainer").append("<p>"+AwareEvent.labelArray[index]+" -- "+maxDeltat+"ns</p>");
-    }
-    
-    var Ai = new Array(orderIndex.length);
-    var Bi = new Array(orderIndex.length);
-    var Ci = new Array(orderIndex.length);
-    var Di = new Array(orderIndex.length);
-
-    for(var index=2;index<orderIndex.length;index++) {
-	var i1=orderIndex[1];
-	var i=orderIndex[index];
-	//	$("#debugContainer").append("<p>"+index+" -- "+orderIndex[index]+"</p>");
-	Ai[index] = (2*relLocationArray[i][0])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-	Bi[index] = (2*relLocationArray[i][1])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-	Ci[index] = (2*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-	Di[index] = Cinice*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) - (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
-    }
-
-//Now need to find the vector in the direction of the line of intersection
-//will arbitrarily pick the point at z=0;
-//    var n2 =[Ai[2],Bi[2],Ci[2]];
-//    var n3 =[Ai[3],Bi[3],Ci[3]];
-    var ni= [ (Bi[2]*Ci[3]-Ci[2]*Bi[3]), (Ci[2]*Ai[3]-Ai[2]*Ci[3]), (Ai[2]*Bi[3]-Bi[2]*Ai[3])];
-    var niSize=Math.sqrt(ni[0]*ni[0]+ni[1]*ni[1]+ni[2]*ni[2]);
-    ni[0]/=niSize;
-    ni[1]/=niSize;
-    ni[2]/=niSize;
-
-
-    var point= new Array(3);
-    point[0]=(Di[3]*Bi[2]-Di[2]*Bi[3])/(Ai[2]*Bi[3]-Ai[3]*Bi[2]);
-    point[1]=(-Ai[2]*point[0] - Di[2])/Bi[2];
-    point[2]=0;
-    //    $("#debugContainer").append("<p>Line of best fit: "+ni[0]+" + "+ni[1]+" + "+ni[2]+"</p>");
-    //    $("#debugContainer").append("<p>Point on line of best fit: "+(point[0]+refLocation[0])+" + "+(point[1]+refLocation[1])+" + "+(point[2]+refLocation[2])+"</p>");
 
     
 
@@ -1188,56 +1170,127 @@ function findBestLocation()
 	    var relR=Math.sqrt(relX*relX+relY*relY+relZ*relZ);
 	    var deltaT=(relR-refR)/Cinice;
 	    chiSq+=(deltaT-AwareEvent.csumDeltaTArray[i])*(deltaT-AwareEvent.csumDeltaTArray[i]);
-	    //	    $("#debugContainer").append("<p>Ant i: "+i+" + "+deltaT+" + "+AwareEvent.csumDeltaTArray[i]+"</p>");
+	    //$("#debugContainer").append("<p>Ant i: "+i+" + "+deltaT+" + "+AwareEvent.csumDeltaTArray[i]+"</p>");
 	    
 	}	
 	return chiSq;
 
     }
 
-    function getTestPointChiSquared() {
-	//This function calculates the chi-squared of the measured delta-ts to the position on the line
-	//defined by point + step*ni
-	var testPoint=[point[0]+step*ni[0],point[1]+step*ni[1],point[2]+step*ni[2]];
+    var bestPoint;
+    var bestChiSq=Number.MAX_VALUE;
 
-	return calculateChiSquared(testPoint);
+    function solveForTwoEquations() {
+
+
+	//Now need to find the vector in the direction of the line of intersection
+	//will arbitrarily pick the point at z=0;
+	var n2 =[Ai[2],Bi[2],Ci[2]];
+	var n3 =[Ai[3],Bi[3],Ci[3]];
+	var ni= crossProduct(n2,n3);
+	var niSize=Math.sqrt(ni[0]*ni[0]+ni[1]*ni[1]+ni[2]*ni[2]);
+	ni[0]/=niSize;
+	ni[1]/=niSize;
+	ni[2]/=niSize;
+	
+
+	var point= new Array(3);
+	point[0]=(Di[3]*Bi[2]-Di[2]*Bi[3])/(Ai[2]*Bi[3]-Ai[3]*Bi[2]);
+	point[1]=(-Ai[2]*point[0] - Di[2])/Bi[2];
+	point[2]=0;
+
+	function getTestPointChiSquared() {
+	    //This function calculates the chi-squared of the measured delta-ts to the position on the line
+	    //defined by point + step*ni
+	    var testPoint=[point[0]+step*ni[0],point[1]+step*ni[1],point[2]+step*ni[2]];
+	    
+	    return calculateChiSquared(testPoint);
+	}
+	
+	var stepStart=-100;
+	var stepEnd=+100;
+	var stepSize=2;
+	bestChiSq=Number.MAX_VALUE;
+	var bestStep=-100;
+	while(stepSize>0.1) {
+	    for(var step=stepStart;step<=stepEnd;step+=stepSize) {
+		var chiSq=getTestPointChiSquared(step);
+		//	    $("#debugContainer").append("<p>"+step+" -- "+chiSq+"</p>");
+		if(chiSq<bestChiSq) {
+		    bestChiSq=chiSq;
+		    bestStep=step;
+		}
+	    }
+	    stepStart=bestStep-2*stepSize;
+	    stepEnd=bestStep+2*stepSize;
+	    stepSize/=2;
+	}
+        
+	var startPoint=[(point[0]+bestStep*ni[0]),(point[1]+bestStep*ni[1]),(point[2]+bestStep*ni[2])];
+	bestPoint=startPoint;	
     }
 
-    var stepStart=-100;
-    var stepEnd=+100;
-    var stepSize=2;
-    var bestChiSq=Number.MAX_VALUE;
-    var bestStep=-100;
-    while(stepSize>0.1) {
-	for(var step=stepStart;step<=stepEnd;step+=stepSize) {
-	    var chiSq=getTestPointChiSquared(step);
-	    //	    $("#debugContainer").append("<p>"+step+" -- "+chiSq+"</p>");
-	    if(chiSq<bestChiSq) {
-		bestChiSq=chiSq;
-		bestStep=step;
+
+    function solveForNEquations() {
+	//First up let us sort out an index
+	var dArray = [[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+	var planeNormal = new Array();
+	for(var ant=2;ant<orderIndex.length;ant++) {
+	    var planeArray =[Ai[ant],Bi[ant],Ci[ant],Di[ant]];	
+	    //	    $("#debugContainer").append("<p>"+planeArray[0]+","+planeArray[1]+","+planeArray[2]+","+planeArray[3]+"</p>");
+	    for(var i=0;i<3;i++) {
+		for(var j=0;j<4;j++) {
+		    dArray[i][j]+=planeArray[i]*planeArray[j];
+		}
 	    }
 	}
-	stepStart=bestStep-2*stepSize;
-	stepEnd=bestStep+2*stepSize;
-	stepSize/=2;
+		
+	for(var i=0;i<3;i++) {
+	    var norm=0;
+	    for(var j=0;j<3;j++) {
+		norm+=dArray[i][j]*dArray[i][j];
+	    }
+	    norm=Math.sqrt(norm);
+	    for(var j=0;j<4;j++) {
+		dArray[i][j]/=norm;
+	    }	    
+	    planeNormal.push([dArray[i][0],dArray[i][1],dArray[i][2]]);
+	    $("#debugContainer").append("<p>n"+i+" = "+dArray[i][0] +","+dArray[i][1]+","+dArray[i][2]+","+dArray[i][3]+"</p>");
+	}
+	//Now we have stored the equations of the three planes that intersect at the minimum point
+	
+ 	var n2cross3= crossProduct(planeNormal[1],planeNormal[2]);
+ 	var n1dotn2cross3  = dotProduct(planeNormal[0],n2cross3);
+	$("#debugContainer").append("<p>n1dotn2cross3="+n1dotn2cross3+"</p>");
+ 	if(n1dotn2cross3!=0) {
+ 	    var n3cross1=crossProduct(planeNormal[2],planeNormal[0]);
+ 	    var n1cross2=crossProduct(planeNormal[0],planeNormal[1]);
+ 	    bestPoint=[0,0,0];
+ 	    for(var j=0;j<3;j++) {
+ 		bestPoint[j]= -1*(dArray[0][3]*n2cross3[j]+dArray[1][3]*n3cross1[j]+dArray[2][3]*n1cross2[j])/n1dotn2cross3;
+ 	    }
+	    $("#debugContainer").append("<p>Best: "+bestPoint[0]+","+bestPoint[1]+","+bestPoint[2]+"</p>");
+ 	}
+	bestChiSq=calculateChiSquared(bestPoint);
+	
+
+
     }
-        
-    var startPoint=[(point[0]+bestStep*ni[0]),(point[1]+bestStep*ni[1]),(point[2]+bestStep*ni[2])];
-    var bestPoint=startPoint;
-//     for(var tryX=startPoint[0]-5;tryX<=startPoint[0]+5;tryX+=1) {
-// 	for(var tryY=startPoint[1]-5;tryY<=startPoint[1]+5;tryY+=1) {
-// 	    for(var tryZ=startPoint[2]-5;tryZ<=startPoint[2]+5;tryZ+=1) {
-// 		var testPoint=[tryX,tryY,tryZ];
-// 		var chiSq=calculateChiSquared(testPoint);
-// 		if(chiSq<bestChiSq) {
-// 		    bestChiSq=chiSq;
-// 		    bestPoint=testPoint;
-// 		}
-// 	    }
-// 	}
-//     }
+
+
+    if(orderIndex.length<5) {
+	//Not enough equations for unknowns
+	solveForTwoEquations();
+	
+    }
+    else {
+	solveForNEquations();
+
+    }
+
     AwareEvent.bestPoint=[bestPoint[0]+refLocation[0],bestPoint[1]+refLocation[1],bestPoint[2]+refLocation[2]];
-    AwareEvent.bestChiSq=bestChiSq;
+    AwareEvent.bestChiSq=bestChiSq;	
+
 
 
     //    $("#debugContainer").append("<p>Best point: "+AwareEvent.bestPoint[0]+" + "+AwareEvent.bestPoint[1]+" + "+AwareEvent.bestPoint[2]+" -- "+AwareEvent.bestChiSq+"</p>");

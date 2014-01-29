@@ -1,3 +1,8 @@
+
+<Files *.gz>
+SetOutputFilter DEFLATE
+</Files>
+
 <files *.js.gz>
   AddType "text/javascript" .gz
   AddEncoding x-gzip .gz

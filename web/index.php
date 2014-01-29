@@ -71,7 +71,7 @@ if (file_exists($lastSensorHk)) {
   Last Header: 
 <span id="lastHeader">
 <?php
-$lastHeader='output/STATION2/lastEvent';
+$lastHeader='output/STATION2/lastHeader';
 include $lastHeader ;
 echo "</span>";
 if (file_exists($lastHeader)) {
@@ -132,7 +132,7 @@ if (file_exists($lastSensorHk)) {
   Last Header: 
 <span id="lastHeader">
 <?php
-$lastHeader='output/STATION3/lastEvent';
+$lastHeader='output/STATION3/lastHeader';
 include $lastHeader ;
 echo "</span>";
 if (file_exists($lastHeader)) {
@@ -194,7 +194,7 @@ if (file_exists($lastSensorHk)) {
   Last Header: 
 <span id="lastHeader">
 <?php
-$lastHeader='output/STATION1B/lastEvent';
+$lastHeader='output/STATION1B/lastHeader';
 include $lastHeader ;
 echo "</span>";
 if (file_exists($lastHeader)) {
