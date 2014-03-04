@@ -44,7 +44,7 @@ function reduceWaveformSamples(channelData,evenSamples,maxV2Samples) {
     var newArray = new Array();
     
     var sampleEvery = Math.floor(inputPoints/evenSamples);
-    if(sampleEvery==0) sampleEvery++;
+   if(sampleEvery==0) sampleEvery++;
 
     for(var i=0;i<inputPoints;i++) {
 	if(i%sampleEvery==0) {
@@ -325,35 +325,38 @@ function getRunInstrumentDateAndEvent(plotFunc) {
     AwareEvent.gotDateCode=0;
     var runNumber=getRunFromForm();  
     var instrumentName=getInstrumentNameFromForm();
+    plotFunc(eventPlotter);
+
+
     //var titleContainer = $("#leftbar"); 
-    var runListFile=getRunListName(instrumentName,runNumber);
-    function handleRunList(jsonObject) {
-//	titleContainer.append("<p>"+jsonObject.runList.length+"</p>");
-	for(var i=0;i<jsonObject.runList.length;i++) {
-	    if(jsonObject.runList[i][0]==runNumber) {
-		AwareEvent.year=jsonObject.runList[i][1];
-		AwareEvent.datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
-		AwareEvent.gotDateCode=1;
-		//		debugContainer.append("<p>"+runNumber+" "+AwareEvent.year+" "+AwareEvent.datecode+"</p>");	
-		plotFunc(eventPlotter);
-		break;
-	    }
-	}
-    }
+//     var runListFile=getRunListName(instrumentName,runNumber);
+//     function handleRunList(jsonObject) {
+// //	titleContainer.append("<p>"+jsonObject.runList.length+"</p>");
+// 	for(var i=0;i<jsonObject.runList.length;i++) {
+// 	    if(jsonObject.runList[i][0]==runNumber) {
+// 		AwareEvent.year=jsonObject.runList[i][1];
+// 		AwareEvent.datecode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
+// 		AwareEvent.gotDateCode=1;
+// 		//		debugContainer.append("<p>"+runNumber+" "+AwareEvent.year+" "+AwareEvent.datecode+"</p>");	
+// 		plotFunc(eventPlotter);
+// 		break;
+// 	    }
+// 	}
+//     }
     
 
-    ajaxLoadingLog(runListFile);
-    $.ajax({
-	    url: runListFile,
-		type: "GET",
-		dataType: "json",
-		success: function(data) {
-		//Log the loadingf of the file
-		ajaxLoadedLog(runListFile);
-		handleRunList(data);
-	        },
-		error: handleAjaxError
-    });
+ //    ajaxLoadingLog(runListFile);
+//     $.ajax({
+// 	    url: runListFile,
+// 		type: "GET",
+// 		dataType: "json",
+// 		success: function(data) {
+// 		//Log the loadingf of the file
+// 		ajaxLoadedLog(runListFile);
+// 		handleRunList(data);
+// 	        },
+// 		error: handleAjaxError
+//     });
 }
 
 
@@ -1149,10 +1152,10 @@ function findBestLocation()
     for(var index=2;index<orderIndex.length;index++) {
 	var i1=orderIndex[1];
 	var i=orderIndex[index];
-	Ai[index] = (2*relLocationArray[i][0])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Clight*AwareEvent.csumDeltaTArray[i1]);
-	Bi[index] = (2*relLocationArray[i][1])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Clight*AwareEvent.csumDeltaTArray[i1]);
-	Ci[index] = (2*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
-	Di[index] = Clight*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) + (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Clight*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Clight*AwareEvent.csumDeltaTArray[i1]);
+	Ai[index] = (2*relLocationArray[i][0])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][0])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+	Bi[index] = (2*relLocationArray[i][1])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][1])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+	Ci[index] = (2*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) - (2*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
+	Di[index] = Cinice*(AwareEvent.csumDeltaTArray[i]-AwareEvent.csumDeltaTArray[i1]) + (relLocationArray[i][0]*relLocationArray[i][0] + relLocationArray[i][1]*relLocationArray[i][1] + relLocationArray[i][2]*relLocationArray[i][2])/(Cinice*AwareEvent.csumDeltaTArray[i]) + (relLocationArray[i1][0]*relLocationArray[i1][0] + relLocationArray[i1][1]*relLocationArray[i1][1] + relLocationArray[i1][2]*relLocationArray[i1][2])/(Cinice*AwareEvent.csumDeltaTArray[i1]);
     }
 
 //Now need to find the vector in the direction of the line of intersection

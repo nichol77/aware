@@ -37,6 +37,15 @@ function pad4(number) {
    
 }
 
+function which10000(number) {
+    return number - (number%10000);
+}
+
+
+function which100(number) {
+    return number - (number%100);
+}
+
 
 /**
 * Utility function that zero pads a number to two digits, eg. 7 -> 07
@@ -79,7 +88,7 @@ function getRunListName(instrument, run) {
 * @returns {String}
 */
 function getHkName(instrument, run, year, datecode, hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/"+hkType+"Summary.json.gz"; 
+    var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/"+hkType+"Summary.json.gz"; 
     return name;
 }
 
@@ -88,8 +97,8 @@ function getHkName(instrument, run, year, datecode, hkType) {
 * Utility function that returns the name of the hk time JSON file
 * @returns {String}
 */
-function getHkTimeName(instrument, run, year, datecode,hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/"+hkType+"Time.json.gz"; 
+function getHkTimeName(instrument, run, year, datecode,hkType) {    
+    var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/"+hkType+"Time.json.gz"; 
     return name;
 }
 
@@ -98,8 +107,8 @@ function getHkTimeName(instrument, run, year, datecode,hkType) {
 * Utility function that returns the name of the full hk JSON file
 * @returns {String}
 */
-function getFullHkName(instrument,run,year,datecode,hkFile,hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/full/"+hkType+"_"+hkFile+".json.gz"; 
+function getFullHkName(instrument,run,year,datecode,hkFile,hkType) {   
+    var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/full/"+hkType+"_"+hkFile+".json.gz"; 
     return name;
 }
 
@@ -109,7 +118,7 @@ function getFullHkName(instrument,run,year,datecode,hkFile,hkType) {
 * @returns {String}
 */
 function getFullHkTimeName(instrument,run,year,datecode,hkType) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/full/"+hkType+"_time.json.gz"; 
+    var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/full/"+hkType+"_time.json.gz"; 
     return name;
 }
 
@@ -129,7 +138,7 @@ function getDateRunListName(instrument,year,datecode) {
 * @returns {String}
 */
 function getEventName(instrument, run, year, datecode, eventNumber) {
-   var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/events"+(eventNumber-(eventNumber%1000))+"/event"+eventNumber+".json.gz"; 
+   var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/events"+(eventNumber-(eventNumber%1000))+"/event"+eventNumber+".json.gz"; 
     return name;
 }
 
@@ -139,7 +148,7 @@ function getEventName(instrument, run, year, datecode, eventNumber) {
 * @returns {String}
 */
 function getEventListName(instrument, run, year, datecode) {
-    var name="output/"+instrument+"/"+year+"/"+pad4(parseInt(datecode))+"/run"+run+"/eventList.json"; 
+     var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/eventList.json"; 
     return name;
 }
 
