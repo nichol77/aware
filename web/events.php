@@ -161,7 +161,7 @@ header("Connection: keep-alive");
       $('#eventNumberInput').change(function() {
 				      getEventIndexFromNumber(plotEvent);
 				   });
-      $('#debugContainer').show();
+      $('#debugContainer').hide();
 
 
 

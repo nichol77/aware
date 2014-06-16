@@ -504,8 +504,27 @@ function actuallyDrawTheStuff(awareControl) {
 						       }
 						   });
 	
-	$('#debugContainer').append("<p>timeData.length  "+timeData.length+"</p>");
+	//	$('#debugContainer').append("<p>timeData.length  "+timeData.length+"</p>");
 	if (timeData.length > 0) {
+	    
+	    if($('#debugContainer').is(":visible")) {
+		var numDebugPoints=timeData[0].data.length;
+		
+		var debugTimeArray= new Array();
+		var debugValueArray= new Array();
+		var debugErrorArray= new Array();
+		for(var i=0;i<numDebugPoints;i++) {
+		    debugTimeArray.push(timeData[0].data[i][0]);
+		    debugValueArray.push(timeData[0].data[i][1]);
+		    debugErrorArray.push(timeData[0].data[i][2]);
+		}
+
+		$('#debugContainer').append("<p>Num debug points "+numDebugPoints+"</p>");
+		$('#debugContainer').append("<p>double timeArray["+numDebugPoints+"]={"+debugTimeArray.toString()+"};</p>");
+		$('#debugContainer').append("<p>double valueArray["+numDebugPoints+"]={"+debugValueArray.toString()+"};</p>");
+		$('#debugContainer').append("<p>double rmsArray["+numDebugPoints+"]={"+debugErrorArray.toString()+"};</p>");
+	    }
+
 	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 	    projPlot=$.plot(projPlotCan,projData,projOptions);
 

@@ -28,10 +28,15 @@ void AwareEventDatabase::addEventToList(int eventNumber)
 }
 
 
-void AwareEventDatabase::writeEventList()
+void AwareEventDatabase::writeEventList(char *outName)
 {
   char filename[FILENAME_MAX];
-  sprintf(filename,"%s/%s/%04d/%04d/run%d/eventList.json",fOutputDirName.c_str(),fInstrumentName.c_str(),fDateInt/10000,fDateInt%10000,fRun);
+  if(outName) {
+     strncpy(filename,outName,FILENAME_MAX-1);
+  }
+  else {
+     sprintf(filename,"%s/%s/%04d/%04d/run%d/eventList.json",fOutputDirName.c_str(),fInstrumentName.c_str(),fDateInt/10000,fDateInt%10000,fRun);
+  }
   std::ofstream EventList(filename);
   int firstOne=1;
 
