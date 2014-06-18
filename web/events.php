@@ -12,7 +12,7 @@ header("Connection: keep-alive");
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
-<link rel="StyleSheet" href="styles/ara.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/local.css" type="text/css" media="screen" >
 
 <title>AWARE Events</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
 <script src="src/awareUtils.js"></script>
