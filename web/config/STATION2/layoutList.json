@@ -1,6 +1,1 @@
-[			  
-	{"sym":"eventLayout10by2","desc":"10x2"},
-	{"sym":"eventLayout5by4","desc":"5x4"},
-	{"sym":"eventLayoutJustVPol","desc":"VPol Only"},
-	{"sym":"eventLayoutJustHPol","desc":"HPol Only"},
-	{"sym":"eventLayoutVPolCSum","desc":"Test"}]
+../ARA/layoutList.json
