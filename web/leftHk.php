@@ -40,7 +40,7 @@ echo "<fieldset>";
 echo "<legend>Update Plot</legend>";
 ///Load the instrument array config file
 $inst_array = parse_ini_file("config/instrumentList.ini", true);
-echo '<label>Station:</label> <select id="instrumentForm" >';
+echo '<label>Instrument:</label> <select id="instrumentForm" >';
 foreach($inst_array as $inst => $properties){
   $key=$properties[name];
   $value=$properties[title];
@@ -57,7 +57,7 @@ echo "<a href=\"#openStationHelp\">?</a>";
 echo "<br>";
 
 //Load the hkType array config file
-$hkType_array = parse_ini_file("config/hkTypeList.ini", true);
+$hkType_array = parse_ini_file("config/$instrument/hkTypeList.ini", true);
 echo 'Hk. Type:<br> <select id="hkTypeForm">';
 foreach($hkType_array as $inst => $properties){
   $key=$properties[name];

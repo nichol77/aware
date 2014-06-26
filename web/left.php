@@ -2,7 +2,7 @@
 <?php
 include("leftMain.php");
 ?>
-<h2 class="navigation">Update Plo2t</h2>
+<h2 class="navigation">Update Plot</h2>
 <p class="navigation">
 <form name="runForm"   id="runForm" action="javascript:drawPlot(); javascript:void(0);">       
 <?php

@@ -9,5 +9,10 @@
 	{"sym":"ssMag","desc":"Sun Sensor Mag.","hkCode":"hk"},
 	{"sym":"ssElevation","desc":"Sun Sensor El.","hkCode":"hk"},
 	{"sym":"ssAzimuthRaw","desc":"Sun Sensor Az.","hkCode":"hk"},
-	{"sym":"ssAzimuthAdu5","desc":"Sun Sensor Az. ADU5","hkCode":"hk", "errorCode":"-400","averageMode":"degAngle"},
-	{"sym":"ssGoodFlag","desc":"Sun Sensor GF","hkCode":"hk"}]
+	{"sym":"ssAzimuthAdu5","desc":"Sun Sensor Az. ADU5","hkCode":"hk"},
+	{"sym":"ssGoodFlag","desc":"Sun Sensor GF","hkCode":"hk"},
+	{"sym":"eventNumber","desc":"Event Number","hkCode":"head"},
+	{"sym":"ppsNum","desc":"PPS Number","hkCode":"head"},
+	{"sym":"c3poNumber","desc":"C3PO Number","hkCode":"head"},
+	{"sym":"l3TrigBit","desc":"L3 Trigger","hkCode":"head"}
+	]
