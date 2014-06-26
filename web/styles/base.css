@@ -4,17 +4,6 @@ body {
    font-family: sans-serif;
 }
 
-div.heading {
-   vertical-align:middle;
-   width:100%;
-   background: url(../images/araTestBed1.png)  ;
-   background-repeat: repeat-y;
-   background-position: center;                 
-   background-color: white;
-   z-index:5;
-   padding:15px;
-}
-
 
 div.body {
    padding-top: 1ex;

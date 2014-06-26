@@ -52,7 +52,7 @@ echo "<a href=\"#openStationHelp\">?</a>";
 echo "<br>";
 
 //Load the hkType array config file
-$hkType_array = parse_ini_file("config/hkTypeList.ini", true);
+$hkType_array = parse_ini_file("config/$instrument/hkTypeList.ini", true);
 echo 'Hk. Type:<br> <select id="hkTypeForm">';
 foreach($hkType_array as $inst => $properties){
   $key=$properties[name];

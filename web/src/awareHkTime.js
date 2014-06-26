@@ -209,10 +209,18 @@ function addFullVariableToDataset(awareControl,jsonObject) {
 
     var varTimeList=varPoint.timeList;
 
+    dataList.voidFlag=false;
+    dataList.voidValue=0;
+    if("voidValue" in varPoint) {
+       dataList.voidFlag=true;
+       dataList.voidValue=varPoint.voidValue;
+    }
+
     for(var index=0;index<varTimeList.length;index++) {
 	var timePoint=awareControl.timeArray[index];
-	var dataPoint=varTimeList[index];
-
+ 	var dataPoint=varTimeList[index];
+	if(dataList.voidFlag)
+	    if(Math.abs(dataPoint-dataList.voidValue)<1e-3) continue;
 	if(dataPoint>dataList.yMax) dataList.yMax=dataPoint;
 	if(dataPoint<dataList.yMin) dataList.yMin=dataPoint;
 	dataList.data.push([timePoint,dataPoint]); ///< No stdDev for full files
@@ -251,9 +259,8 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     if(xaxisMax>xaxisMin) doZoom=1;
     var firstTimeIndex=-1;
     var lastTimeIndex=-1;
-    var fullTimePoints=new Array();
     var plotEvery=1;
-
+    var fullTimePoints=new Array();
     var projMin=Number.MAX_VALUE;
     var projMax=-1*Number.MAX_VALUE;
     if(!getYAutoScale()) {
@@ -270,8 +277,13 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   if(val.yMax>projMax) projMax=val.yMax;
 	       });
     }
+    
+    var haveVoidValue=false;
+    awareControl.maxPoints=0;
     $.each(awareControl.datasets, function(key, val) {
-	       if(fullTimePoints.length==0) {
+	       if(val.voidFlag) haveVoidValue=true;
+	       if(fullTimePoints.length==0 || haveVoidValue) {
+		   fullTimePoints=new Array();
 		   for(var index=0;index<val.data.length;index++) {
 		       if(!doZoom || (val.data[index][0]>=xaxisMin && val.data[index][0]<=xaxisMax)) {
 			   if(firstTimeIndex==-1) firstTimeIndex=index;
@@ -282,7 +294,10 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   if(fullTimePoints.length>maxPointsToShow) {
 		       //Need to do some data decimation
 		       plotEvery=Math.ceil(fullTimePoints.length/maxPointsToShow);
-		   }		   
+		   }
+		   if(fullTimePoints.length>awareControl.maxPoints) {
+		       awareControl.maxPoints=fullTimePoints.length;
+		   }
 	       }
 
 	       var varName=key;
@@ -298,6 +313,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   timeDataList.points=val.points;
 		   projDataList.points=val.points;
 	       }
+
 	       projDataList.numBins=getMaxProjBins();
 	       projDataList.minVal=projMin;
 	       projDataList.maxVal=projMax;
@@ -315,6 +331,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 	       for(var index=firstTimeIndex;index<=lastTimeIndex;index+=plotEvery) {		  
 		   var timePoint=fullTimePoints[index-firstTimeIndex];
 		   var dataPoint=val.data[index][1];
+		   var count=1;
 		   var bin=Math.floor((dataPoint-projDataList.minVal)/projDataList.binSize);
 		   if(bin>=0 && bin<projDataList.numBins) {
 		       projDataList.data[bin][1]++;
@@ -324,7 +341,6 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   if(plotEvery>1) {	    
 		       var dp2=0;
 		       var deltaT=0;
-		       var count=1;
 
 
 		       for(var index2=index+1;index2<index+plotEvery && index2<=lastTimeIndex;index2++) {
@@ -384,14 +400,31 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 	    dataList.data= new Array();
 	    dataList.yMin=Number.MAX_VALUE;
 	    dataList.yMax=-1*Number.MAX_VALUE;
-	    
-	    var varTimeList=varPoint.timeList;	    
+
+	    dataList.voidFlag=false;
+	    dataList.voidValue=0;
+	    if("voidValue" in varPoint) {
+		dataList.voidFlag=true;
+		dataList.voidValue=varPoint.voidValue;
+	    }	    
+
+
+	    var varTimeList=varPoint.timeList;
+	    awareControl.maxPoints=0;
+	    var count=0;
 	    for(var index=0;index<varTimeList.length;index++) {
 		var dataPoint=varTimeList[index];
+		
+		if(dataList.voidFlag)
+		    if(Math.abs(dataPoint.mean-dataList.voidValue)<1e-3) continue;
+
 		if(dataPoint.mean>dataList.yMax) dataList.yMax=dataPoint.mean;
 		if(dataPoint.mean<dataList.yMin) dataList.yMin=dataPoint.mean;
 		dataList.data.push([awareControl.timeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev
+		count++;
 	    }
+	    if(awareControl.maxPoints<count)
+		awareControl.maxPoints=count;
 	    awareControl.datasets[ varName ]=dataList;
 	}
 	
@@ -421,7 +454,7 @@ function actuallyDrawTheStuff(awareControl) {
     
     var canContainer = $("#plot-text-"+awareControl.plotId); 
     if(numPoints>getMaxTimePointsToShow()) numPoints=getMaxTimePointsToShow();
-    canContainer.append("<p>The plot shows "+numPoints+" of "+awareControl.timeArray.length+" time points</p>");
+    canContainer.append("<p>The plot shows "+numPoints+" of "+awareControl.maxPoints+" time points</p>");
     var timePlotCan=$("#"+awareControl.timeCanName);
     var projPlotCan=$("#"+awareControl.projCanName);
 
@@ -894,7 +927,13 @@ function doMultiRunPlot(awareControl) {
 			dataList.data= new Array();
 			dataList.yMin=Number.MAX_VALUE;
 			dataList.yMax=-1*Number.MAX_VALUE;
-
+			dataList.voidFlag=false;
+			dataList.voidValue=0;
+			if("voidValue" in varPoint) {
+			    dataList.voidFlag=true;
+			    dataList.voidValue=varPoint.voidValue;
+			}	    
+			
 
 			
 			
@@ -905,6 +944,10 @@ function doMultiRunPlot(awareControl) {
 		var varTimeList=varPoint.timeList;	    
 		for(var index=0;index<varTimeList.length;index++) {
 		    var dataPoint=varTimeList[index];
+
+		    if(awareControl.datasets[varName].voidFlag)
+			if(Math.abs(dataPoint.mean-awareControl.datasets[varName].voidValue)<1e-3) continue;
+
 		    if(dataPoint.mean>awareControl.datasets[varName].yMax)
 			awareControl.datasets[varName].yMax=dataPoint.mean;
 		    if(dataPoint.mean<awareControl.datasets[varName].yMin)
