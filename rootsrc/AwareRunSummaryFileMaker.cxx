@@ -17,13 +17,13 @@
 
 
 
-AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * instrumentName)
-  :fRun(runNumber),fInstrumentName(instrumentName)
+AwareRunSummaryFileMaker::AwareRunSummaryFileMaker(Int_t runNumber, const char * instrumentName, Int_t numSecondsPerPoint)
+   :fRun(runNumber),fNumSecondsPerPoint(numSecondsPerPoint),fInstrumentName(instrumentName)
 {
 
 }
 
-void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *label, TTimeStamp timeStamp, Double_t variable)
+void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *label, TTimeStamp timeStamp, Double_t variable, AwareAverageType::AwareAverageType_t avgType, Bool_t hasVoidValue, Double_t voidValue)
 {
   std::string elString(elName);
   std::string labelString(label);
@@ -40,9 +40,9 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     it->second.addDataPoint(timeStamp,variable);
   }
   else {
-    AwareVariableSummary newSummary;
-    newSummary.addDataPoint(timeStamp,variable);
-    summaryMap[elString]=newSummary;
+     AwareVariableSummary newSummary(fNumSecondsPerPoint,avgType,hasVoidValue,voidValue);
+     newSummary.addDataPoint(timeStamp,variable);
+     summaryMap[elString]=newSummary;
   }
 
   //Now deal with the raw map
@@ -113,6 +113,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   //Now open the output files
   for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
      labelIt=fLabelMap.find(subMapIt->first);
+     sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
      sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
      std::ofstream *VarFile = new std::ofstream(jsonName);
      if(!(*VarFile)) {
@@ -130,6 +131,14 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
     (*VarFile) << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
     (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
     (*VarFile) << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
+    //    std::cerr << subMapIt->first.c_str() << "\t" << fRawMap.size() << "\t" << sumIt->second.getVoidFlag() << "\t" << sumIt->second.getVoidValue() << "\t"<< sumIt->second.getNumSecondsPerPoint() << "\n";
+    
+    if(sumIt->second.getVoidFlag()) {
+       (*VarFile) << "\t\"voidValue\" : " << sumIt->second.getVoidValue() << ",\n";
+    }
+    if(sumIt->second.getAverageType()!=AwareAverageType::kAngleDegree) {
+      (*VarFile) << "\t\"avgType\" : \"angleDegree\",\n";
+    } 
     (*VarFile) << "\t\"timeList\" : [\n";
     fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
   }
@@ -266,6 +275,13 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     //Start of runSum
     TimeFile << "\t\"name\" : \"" << elementName << "\",\n";
     TimeFile << "\t\"label\" : \"" << labelIt->second << "\",\n";
+
+    if(it->second.getVoidFlag()) {
+       TimeFile << "\t\"voidValue\" : " << it->second.getVoidValue() << ",\n";
+    }
+    if(it->second.getAverageType()!=AwareAverageType::kAngleDegree) {
+      TimeFile << "\t\"avgType\" : \"angleDegree\",\n";
+    }     
     TimeFile << "\t\"timeList\" : [\n";
     int firstInArray=1;
     
