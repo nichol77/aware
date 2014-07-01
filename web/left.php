@@ -9,7 +9,7 @@ include("leftMain.php");
 
 $station=$_GET["station"];
 if($_GET["station"] === null) {
-  $station=ANITA2;
+  $station=ANITA3;
  }
 
 
@@ -37,7 +37,7 @@ if($_GET["timeType"] === null) {
 
 
 $stationarray=array(
-		    "ANITA2" => "ANITA2",
+		    "ANITA3" => "ANITA3",
 		    );
 
 echo 'Station: <select id="instrumentForm" onchange="javascript:drawPlot();">';

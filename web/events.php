@@ -21,7 +21,7 @@ header("Connection: keep-alive");
 <script type="text/javascript" src="src/fft.js"></script>
 <script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
@@ -98,8 +98,9 @@ header("Connection: keep-alive");
   
       function readEventLayout() {	
 	function actuallyReadEventLayout(jsonObject) {
-	  setupEventDisplay(jsonObject);
-	  plotEvent();
+	checkForAlternate(jsonObject);				
+	  setupEventDisplay(jsonObject);			
+	  plotEvent();							
 	  
 	}	
 	eventLayout=getLayoutFromForm();
@@ -162,6 +163,7 @@ header("Connection: keep-alive");
 				      getEventIndexFromNumber(plotEvent);
 				   });
       $('#debugContainer').hide();
+      $('#instrumentDiv').hide();
 
 
 
