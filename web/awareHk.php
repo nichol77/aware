@@ -17,12 +17,12 @@ header("Connection: keep-alive");
 <script type="text/javascript" src="src/awareHkTime.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script type="text/javascript" src="src/newflot/jquery.flot.min.js.gz"></script>
-<script type="text/javascript" src="src/newflot/jquery.flot.errorbars.min.js.gz"></script>
-<script type="text/javascript" src="src/newflot/jquery.flot.time.min.js.gz"></script>
-<script type="text/javascript" src="src/newflot/jquery.flot.canvas.min.js.gz"></script>
-<script type="text/javascript" src="src/newflot/jquery.flot.selection.min.js.gz"></script>
-<script type="text/javascript" src="src/newflot/jquery.flot.resize.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.resize.min.js.gz"></script>
 <script type="text/javascript">
 
   $(function() {

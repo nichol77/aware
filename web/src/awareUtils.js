@@ -410,6 +410,30 @@ function fillLayoutForm(array) {
 }
 
 /**
+* Utility function that initialises the layout form on the left menu
+*/
+function fillAlternateForm(array) {
+    var urlValue=getUrlParameter('alternate');
+    var gotUrlMatch=false;
+    $('#alternateForm').empty();
+    for (i=0;i<array.length;i++){ 
+	if(getUrlParameter('alternate')) {
+	    if(urlValue.indexOf(array[i].sym)>=0) {
+		gotUrlMatch=true;
+	    }
+	}
+	$('<option/>').val(array[i].sym).html(array[i].desc).appendTo('#alternateForm');
+    }
+    if(gotUrlMatch) {
+	$('#alternateForm').val(urlValue);
+    }	    
+}
+
+
+
+
+
+/**
 * Utitlity function that draws the UI buttons for time view
 */
 function initialiseTimeViewButtons() {

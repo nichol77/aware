@@ -44,6 +44,7 @@ if($_GET["run"] === null) {
 echo "<fieldset>";     
 echo "<legend>Update Plot</legend>";
 echo "<ul>";
+echo "<div id=\"instrumentDiv\">";
 echo "<li>";
 ///Load the instrument array config file
 $inst_array = parse_ini_file("config/instrumentList.ini", true);
@@ -62,6 +63,7 @@ foreach($inst_array as $inst => $properties){
 echo "</select>";
 echo "<a href=\"#openStationHelp\">?</a>";
 echo "</li>";
+echo "</div>";
 
 echo "<li>";
 ///Load the instrument array config file
@@ -71,9 +73,17 @@ echo "<a href=\"#openLayoutHelp\">?</a>";
 echo "</li>";
 
 
+echo "<div id=\"alternateDiv\">";
+echo "<li>";
+echo '<label>Alternate:</label> <select id="alternateForm" >';
+echo "</select>";
+echo "</li>";
+echo "</div>";
+
+
 echo "<li>";
 ///Load the instrument array config file
-$waveform_array = parse_ini_file("config/waveformList.ini", true);
+$waveform_array = parse_ini_file("config/$instrument/waveformList.ini", true);
 echo '<label>Data:</label> <select id="waveformForm" >';
 foreach($waveform_array as $waveform => $properties){
   $key=$properties[name];

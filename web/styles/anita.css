@@ -1,6 +1,6 @@
 @media screen {
    DIV.heading {
-                 background: url("/~rjn/images/anitaLaunchSmaller.jpg")  ;
+                 background: url("../images/anitaLaunchSmaller.jpg")  ;
                  background-repeat: repeat-y;
                  background-position: center;
    }
