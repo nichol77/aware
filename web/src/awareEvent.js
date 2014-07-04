@@ -459,9 +459,7 @@ function eventPlotter() {
     function handleEventJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
 	updatePlotTitle(jsonObject);
-
 	
-
 	var newEvent=true;
 	if('gotDataForIndex' in AwareEvent) {
 	    if(AwareEvent.gotDataForIndex==getEventIndexFromForm()) {
@@ -479,7 +477,6 @@ function eventPlotter() {
 	    AwareEvent.labelArray=null;
 	}
 		
-
 
 	var processData=true;
 	if(!newEvent) {
@@ -831,6 +828,9 @@ function plotTheEvent() {
 		var grLabel=AwareEvent.labelArray[i];  ///Need to fix this
 		var flotData=new Object();
 		flotData.data=dataChanArray[i];
+
+		
+
 		//	    plotSinglePanel(divName,contName,jsonObject.event.channelList[chan].data,yMin[scaleGroup],yMax[scaleGroup],grLabel);
 		plotSinglePanel(divName,contName,[flotData],xMin,xMax,yMin[scaleGroup],yMax[scaleGroup],grLabel,showX,showY);
 	    }
@@ -859,6 +859,7 @@ function plotSinglePanel(divChanName,divContName,flotDataArray,xMin,xMax,yMin,yM
     var showYaxis=showY;
     var showLabel=false;
     
+
     //    $("#debugContainer").append("<p>"+divChanName+" "+divContName+" "+showX+" "+showY+" "+xMin+" "+xMax+" "+yMin+" "+yMax+" "+grLabel+"</p>");
 
     var titleContainer = $("#titleContainer"); 
@@ -1017,6 +1018,24 @@ function fillEventDivWithWaveformContainers(chanArray,rowContLabel,colContLabel,
       }
 }
 
+function checkForAlternate(jsonObject) {
+    if('numAlts' in jsonObject) {
+	AwareEvent.numAlts=jsonObject.numAlts;
+	var altArray = new Array();
+	for(var i=0;i<AwareEvent.numAlts;i++) {
+	    var altItem = new Object();
+	    altItem.sym="alt"+i;
+	    altItem.desc=jsonObject.altLabel[i];
+	    altArray.push(altItem);
+	}
+	fillAlternateForm(altArray);
+	$("#alternateDiv").show();
+    }
+    else {
+	$("#alternateDiv").hide();
+    }
+}
+
 
 /*
 * Worker function which stes some of the global variables deterined by the selected eventLayout (eg. number of rows, columns etc.)
@@ -1041,6 +1060,9 @@ function setupEventDisplay(jsonObject) {
 	AwareEvent.chanToScaleGroup[i]=jsonObject.chanScale[i];
 	if(jsonObject.chanScale[i]>(AwareEvent.nScaleGroups-1)) AwareEvent.nScaleGroups=jsonObject.chanScale[i]+1;
     }
+
+    
+
 
     AwareEvent.nRows=jsonObject.numRows;
     AwareEvent.nCols=jsonObject.numCols;
@@ -1430,12 +1452,14 @@ function drawStationMap(divChanName,divContName) {
        if(showXaxis) {
 	  //	  options.xaxis.show=true;
 	  //	  delete options.xaxis.tickFomatter;
+	   options.xaxis.tickLength=0;
 	  delete options.xaxis.font;
 	  delete options.xaxis.labelWidth;
 	  delete options.xaxis.labelHeight;
        }
        else {
 	  //	  options.xaxis.show=false;
+	   options.xaxis.tickLength=0;
 	  options.xaxis.labelHeight=5;
 	  options.xaxis.labelWidth=5;
 	  options.xaxis.font={size:1,lineHeight:1};
@@ -1449,6 +1473,7 @@ function drawStationMap(divChanName,divContName) {
        }
        else {
 	  //	  options.yaxis.show=false;
+	   options.yaxis.tickLength=0;
 	  options.yaxis.labelHeight=5;
 	  options.yaxis.labelWidth=5;
 	  options.yaxis.font={size:1,lineHeight:1};
@@ -1475,20 +1500,20 @@ function drawStationMap(divChanName,divContName) {
 	doThePlot();
     });
 
-    plotCan.unbind("plothover");
-    plotCan.bind("plothover",function(event,pos,item) {
+    //    plotCan.unbind("plothover");
+    //    plotCan.bind("plothover",function(event,pos,item) {
 		     
-    if (item) {
-	var x = item.datapoint[0].toFixed(2),
-	    y = item.datapoint[1].toFixed(2);
+	    //    if (item) {
+	    //	var x = item.datapoint[0].toFixed(2),
+	    //	    y = item.datapoint[1].toFixed(2);
 	
-	$("#tooltip").html(item.series.label + " of " + x + " = " + y)
-	    .css({top: item.pageY+5, left: item.pageX+5})
-	    .fadeIn(200);
-    } else {
-	$("#tooltip").hide();
-    }
-		 });
+	    //	$("#tooltip").html(item.series.label + " of " + x + " = " + y)
+	    //	    .css({top: item.pageY+5, left: item.pageX+5})
+	    //	    .fadeIn(200);
+	    //    } else {
+	    //	$("#tooltip").hide();
+	    //    }
+	    //});
 	 
     doThePlot();
 

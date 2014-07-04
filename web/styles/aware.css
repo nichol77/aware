@@ -162,10 +162,35 @@ For the AWARE web event display
 
 }
 
+
+.column-label-12up {
+	box-sizing: border-box;
+	width: 7%;	
+	height:100%;
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+        text-align: center ;
+
+}
+
 .row-label-10up {
 	box-sizing: border-box;
 	width: 100%;	
 	height:9%;
+	float: left;
+	padding: 2px 2px 2px 2px;
+	margin: 0px 0px 0px 0px;
+	background-color: snow;
+	 text-align: center ;
+}
+
+
+.row-label-9up {
+	box-sizing: border-box;
+	width: 100%;	
+	height:10%;
 	float: left;
 	padding: 2px 2px 2px 2px;
 	margin: 0px 0px 0px 0px;
@@ -294,6 +319,54 @@ For the AWARE web event display
 	min-width:20%;
 	max-width:90%
 	min-height:15%;
+	max-height:60%;
+}
+
+
+.waveform-container-9x12up {
+	box-sizing: border-box;
+	width: 7.5%;
+	height: 10%;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:6%;
+	max-width:90%
+	min-height:6%;
+	max-height:60%;
+}
+
+
+.waveform-container-9x1up {
+	box-sizing: border-box;
+	width: 90%;
+	height: 10%;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:6%;
+	max-width:90%
+	min-height:6%;
+	max-height:60%;
+}
+
+
+.waveform-container-9x2up {
+	box-sizing: border-box;
+	width: 44%;
+	height: 10%;
+	margin: 0px 0px 0px 0px;
+	border: 1px solid #ddd;
+	float: left;
+	resize:both;
+	overflow:hidden;
+	min-width:6%;
+	max-width:90%
+	min-height:6%;
 	max-height:60%;
 }
 

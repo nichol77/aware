@@ -1,0 +1,10 @@
+@media screen {
+   DIV.heading {
+                 background: url("../images/anitaLaunchSmaller.jpg")  ;
+                 background-repeat: repeat-y;
+                 background-position: center;
+   }
+  DIV.heading H1 {	
+                   padding:1em;             
+                }
+}             

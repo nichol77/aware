@@ -1,0 +1,9 @@
+@media screen {
+   DIV.heading {
+	 background: url("/~rjn/images/araTestBed1.png")  ;	
+                 background-repeat: repeat-y;
+                 background-position: center;
+}
+}
+
+

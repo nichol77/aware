@@ -80,7 +80,7 @@ echo "<br>";
 
 
 //Load the timeType array config file
-$timeType_array = parse_ini_file("config/timeTypeList.ini", true);
+$timeType_array = parse_ini_file("config/$instrument/timeTypeList.ini", true);
 echo 'Type:<br> <select id="timeForm">';
 foreach($timeType_array as $inst => $properties){
   $key=$properties[name];
