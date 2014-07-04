@@ -143,9 +143,10 @@ function drawAllChannels(allowZoom,xScale,yScale) {
     ctx.fillText("Trigger: "+triggerTime+"s",6*titleOffset,2*titleOffset); 
 
 
-    for(var chan=0;chan<16;chan++) {
+    for(var chan=0;chan<64;chan++) {
 	var canName="can"+chan;
-	drawThisChannel(chan,canName,allowZoom,xScale,yScale);
+	var plotChan=chan%16;
+	drawThisChannel(plotChan,canName,allowZoom,xScale,yScale);
     }   
 }
 
