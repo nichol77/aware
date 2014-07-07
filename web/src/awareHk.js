@@ -14,7 +14,7 @@
 
 /* Globals */
 
-function drawHk(canName,varNameKey,colour,dpList) {
+function drawHkBarChart(canName,varNameKey,colour,dpList) {
     var dataArray = [];
     var dataArrayErrors = [];
     var countData=0;
@@ -62,7 +62,74 @@ function drawHk(canName,varNameKey,colour,dpList) {
 
     $.plot($("#"+canName), flotData, flotOptions );
 
+}
 
+
+function drawHk2DChart(canName,varNameKey,xNameKey,colour,dpList) {
+    var dataObject = new Object();
+    var dataArrayErrors = [];
+    var countData=0;
+
+    //    $("#debugContainer").append("<p>drawHk2DChart  "+varNameKey+ " "+xNameKey+"</p>");
+
+
+    var xObject = {};
+
+    for(var index=0;index<dpList.length;index++) {
+	var dp2=dpList[index];
+	var dpName=new String(dp2.name);
+	var n=dpName.indexOf(xNameKey);
+	if(n>=0) {
+	    var tag=dpName.substring(xNameKey.length)
+		//	    $("#debugContainer").append("<p>dpName  "+dpName+" "+tag+"</p>");
+	    xObject[tag]=dp2.mean;
+	}
+	
+    }
+
+
+    for(var index=0;index<dpList.length;index++) {
+	var dp2=dpList[index];
+	var dpName=new String(dp2.name);
+	var n=dpName.indexOf(varNameKey);
+	if(n>=0) {
+	    
+	    //	    $("#debugContainer").append("<p>dpName  "+dpName+"</p>");
+	    var tagPos=dpName.lastIndexOf("_");
+	    var tag=dpName.substring(tagPos);
+	    var variable=dpName.substring(0,tagPos)
+		//	    $("#debugContainer").append("<p>dpName  "+variable+" "+tag+"</p>");
+	    if(variable in dataObject) {
+		//Already started this array
+	    }
+	    else {
+		dataObject[variable]={};
+		dataObject[variable].data = new Array();
+		dataObject[variable].label=variable;
+	    }
+	    dataObject[variable].data.push([xObject[tag],dp2.mean]);	   	    
+	}
+    }
+    
+    var dataArray = new Array();
+
+    for (var key in dataObject) {
+	var obj = dataObject[key];
+	dataArray.push(obj);
+    }
+    var options = {
+	series: {
+	    lines: { show: false },
+	    points: { show: true }
+	},
+	legend: {show:false}
+
+    };
+
+
+	
+    $.plot($("#"+canName), dataArray ,options);
+    
 
 }
 
@@ -78,8 +145,15 @@ function drawRunSummaryHkJSON(awareControl) {
     function handleHkJsonFile(jsonObject) {
 	updatePlotTitle();
 	for(var plotId=0;plotId<awareControl.numPlots;plotId++) {
-	    var plotName=awareControl.plotList[plotId].name;	    
-	    drawHk("runsum-cont-"+plotId,plotName,plotId,jsonObject.runsum.varList);
+	    var plotName=awareControl.plotList[plotId].name;
+	    var plotType=getXaxisOpt(plotName);
+	    if(plotType=="time") {
+		drawHkBarChart("runsum-cont-"+plotId,plotName,plotId,jsonObject.runsum.varList);
+	    }
+	    else {
+		drawHk2DChart("runsum-cont-"+plotId,plotName,plotType,plotId,jsonObject.runsum.varList);
+	    }
+	    
 	}
     }
 
@@ -118,12 +192,14 @@ function drawPlots(plotControl) {
     plotControl.numPlots=plotControl.plotList.length;
     plotControl.numRows=Math.floor(Math.sqrt(plotControl.numPlots));
     plotControl.numPerRow=Math.floor(plotControl.numPlots/plotControl.numRows);
+    if(plotControl.numRows*plotControl.numPerRow<plotControl.plotList.length) plotControl.numRows++;
+
     plotControl.width=100/plotControl.numPerRow;
-    plotControl.height=100/plotControl.numRows;
+    plotControl.height=95/plotControl.numRows;
 	     
-    //    $("#debugContainer").append("plotList.length  "+plotList.length);
-    //    $("#debugContainer").append("numRows  "+numRows);
-    //    $("#debugContainer").append("numPerRow  "+numPerRow);
+    $("#debugContainer").append("plotList.length  "+plotControl.plotList.length);
+    $("#debugContainer").append("numRows  "+plotControl.numRows);
+    $("#debugContainer").append("numPerRow  "+plotControl.numPerRow);
     makePlotGrid(plotControl);
 
     getRunInstrumentDateAndPlot(drawRunSummaryHkJSON,plotControl);

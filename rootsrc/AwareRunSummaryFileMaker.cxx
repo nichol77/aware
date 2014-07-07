@@ -105,86 +105,77 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   
   //For now get the first time point in the raw map
   std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();  
+  std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt2=fRawMap.begin();  
   //Then get an iterator for all the variables at the first timePoint
   std::map<std::string, Double_t>::iterator subMapIt=fRawMapIt->second.begin();
+  std::map<std::string, Double_t>::iterator subMapIt2=fRawMapIt->second.begin();
 
   std::map<std::string, std::string>::iterator labelIt;
 
-  //Now open the output files
-  for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-     labelIt=fLabelMap.find(subMapIt->first);
-     sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
-     sprintf(jsonName,"%s/%s_%s.json",jsonDir,filePrefix,subMapIt->first.c_str());
-     std::ofstream *VarFile = new std::ofstream(jsonName);
-     if(!(*VarFile)) {
-	std::cerr << "Couldn't open " << jsonName << "\n";
-	continue;
-     }
-     fFileList.push_back(std::string(jsonName));
-      
-    (*VarFile) << "{\n";
-    //Start of runSum
-    (*VarFile) << "\t\"full\":{\n";
-    (*VarFile) << "\t\"run\" : " << fRun <<  ",\n";
-    (*VarFile) << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
-    (*VarFile) << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
-    (*VarFile) << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
-    (*VarFile) << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
-    (*VarFile) << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
-    //    std::cerr << subMapIt->first.c_str() << "\t" << fRawMap.size() << "\t" << sumIt->second.getVoidFlag() << "\t" << sumIt->second.getVoidValue() << "\t"<< sumIt->second.getNumSecondsPerPoint() << "\n";
-    
-    if(sumIt->second.getVoidFlag()) {
-       (*VarFile) << "\t\"voidValue\" : " << sumIt->second.getVoidValue() << ",\n";
-    }
-    if(sumIt->second.getAverageType()!=AwareAverageType::kAngleDegree) {
-      (*VarFile) << "\t\"avgType\" : \"angleDegree\",\n";
-    } 
-    (*VarFile) << "\t\"timeList\" : [\n";
-    fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
-  }
 
- 
+  ///Now fill the time file
   int firstInArray=1;
   //Now loop over the fRawMap
-  for(;fRawMapIt!=fRawMap.end();fRawMapIt++) {
+  for(fRawMapIt=fRawMap.begin();fRawMapIt!=fRawMap.end();fRawMapIt++) {
     //First do the time file
     if(!firstInArray) TimeFile << ",\n";
     TimeFile <<  fRawMapIt->first;
-						
-    //Now the variable files
-    subMapIt=fRawMapIt->second.begin();
-    for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-       std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);  
-
-      if(fileIt!=fJsonFileMap.end()) {	
-	 //	 std::cout << subMapIt->first.c_str() << "\n";
-	 if(!firstInArray) *(fileIt->second) << ",\n";
-	 *(fileIt->second) <<  subMapIt->second;
-      }
-    }    
     firstInArray=0;
   }  
   TimeFile << " ]\n}\n}\n";
   TimeFile.flush();
-  
+
   fRawMapIt=fRawMap.begin();
   subMapIt=fRawMapIt->second.begin();
-  for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-     std::map<std::string, std::ofstream*>::iterator fileIt = fJsonFileMap.find(subMapIt->first);      
-     if(fileIt!=fJsonFileMap.end()) {	
-	//	std::cout << subMapIt->first.c_str() << "\n";
-	*(fileIt->second) << " ]\n}\n}\n";
-	(fileIt->second)->close();
-     }
-  }
 
-    while(!fFileList.empty()) {      
-      char gzipString[FILENAME_MAX];
-      sprintf(gzipString,"gzip -f %s",fFileList.back().c_str());
-      fFileList.pop_back();
-      gSystem->Exec(gzipString);
-    }
-  
+  //Now loop over the variables the output files
+  for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
+     //     std::cerr << subMapIt->first << "\n";
+     labelIt=fLabelMap.find(subMapIt->first);
+     sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
+     sprintf(jsonName,"%s/%s_%s.json.gz",jsonDir,filePrefix,subMapIt->first.c_str());
+     //     std::cerr << jsonName << "\n";
+
+     boost::iostreams::filtering_ostream FullFile;
+     FullFile.push(boost::iostreams::gzip_compressor());
+     FullFile.push(boost::iostreams::file_sink(jsonName));
+
+      
+     FullFile << "{\n";
+     //Start of runSum
+     FullFile << "\t\"full\":{\n";
+     FullFile << "\t\"run\" : " << fRun <<  ",\n";
+     FullFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
+     FullFile << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
+     FullFile << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
+     FullFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
+     FullFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
+     //    std::cerr << subMapIt->first.c_str() << "\t" << fRawMap.size() << "\t" << sumIt->second.getVoidFlag() << "\t" << sumIt->second.getVoidValue() << "\t"<< sumIt->second.getNumSecondsPerPoint() << "\n";
+     
+     if(sumIt->second.getVoidFlag()) {
+	FullFile << "\t\"voidValue\" : " << sumIt->second.getVoidValue() << ",\n";
+     }
+     if(sumIt->second.getAverageType()!=AwareAverageType::kAngleDegree) {
+	FullFile << "\t\"avgType\" : \"angleDegree\",\n";
+     } 
+     FullFile << "\t\"timeList\" : [\n";
+     //    fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
+     
+     
+     int firstInArray=1;
+     //Now loop over the time file again
+     for(fRawMapIt2=fRawMap.begin();fRawMapIt2!=fRawMap.end();fRawMapIt2++) {
+	subMapIt2=fRawMapIt2->second.find(subMapIt->first);
+	if(subMapIt2!=fRawMapIt2->second.end()) {	   
+	   if(!firstInArray) FullFile << ",\n";
+	   FullFile <<  subMapIt2->second;
+	   firstInArray=0;
+	}
+     }
+     FullFile << " ]\n}\n}\n";
+     FullFile.flush();
+  }
+  //  std::cerr << "Here\n";
   
 
 }

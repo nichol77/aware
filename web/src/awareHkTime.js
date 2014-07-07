@@ -253,7 +253,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     smallHolder.timeDataset = new Object();
     smallHolder.projDataset = new Object();
 
-
+    var yAxisOpt=getYaxisOpt(getPlotNameFromForm());
     var maxPointsToShow=getMaxTimePointsToShow();
     var doZoom=0;
     if(xaxisMax>xaxisMin) doZoom=1;
@@ -263,6 +263,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     var fullTimePoints=new Array();
     var projMin=Number.MAX_VALUE;
     var projMax=-1*Number.MAX_VALUE;
+    var needToScaleYAxis=false;
     if(!getYAutoScale()) {
 	projMin=getYMin();
 	projMax=getYMax();
@@ -276,6 +277,10 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   if(val.yMin<projMin) projMin=val.yMin;
 		   if(val.yMax>projMax) projMax=val.yMax;
 	       });
+	
+	if(yAxisOpt=="dydx") {
+	    needToScaleYAxis=true;
+	}
     }
     
     var haveVoidValue=false;
@@ -297,6 +302,10 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   }
 		   if(fullTimePoints.length>awareControl.maxPoints) {
 		       awareControl.maxPoints=fullTimePoints.length;
+		   }
+		   if(needToScaleYAxis) {
+		       projMax=2e3*(projMax-projMin)/((fullTimePoints[fullTimePoints.length-1]-fullTimePoints[0]));		       
+		       projMin=0;
 		   }
 	       }
 
@@ -327,14 +336,18 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		   projDataList.data.push([projDataList.minVal+bin*projDataList.binSize,0]);
 	       }
 
-	       timeDataList.data= new Array();	       	       
+	       timeDataList.data= new Array();	
+	       var lastTimePoint=0;
+	       var lastDataPoint=0;
 	       for(var index=firstTimeIndex;index<=lastTimeIndex;index+=plotEvery) {		  
 		   var timePoint=fullTimePoints[index-firstTimeIndex];
 		   var dataPoint=val.data[index][1];
 		   var count=1;
-		   var bin=Math.floor((dataPoint-projDataList.minVal)/projDataList.binSize);
-		   if(bin>=0 && bin<projDataList.numBins) {
-		       projDataList.data[bin][1]++;
+		   if(yAxisOpt!="dydx") {
+		       var bin=Math.floor((dataPoint-projDataList.minVal)/projDataList.binSize);
+		       if(bin>=0 && bin<projDataList.numBins) {
+			   projDataList.data[bin][1]++;
+		       }
 		   }
 
 		   var stdDev=0;
@@ -346,10 +359,12 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		       for(var index2=index+1;index2<index+plotEvery && index2<=lastTimeIndex;index2++) {
 			   //Fill the histogram
 			   var dataPoint2=val.data[index2][1];
-			   var bin=Math.floor((dataPoint2-projDataList.minVal)/projDataList.binSize);
 			   
-			   if(bin>=0 && bin<projDataList.numBins) {
-			       projDataList.data[bin][1]++;
+			   if(yAxisOpt!="dydx") {
+			       var bin=Math.floor((dataPoint2-projDataList.minVal)/projDataList.binSize);			   
+			       if(bin>=0 && bin<projDataList.numBins) {
+				   projDataList.data[bin][1]++;
+			       }
 			   }
 
 
@@ -364,8 +379,24 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		       dp2/=count;
 		       stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
 		   }	
+		   if(yAxisOpt=="dydx") {
+		      //Want to plot the derivative
+		      if(lastTimePoint>0) {
+			  var dx=1e-3*(timePoint-lastTimePoint);
+			  var dy=dataPoint-lastDataPoint;
+			 timeDataList.data.push([timePoint,dy/dx,stdDev/dx]); 
+			 var bin=Math.floor(((dy/dx)-projDataList.minVal)/projDataList.binSize);			   
+			 if(bin>=0 && bin<projDataList.numBins) {
+			     projDataList.data[bin][1]++;
+			 }
 
-		   timeDataList.data.push([timePoint,dataPoint,stdDev]); ///< No stdDev for full files
+		      }
+		      lastTimePoint=timePoint;
+		      lastDataPoint=dataPoint;
+
+		   } else {
+		      timeDataList.data.push([timePoint,dataPoint,stdDev]); 
+		   }
 	       }
 	       
 	       smallHolder.timeDataset[varName]=timeDataList; 

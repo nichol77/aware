@@ -7,7 +7,7 @@ header("Connection: keep-alive");
 <head>
 <link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" />
-<link rel="StyleSheet" href="`styles/local.css" type="text/css" media="screen" />
+<link rel="StyleSheet" href="styles/local.css" type="text/css" media="screen" />
 <title>ANITA-3 - AWARE</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
 </head>

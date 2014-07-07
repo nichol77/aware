@@ -33,8 +33,8 @@ OBJSUF=o
 
 
 #Generic and Site Specific Flags
-CXXFLAGS     += $(ROOTCFLAGS) $(FFTFLAG) $(SYSINCLUDES) 
-LDFLAGS      += -g $(ROOTLDFLAGS) 
+CXXFLAGS     += $(ROOTCFLAGS) $(FFTFLAG) $(SYSINCLUDES) -g
+LDFLAGS      += -g2 $(ROOTLDFLAGS) 
 
 LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS)  $(FFTLIBS) -lboost_iostreams
 GLIBS         = $(ROOTGLIBS) $(SYSLIBS)

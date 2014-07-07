@@ -12,7 +12,22 @@
 	{"sym":"ssAzimuthAdu5","desc":"Sun Sensor Az. ADU5","hkCode":"hk"},
 	{"sym":"ssGoodFlag","desc":"Sun Sensor GF","hkCode":"hk"},
 	{"sym":"eventNumber","desc":"Event Number","hkCode":"header"},
+	{"sym":"eventNum","desc":"Event Rate","hkCode":"header","yAxis":"dydx"},
 	{"sym":"ppsNum","desc":"PPS Number","hkCode":"header"},
 	{"sym":"c3poNum","desc":"C3PO Number","hkCode":"header"},
-	{"sym":"l3TrigBit","desc":"L3 Trigger","hkCode":"header"}
+	{"sym":"l3TrigBit","desc":"L3 Trigger","hkCode":"header"},
+	{"sym":"chanMean","desc":"Channel Mean","hkCode":"acqdStart"},
+	{"sym":"chanRMS","desc":"Channel RMS","hkCode":"acqdStart"},
+	{"sym":"scalerVals_0","desc":"Thresh SURF 1","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_1","desc":"Thresh SURF 2","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_2","desc":"Thresh SURF 3","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_3","desc":"Thresh SURF 4","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_4","desc":"Thresh SURF 5","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_5","desc":"Thresh SURF 6","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_6","desc":"Thresh SURF 7","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_7","desc":"Thresh SURF 8","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_8","desc":"Thresh SURF 9","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_9","desc":"Thresh SURF 10","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_10","desc":"Thresh SURF 11","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"scalerVals_11","desc":"Thresh SURF 12","hkCode":"acqdStart","xAxis":"threshVals"}
 	]

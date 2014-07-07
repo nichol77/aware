@@ -244,6 +244,37 @@ function getPlotNameFromForm() {
 
 
 /**
+ * Gets the xAxis option for this plot, useful if we doing a 2D plot
+ * @returns A string corresponding to the xAxis option
+ */
+function getXaxisOpt(plotName) {       
+    //    $('#debugContainer').append("<p>Got xAxis: "+plotName+" "+AwareUtils.xAxisOpt[plotName]+"</p>"); 
+    if(plotName in AwareUtils.xAxisOpt) {
+	return AwareUtils.xAxisOpt[plotName];
+    }
+    return "time";
+}
+
+
+
+/**
+ * Gets the yAxis option for this plot, useful if we doing a 2D plot
+ * @returns A string corresponding to the yAxis option
+ */
+function getYaxisOpt(plotName) {       
+    $('#debugContainer').append("<p>Got yAxis: "+plotName+" "+AwareUtils.yAxisOpt[plotName]+"</p>"); 
+    if(plotName in AwareUtils.yAxisOpt) {
+	return AwareUtils.yAxisOpt[plotName];
+    }
+    return "time";
+}
+
+
+
+
+
+
+/**
  * Gets the keyword for the selected value in the hkTypeForm UI element
  * @returns A string corresponding to the hk type keyword
  */
@@ -369,16 +400,29 @@ function initialiseHkMenu(doTimeType) {
 /**
 * Utility function that initialises the plot form on the left menu
 */
-function fillPlotForm(array) {
+function fillPlotFormAndPlotTypeList(array) {
     var urlValue=getUrlParameter('plot');
     var gotUrlMatch=false;
     $('#plotForm').empty();
+
+    AwareUtils.xAxisOpt={}; 
+    AwareUtils.yAxisOpt={};    
+
     for (i=0;i<array.length;i++){ 
 	if(getUrlParameter('plot')) {
 	    if(urlValue.indexOf(array[i].sym)>=0) {
 		gotUrlMatch=true;
 	    }
 	}
+	if('xAxis' in array[i]) {
+	    AwareUtils.xAxisOpt[array[i].sym]=array[i].xAxis;
+	    //	    $('#debugContainer').append("<p>Got xAxis: "+ AwareUtils.xAxisOpt[array[i].sym]+"</p>");
+	}
+	if('yAxis' in array[i]) {
+	    AwareUtils.yAxisOpt[array[i].sym]=array[i].yAxis;
+	    $('#debugContainer').append("<p>Here yAxis: "+ AwareUtils.yAxisOpt[array[i].sym]+"</p>");
+	}
+
 	$('<option/>').val(array[i].sym).html(array[i].desc).appendTo('#plotForm');
     }
     if(gotUrlMatch) {
@@ -705,7 +749,7 @@ function updateHkType(thisHkType) {
     
     function actuallyUpdateHkType(plotFormArray) {
 	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
-	fillPlotForm(tempArray);
+	fillPlotFormAndPlotTypeList(tempArray);
 
         if($('#debugContainer').is(":visible"))
 	    $('#debugContainer').append("<p>actuallyUpdateHkType... drawPlots</p>");
@@ -815,7 +859,7 @@ function setStartRunOnForm(thisRun) {
 function initialiseAwareHkTime() {
 
 
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
 
     //First initialise the plot-holder div
     initialisePlotHolder();
@@ -904,13 +948,8 @@ function initialiseRunSummary() {
 
     initialiseMenuButtions();
 
-    if(!AwareUtils.runAlreadySet) {
-	updateLastRun(true,true);
-    }
-    else {	
-	updateLastRun(false,false); 
-	updateHkType(AwareUtils.hkType); 
-    }
+    updateLastRun(true,false);
+    updateHkType(AwareUtils.hkType); 
 }
 
 function getPlotNameLabelList() {
