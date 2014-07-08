@@ -859,7 +859,7 @@ function setStartRunOnForm(thisRun) {
 function initialiseAwareHkTime() {
 
 
-    $('#debugContainer').show();
+    $('#debugContainer').hide();
 
     //First initialise the plot-holder div
     initialisePlotHolder();
