@@ -23,7 +23,7 @@ if($_GET["instrument"] === null) {
 
 $run=$_GET["run"];
 if($_GET["run"] === null) {
-  $run=1667; //This number is never really used
+  $run=151; //This number is never really used
  }
 
 $hkType=$_GET["hkType"];

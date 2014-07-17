@@ -19,7 +19,7 @@ SetOutputFilter DEFLATE
 </files>
 
 
-<filesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|gz)$">
+<filesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
 Header set Cache-Control "max-age=290304000, public"
 </filesMatch>
 

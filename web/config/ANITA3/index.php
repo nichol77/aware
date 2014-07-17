@@ -39,35 +39,35 @@ if (file_exists($lastEvent)) {
 </a>
 
 
-<a href="awareHk.php?instrument=ANITA3&hkType=hk">
-<div class="lastBox">
-  Last Hk: 
-<span id="lastHk">
 <?php
-$lastHk='output/ANITA3/lastHk';
-include $lastHk ;
-echo "</span>";
+
+$hkType_array = parse_ini_file("config/ANITA3/hkTypeList.ini", true);
+
+foreach($hkType_array as $inst => $properties){
+  $key=$properties[name];
+  $Key= ucfirst($key);
+  $value=$properties[title];
+ # echo "$key";
+
+ echo "<a href=\"awareHk.php?instrument=ANITA3&hkType=$key\">";
+ echo "<div class=\"lastBox\">";
+ echo "Last $value:";
+ echo "<span id=\"lastHk\">";
+  $lastHk="output/ANITA3/last$Key";
+  include $lastHk ;
+ echo "</span>";
 if (file_exists($lastHk)) {
     echo " started " . date ("F d Y H:i.", filemtime($lastHk));
 }
-?>
-</div>
-</a>
+echo "</div>";
+echo "</a>";
 
-<a href="awareHk.php?instrument=ANITA3&hkType=header">
-<div class="lastBox">
-  Last Header: 
-<span id="lastHeader">
-<?php
-$lastHeader='output/ANITA3/lastHeader';
-include $lastHeader ;
-echo "</span>";
-if (file_exists($lastHeader)) {
-    echo " started " . date ("F d Y H:i.", filemtime($lastHeader));
 }
+
+
 ?>
-</div>
-</a>
+
+
 
 
 </div>
