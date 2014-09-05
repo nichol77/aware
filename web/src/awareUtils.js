@@ -94,6 +94,16 @@ function getHkName(instrument, run, year, datecode, hkType) {
 
 
 /**
+* Utility function that returns the name of the summary hk JSON file
+* @returns {String}
+*/
+function getConfigName(instrument, run, configBase) {
+    var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/config/"+configBase+".json"; 
+    return name;
+}
+
+
+/**
 * Utility function that returns the name of the hk time JSON file
 * @returns {String}
 */
@@ -835,12 +845,23 @@ function setLastRun(thisRun) {
 
 
 /**
+ * Gets the configName from the configInput UI element
+ * @returns The configName from the configInput UI element
+ */
+function getConfigFromForm() {
+//    return document.getElementById("runInput").value;
+    return "Acqd";
+} 
+
+
+/**
  * Gets the run number from the runInput UI element
  * @returns The run number from the runInput UI element
  */
 function getStartRunFromForm() {
     return document.getElementById("runInput").value;
 } 
+
 
 /**
  * Sets the runInput UI element to thisRun
@@ -951,6 +972,20 @@ function initialiseRunSummary() {
     updateLastRun(true,false);
     updateHkType(AwareUtils.hkType); 
 }
+
+
+/**
+* Utility function that initialises the the aware hk time plotting thing
+*/
+function initialiseConfigView() {
+
+    $('#debugContainer').show();
+   
+    updateLastRun(true,false);
+    showConfig();
+
+}
+
 
 function getPlotNameLabelList() {
 

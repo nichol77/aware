@@ -43,7 +43,8 @@ header("Connection: keep-alive");
 </div>
 <div class=middle>
 
-<div id="configView" class="configView" ></div>
+
+<div id="runSummary" class="runSummary" ></div>
 
 <div id="plot-holder-1" class="plot-holder"  >
 <div id="plot-header-1" class="plot-header">
