@@ -56,6 +56,9 @@ class ConfigFile:
     def parseItemString(self,line):
         hashIndex=line.find('#')
         semicolonIndex=line.find(';')
+        if(semicolonIndex==-1):
+            print "Missing semicolon",line
+            semicolonIndex=len(line)
         commentIndex=line.find("//")
         # print commentIndex,line[commentIndex+2:]
         comment=None
@@ -65,23 +68,26 @@ class ConfigFile:
         equalIndex=line.find('=')
         varType=line[hashIndex+1:equalIndex]
         valueStr=line[equalIndex+1:semicolonIndex]
-        #print valueStr
-        numValues=int(varType[1:])
+       # print line,valueStr
         value=None
         if(varType[0]=='I'):
+            numValues=int(varType[1:])
             #Integer
             if(numValues==1):
                 value=int(valueStr,0)
             else:
-                value = [int(x,0) for x in valueStr.split(',')]
-        else:
-            if(varType[0]=='F'):
-                #Float
-                if(numValues==1):
-                    value=float(valueStr)
+                if(valueStr.find(',')>0):
+                    value = [int(x,0) for x in valueStr.split(',')]
                 else:
-                    value = [float(x) for x in valueStr.split(',')]
-               
+                    value = [int(x,0) for x in valueStr.split(' ')]
+        elif(varType[0]=='F'):
+            numValues=int(varType[1:])
+            if(numValues==1):
+                value=float(valueStr)
+            else:
+                value = [float(x) for x in valueStr.split(',')]
+        elif(varType[0]=='S'):
+            value=valueStr
         self.sectionList[-1].addItem(name,varType,value,comment)
 
         
@@ -93,7 +99,13 @@ class ConfigFile:
 #        print lines
         count=0
         comment=None
-        for line in lines:
+        line=None
+        multiline=False
+        for curLine in lines:
+            if(multiline):
+                line+=curLine
+            else:
+                line=curLine
             count+=1
             if(len(line)):
                 if(count==1 and line.find("//")>-1):
@@ -112,7 +124,13 @@ class ConfigFile:
 
                 else:
                     if(str(line[0]).isalpha()):
-                        self.parseItemString(line)
+#                        print line[-1],line
+                        if(line[-1]=='\\'):
+                            line=line[:-2]
+                            multiline=True
+                        else:
+                            multiline=False
+                            self.parseItemString(line)
                     else:
                         if(line.find("//")>-1):
                             comment=line[line.find("//")+2:]
