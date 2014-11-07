@@ -20,7 +20,7 @@ header("Connection: keep-alive");
 <script src="src/awareEvent.js"></script>
 <script type="text/javascript" src="src/fft.js"></script>
 <script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="src/jqueryui/js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>

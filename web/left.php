@@ -84,6 +84,7 @@ echo "<br />";
 
 
 $timeTypearray = array(
+		       "histo" => "Histo",
 		       "simple" => "Simple",
 		       "full" => "Full",
 		       "multiRun" => "Multiple Runs",
