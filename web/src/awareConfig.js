@@ -1,20 +1,48 @@
 //////////////////////////////////////////////////////////////////////////////
 /////                                                                    /////
-/////   awareHk.js                                                       /////
+/////   awareConfig.js                                                   /////
 /////                                                                    /////
-/////   Simple javascript for getting housekeeping data in JSON format   /////
-/////   and plotting using the flot library.                             /////
+/////   Simple javascript for showing config file in JSON format         /////
 /////                                                                    /////
-/////   March 2013, r.nichol@ucl.ac.uk                                   /////
+/////   November 2014, r.nichol@ucl.ac.uk                                   /////
 //////////////////////////////////////////////////////////////////////////////
 
 
+function getList(item, $list) {
+    
+    if($.isArray(item)){
+        $.each(item, function (key, value) {
+		   getList(value, $list);
+	       });
+        return;
+    }
+    
+    if (item) {
+        var $li = $('<li />');
+	if(item.type=="ConfigItem") {
+	    $li.append(item.name + ' = ' + item.value);
+	}
+        else if (item.name) {
+            $li.append($('<a href="#">' + item.name + '</a>'));
+        }
+        if (item.itemList && item.itemList.length) {
+            var $sublist = $("<ul/>");
+            getList(item.itemList, $sublist)
+		$li.append($sublist);
+        }
+        $list.append($li)
+	    }
+}
 
 
 function showConfig() {
-    var configUrl=getHkName(getInstrumentNameFromForm(),getStartRunFromForm(),getConfigFromForm());
+    var configUrl=getConfigName(getInstrumentNameFromForm(),getStartRunFromForm(),getConfigFromForm());
+    
     function handleConfigJsonFile(jsonObject) {
-	$("#debugContainer").append("<p>"+jsonObject+"</p>")
+	var $ul = $('<ul></ul>');
+	getList(jsonObject.sectionList,$ul);
+	$("#plot-content-1").append($ul);
+	//	$("#debugContainer").append("<p>"+jsonObject+"</p>")
     }
 
 

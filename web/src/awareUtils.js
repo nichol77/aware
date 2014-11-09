@@ -979,9 +979,8 @@ function initialiseRunSummary() {
 */
 function initialiseConfigView() {
 
-    $('#debugContainer').show();
-   
-    updateLastRun(true,false);
+    $('#debugContainer').hide();
+    //    $("#debugContainer").append("<p>initialiseConfigView</p>");
     showConfig();
 
 }
