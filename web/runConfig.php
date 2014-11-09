@@ -14,8 +14,8 @@ header("Connection: keep-alive");
 <title>AWARE Config View</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script type="text/javascript" src="src/awareUtils.js"></script>
 <script type="text/javascript" src="src/awareConfig.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="src/jqueryui/js/jquery.min.js"></script>
+<script src="src/jqueryui/js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>

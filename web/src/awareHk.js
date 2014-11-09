@@ -10,6 +10,21 @@
 /////   March 2013, r.nichol@ucl.ac.uk                                   /////
 //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * This function simply updates the plot title and the URL
+ */
+function updatePlotTitleHk() {
+    //Also update the page URL
+    var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
+    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&hkType="+getHkTypeFromForm();
+    var stateObj = { foo: "bar" };
+    history.replaceState(stateObj, "page 2", currentUrl);
+
+    var canContainer = $("#titleContainer"); 
+    canContainer.empty();
+    canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
+}
+
 
 
 /* Globals */
@@ -65,7 +80,7 @@ function drawHkBarChart(canName,varNameKey,colour,dpList) {
 }
 
 
-function drawHk2DChart(canName,varNameKey,xNameKey,colour,dpList) {
+function drawHk2DChart(canName,varNameKey,xNameKey,colour,dpList,legendShowOpt) {
     var dataObject = new Object();
     var dataArrayErrors = [];
     var countData=0;
@@ -122,7 +137,7 @@ function drawHk2DChart(canName,varNameKey,xNameKey,colour,dpList) {
 	    lines: { show: false },
 	    points: { show: true }
 	},
-	legend: {show:false}
+	legend: {show:legendShowOpt}
 
     };
 
@@ -136,6 +151,36 @@ function drawHk2DChart(canName,varNameKey,xNameKey,colour,dpList) {
 
 
 
+function drawHistogram(awareControl) {
+    
+    var simpleHkUrl=getHkName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,getHkTypeFromForm());
+
+    function handleHkJsonFile(jsonObject) {
+	updatePlotTitleHk();
+	var plotId=1;
+	var plotName=getPlotNameFromForm();
+	var plotType=getXaxisOpt(plotName);
+	if(plotType=="time") {
+	    drawHkBarChart(awareControl.timeCanName,plotName,plotId,jsonObject.runsum.varList);
+	}
+	else {
+	    drawHk2DChart(awareControl.timeCanName,plotName,plotType,plotId,jsonObject.runsum.varList,true);
+	}
+	
+    }
+
+
+    
+    ajaxLoadingLog(simpleHkUrl);
+    $.ajax({
+	  url: simpleHkUrl,
+	  type: "GET",
+	  dataType: "json",
+	  success: handleHkJsonFile,
+	  error: handleAjaxError
+    }); 
+}
+
  
 
 function drawRunSummaryHkJSON(awareControl) {
@@ -143,7 +188,7 @@ function drawRunSummaryHkJSON(awareControl) {
     var simpleHkUrl=getHkName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,getHkTypeFromForm());
 
     function handleHkJsonFile(jsonObject) {
-	updatePlotTitle();
+	updatePlotTitleHk();
 	for(var plotId=0;plotId<awareControl.numPlots;plotId++) {
 	    var plotName=awareControl.plotList[plotId].name;
 	    var plotType=getXaxisOpt(plotName);
@@ -151,7 +196,7 @@ function drawRunSummaryHkJSON(awareControl) {
 		drawHkBarChart("runsum-cont-"+plotId,plotName,plotId,jsonObject.runsum.varList);
 	    }
 	    else {
-		drawHk2DChart("runsum-cont-"+plotId,plotName,plotType,plotId,jsonObject.runsum.varList);
+		drawHk2DChart("runsum-cont-"+plotId,plotName,plotType,plotId,jsonObject.runsum.varList,false);
 	    }
 	    
 	}
@@ -166,7 +211,7 @@ function drawRunSummaryHkJSON(awareControl) {
 	  success: handleHkJsonFile,
 	  error: handleAjaxError
     }); 
-  }
+}
 
 
 function makePlotGrid(awareControl) {
@@ -205,18 +250,3 @@ function drawPlots(plotControl) {
     getRunInstrumentDateAndPlot(drawRunSummaryHkJSON,plotControl);
 }
 
-
-/**
- * This function simply updates the plot title and the URL
- */
-function updatePlotTitle() {
-    //Also update the page URL
-    var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
-    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&hkType="+getHkTypeFromForm();
-    var stateObj = { foo: "bar" };
-    history.replaceState(stateObj, "page 2", currentUrl);
-
-    var canContainer = $("#titleContainer"); 
-    canContainer.empty();
-    canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
-}
