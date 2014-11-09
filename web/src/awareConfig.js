@@ -1,11 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////
 /////                                                                    /////
-/////   awareHk.js                                                       /////
+/////   awareConfig.js                                                   /////
 /////                                                                    /////
-/////   Simple javascript for getting housekeeping data in JSON format   /////
-/////   and plotting using the flot library.                             /////
+/////   Simple javascript for showing config file in JSON format         /////
 /////                                                                    /////
-/////   March 2013, r.nichol@ucl.ac.uk                                   /////
+/////   November 2014, r.nichol@ucl.ac.uk                                   /////
 //////////////////////////////////////////////////////////////////////////////
 
 
