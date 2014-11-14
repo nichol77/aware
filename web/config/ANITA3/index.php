@@ -1,4 +1,6 @@
 <? 
+
+
 ob_start("ob_gzhandler"); 
 header("Connection: keep-alive");
 ?>
@@ -24,22 +26,38 @@ header("Connection: keep-alive");
 <DIV class=content>
 <h2>ANITA-3</h2>
 <a href="events.php?instrument=ANITA3">
-<div class="lastBox">
-  Last Event: 
-<span id="lastEvent">
-<?php
+<?php 
+
+
+// Events are considered fresh untill an hour old (green)
+// then they mid aged (orange) then after the old point (red)
+$oldPoint = 86400; //In seconds 86400 is 24 hours
+$midPoint = 3600;  //One hour
+
 $lastEvent='output/ANITA3/lastEvent';
-include $lastEvent ;
-echo "</span>";
-if (file_exists($lastEvent)) {
-    echo " started " . date ("F d Y H:i.", filemtime($lastEvent));
-}
-?>
-</div>
-</a>
+
+  if (file_exists($lastEvent)) {
+    $timeStarted =  " started " . date ("F d Y H:i.", filemtime($lastEvent));
+    $timeSinceLast = floor((time()-filemtime($lastEvent)));
+    $colourString = "class='lastBoxNew'";
+    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
+    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
+    $colourString= "class='lastBoxMiddle'";}
+    else {$colourString = "class='lastBoxNew'";}
+  }
+  else {
+    $colourString = "class='lastBoxOld'";
+  }
 
 
-<?php
+  echo "<div ".$colourString."  >";
+  echo "Last Event:";
+  echo "<span id=\"lastEvent\">";
+  include $lastEvent ;
+  echo "</span>";
+  echo $timeStarted;
+  echo "</div>";
+  echo "</a>";
 
 $hkType_array = parse_ini_file("config/ANITA3/hkTypeList.ini", true);
 
@@ -47,20 +65,32 @@ foreach($hkType_array as $inst => $properties){
   $key=$properties[name];
   $Key= ucfirst($key);
   $value=$properties[title];
- # echo "$key";
-
- echo "<a href=\"awareHk.php?instrument=ANITA3&hkType=$key\">";
- echo "<div class=\"lastBox\">";
- echo "Last $value:";
- echo "<span id=\"lastHk\">";
+  # echo "$key";
   $lastHk="output/ANITA3/last$Key";
-  include $lastHk ;
- echo "</span>";
 if (file_exists($lastHk)) {
-    echo " started " . date ("F d Y H:i.", filemtime($lastHk));
-}
-echo "</div>";
-echo "</a>";
+    $timeStarted =  " started " . date ("F d Y H:i.", filemtime($lastHk));
+    $timeSinceLast = floor((time()-filemtime($lastHk)));
+    $colourString = "class='lastBoxNew'";
+    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
+    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
+    $colourString= "class='lastBoxMiddle'";}
+    else {$colourString = "class='lastBoxNew'";}
+  }
+  else {
+    $colourString = "class='lastBoxOld'";
+  }
+
+
+  echo "<a href=\"awareHk.php?instrument=ANITA3&hkType=$key\">";
+  echo "<div ".$colourString."  >";
+  echo "Last $value:";
+  echo "<span id=\"lastHk\">";
+  include $lastHk ;
+  echo "</span>";
+  echo $timeStarted;
+  #echo " ".$timeSinceLast." ".$oldPoint." ".$midPoint." ";
+  echo "</div>";
+  echo "</a>";
 
 }
 
@@ -74,4 +104,3 @@ echo "</a>";
 </div>
 
 </body></html>
-

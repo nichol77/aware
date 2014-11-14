@@ -227,7 +227,7 @@ void AwareRunDatabase::updateRunList(char *outputDir,char *instrumentName, int r
 }
 
 
-int AwareRunDatabase::updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime)
+int AwareRunDatabase::updateTouchFile(const char *touchFile, Int_t run, UInt_t unixTime)
 {
    //Touch File  
    struct utimbuf ut;

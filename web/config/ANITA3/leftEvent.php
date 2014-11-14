@@ -19,17 +19,6 @@ foreach($defaults_array as $ignore => $properties){
 }
 
 
-$layoutType=$_GET["layoutType"];
-if($_GET["layoutType"] === null) {
-  $layoutType=$realDefaults[layoutType];
- }
-
-
-$waveformType=$_GET["waveformType"];
-if($_GET["waveformType"] === null) {
-  $waveformType=$realDefaults[waveformType];
- }
-
 
 $instrument=$_GET["instrument"];
 if($_GET["instrument"] === null) {
@@ -60,17 +49,7 @@ foreach($inst_array as $inst => $properties){
     echo "<option value=$key label=\"$value\">$value</option>";    
   }         
 }
-echo "</select>";
-echo "<a href=\"#openStationHelp\">?</a>";
-echo "</li>";
-echo "</div>";
 
-echo "<li>";
-///Load the instrument array config file
-echo '<label>Layout:</label> <select id="layoutForm" >';
-echo "</select>";
-echo "<a href=\"#openLayoutHelp\">?</a>";
-echo "</li>";
 
 
 echo "<div id=\"alternateDiv\">";
@@ -79,27 +58,6 @@ echo '<label>Alternate:</label> <select id="alternateForm" >';
 echo "</select>";
 echo "</li>";
 echo "</div>";
-
-
-echo "<li>";
-///Load the instrument array config file
-$waveform_array = parse_ini_file("config/$instrument/waveformList.ini", true);
-echo '<label>Data:</label> <select id="waveformForm" >';
-foreach($waveform_array as $waveform => $properties){
-  $key=$properties[name];
-  $value=$properties[title];
-  $pos = strpos($waveformType,$key);
-  if($pos !== false) {
-  echo "<option value=$key selected=\"selected\" label=\"$value\">$value</option>";
-  }
-  else {
-    echo "<option value=$key label=\"$value\">$value</option>";    
-  }         
-}
-echo "</select>";
-echo "<a href=\"#openWaveformHelp\">?</a>";
-echo "</li>";
-
 
 
 echo "<li>";
@@ -131,36 +89,6 @@ echo "<li>";
 echo "<label>Speed:</label><input id='speedSlide' type='range' value='10' min='1' max='1000'>";
 echo "</li>";
 ?>
-</ul>
-</fieldset>
-<fieldset>
-<legend>x-Axis Options</legend>
-<ul>
-<li>
-<label for = "includeCables">Cable Delays</label>
-<input type = "checkbox"
-  id = "includeCables"
-  value = "includeCables"
-  checked>
-</li>
-<li>
-<label for = "xAutoScale">Auto Scale</label>
-<input type = "checkbox"
-  id = "xAutoScale"
-  value = "xAutoScale"
-  checked >
-</li>
-<li>
-<label>x-min:</label>
-<input type="number" name="xMin" id="xMinInput" value="" disabled>
-</li>
-<li>
-<label>x-max:</label>
-<input type="number" name="xMax" id="xMaxInput" value="" disabled> 
-</li>
-<li>
-<button type="button" id="refreshButton">Refresh</button>
-</li>
 </ul>
 </fieldset>
 </form>
