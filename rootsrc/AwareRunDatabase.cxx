@@ -12,7 +12,9 @@
 #include <map>
 #include <utime.h>      
 #include <sys/stat.h>
-
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
 AwareRunDatabase::AwareRunDatabase(char *outputDir,char *instumnentName) 
    :fOutputDirName(outputDir),fInstrumentName(instumnentName)
 {
@@ -253,4 +255,9 @@ int AwareRunDatabase::updateTouchFile(const char *touchFile, Int_t run, UInt_t u
       return 1;
    }      
    return 0;
+}
+
+void AwareRunDatabase::touchFile(const char *touchFile) {
+  FILE *fd = fopen(touchFile, "rwb");
+  if (fd >= 0) fclose(fd);
 }
