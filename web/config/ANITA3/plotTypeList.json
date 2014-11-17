@@ -3,6 +3,7 @@
 	{"sym":"extTemps","desc":"External Temp.","hkCode":"hk"},
 	{"sym":"voltages","desc":"Voltages","hkCode":"hk"},
 	{"sym":"currents","desc":"Currents","hkCode":"hk"},
+	{"sym":"power","desc":"Powers","hkCode":"hk"},
 	{"sym":"mag","desc":"Magnetometer","hkCode":"hk"},
 	{"sym":"pressures","desc":"Pressures","hkCode":"hk"},
 	{"sym":"accelerometer","desc":"Accelerometer","hkCode":"hk"},
