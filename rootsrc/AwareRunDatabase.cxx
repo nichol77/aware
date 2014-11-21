@@ -258,6 +258,6 @@ int AwareRunDatabase::updateTouchFile(const char *touchFile, Int_t run, UInt_t u
 }
 
 void AwareRunDatabase::touchFile(const char *touchFile) {
-  FILE *fd = fopen(touchFile, "rwb");
-  if (fd >= 0) fclose(fd);
+  std::ofstream Touch(touchFile);
+  if(Touch) Touch.close();
 }
