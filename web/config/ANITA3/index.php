@@ -1,6 +1,4 @@
 <? 
-
-
 ob_start("ob_gzhandler"); 
 header("Connection: keep-alive");
 ?>
