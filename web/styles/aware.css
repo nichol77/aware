@@ -434,10 +434,36 @@ For the AWARE web event display
 	max-height:60%;	
 }
 
+
 .lastBox {
     width:90%;
     border-radius: 15px;
     background-color: greenyellow;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
+.lastBoxNew {
+    width:90%;
+    border-radius: 15px;
+    background-color: greenyellow;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+.lastBoxMiddle {
+    width:90%;
+    border-radius: 15px;
+    background-color: orange;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+.lastBoxOld {
+    width:90%;
+    border-radius: 15px;
+    background-color: red;
     padding: 10px;
     margin: 10px;
     text-align: center;

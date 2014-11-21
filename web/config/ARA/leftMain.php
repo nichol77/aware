@@ -10,6 +10,10 @@
 "leftBar" title="Events" href="events.php"
 accesskey="C">Events</a>
 
+<a class=
+"leftBar" title="Events" href="cmd.php"
+accesskey="C">Command</a>
+
 
 <a class=
 "leftBar" title="Housekeeping" href="awareHk.php"

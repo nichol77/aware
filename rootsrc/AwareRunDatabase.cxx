@@ -12,7 +12,9 @@
 #include <map>
 #include <utime.h>      
 #include <sys/stat.h>
-
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
 AwareRunDatabase::AwareRunDatabase(char *outputDir,char *instumnentName) 
    :fOutputDirName(outputDir),fInstrumentName(instumnentName)
 {
@@ -227,7 +229,7 @@ void AwareRunDatabase::updateRunList(char *outputDir,char *instrumentName, int r
 }
 
 
-int AwareRunDatabase::updateTouchFile(char *touchFile, Int_t run, UInt_t unixTime)
+int AwareRunDatabase::updateTouchFile(const char *touchFile, Int_t run, UInt_t unixTime)
 {
    //Touch File  
    struct utimbuf ut;
@@ -253,4 +255,9 @@ int AwareRunDatabase::updateTouchFile(char *touchFile, Int_t run, UInt_t unixTim
       return 1;
    }      
    return 0;
+}
+
+void AwareRunDatabase::touchFile(const char *touchFile) {
+  std::ofstream Touch(touchFile);
+  if(Touch) Touch.close();
 }

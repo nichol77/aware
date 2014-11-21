@@ -12,6 +12,15 @@ if [ -d "config/$1" ]; then
     rm -f index.php
     ln -sf config/$1/index.php
     echo "Linking to config/$1/index.php"
+    rm -f leftMain.php
+    ln -sf config/$1/leftMain.php
+    echo "Linking to config/$1/leftMain.php"
+    rm -f leftEvent.php
+    ln -sf config/$1/leftEvent.php
+    echo "Linking to config/$1/leftEvent.php"
+    rm -f events.php
+    ln -sf config/$1/events.php
+    echo "Linking to config/$1/events.php"
 
     rm -f config/defaultValues.ini
     rm -f config/instrumentList.ini
