@@ -1,7 +1,6 @@
 <h2 class="navigation">Web Monitoring</h2>
 <p class="navigation">
 
-<script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
 <script type="application/javascript">
 function checkFiles() {
 	$.ajax({ 
@@ -28,7 +27,7 @@ function checkFiles() {
 $(document).ready(function () {var timer = setInterval(checkFiles,10000);});
 </script>
 
-<div id="statusBox" style="color:red;">Hullo</div>
+<div id="statusBox" style="color:red;"></div>
 <a class="leftBar" title=
 "Main Page" href="." accesskey=
 "C">Main</a>
