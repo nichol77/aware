@@ -37,15 +37,23 @@ $(document).ready(function () {var timer = setInterval(checkFiles,10000);});
 "leftBar" title="Events" href="events.php"
 accesskey="C">Events</a>
 
-<a class=
-"leftBar" title="Events" href="cmd.php"
-accesskey="C">Command</a>
-
 
 <a class=
 "leftBar" title="Housekeeping" href="awareHk.php"
 accesskey="C">Housekeeping</a>
 
+
+<a class=
+"leftBar" title="Command" href="cmd.php"
+accesskey="C">Command</a>
+
+<a class=
+"leftBar" title="Config" href="runConfig.php"
+accesskey="C">Config</a>
+
+<a class=
+"leftBar" title="Telemetry" href="telem.php"
+accesskey="C">Telemetry</a>
 
 <a class=
 "leftBar" title="Summary" href="runSum.php"

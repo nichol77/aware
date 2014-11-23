@@ -9,18 +9,12 @@ fi
 
 if [ -d "config/$1" ]; then
     echo "Found config/$1"
-    rm -f index.php
-    ln -sf config/$1/index.php
-    echo "Linking to config/$1/index.php"
-    rm -f leftMain.php
-    ln -sf config/$1/leftMain.php
-    echo "Linking to config/$1/leftMain.php"
-    rm -f leftEvent.php
-    ln -sf config/$1/leftEvent.php
-    echo "Linking to config/$1/leftEvent.php"
-    rm -f events.php
-    ln -sf config/$1/events.php
-    echo "Linking to config/$1/events.php"
+
+    for file in config/$1/*.php; do
+	rm ${file##*/} 
+	ln -sf $file
+	echo "Linking $file"
+    done
 
     rm -f config/defaultValues.ini
     rm -f config/instrumentList.ini
