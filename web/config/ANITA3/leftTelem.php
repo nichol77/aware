@@ -52,13 +52,13 @@ foreach($telemType_array as $inst => $properties){
 <fieldset>
 <div id="telemRunDiv">
 <label>Telem Run:</label>
-<input type="number" name="telemRun" id="telemRun" value="" min="0" max="100000" step="1" >
+<select id="telemRunForm"></select>
 </div>
 </fieldset>
 <fieldset>
 <div id="telemFileDiv">
 <label>Telem File:</label>
-<input type="number" name="telemRun" id="telemRun" value="" min="0" max="100000" step="1" >
+<select id="telemFileForm"></select>
 </div>
 </fieldset>
 <div id="fullMaxDiv">

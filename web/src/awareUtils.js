@@ -28,11 +28,18 @@ function timeConverter(UNIX_timestamp){
   var date = a.getDate();
   var hour = a.getHours();
   var min = a.getMinutes();
-h  var sec = a.getSeconds();
+  var sec = a.getSeconds();
   var time = date + ',' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
   return time;
 }
 
+function baseName(str)
+{
+    var base = new String(str).substring(str.lastIndexOf('/') + 1); 
+    if(base.lastIndexOf(".") != -1)       
+        base = base.substring(0, base.lastIndexOf("."));
+    return base;
+}
 
 /**
 * Utility function that capitalises the first letter of the string
@@ -317,6 +324,22 @@ function getHkTypeFromForm() {
  */
 function getTelemTypeFromForm() {
     return document.getElementById("telemTypeForm").value;
+}
+
+/**
+ * Gets the keyword for the selected value in the telemRunForm UI element
+ * @returns A string corresponding to the telem run
+ */
+function getTelemRunFromForm() {
+    return document.getElementById("telemRunForm").value;
+}
+
+/**
+ * Gets the keyword for the selected value in the telemRunForm UI element
+ * @returns A string corresponding to the telem run
+ */
+function getTelemFileFromForm() {
+    return document.getElementById("telemFileForm").value;
 }
 
 
@@ -939,7 +962,7 @@ function initialiseAwareHkTime() {
 */
 function initialiseAwareTelem() {
 
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
 
     //First initialise the plot-holder div
     initialisePlotHolder();
@@ -948,9 +971,9 @@ function initialiseAwareTelem() {
 
     updateTelemType(getTelemTypeFromForm());
     
-    
+}    
 
-}
+
 
 
 /**
@@ -1061,10 +1084,10 @@ function getPlotNameLabelList() {
 
 function initialiseTelemMenus() {
       
-    $('#runForm').change(function() {
+    $('#telemRunForm').change(function() {
         if($('#debugContainer').is(":visible"))
 	    $('#debugContainer').append("<p>runForm... drawPlots</p>");
-	drawPlots(AwareUtils);
+	updateTelemFile();
     });
     
     $('#telemTypeForm').change(function(e) {
@@ -1077,16 +1100,58 @@ function initialiseTelemMenus() {
 
 
 function updateTelemType(thisTelemType) {
-    AwareUtils.telemType=thisTelemType;	
-    
+    AwareUtils.telemType=thisTelemType;
+    $('#telemRunForm').empty();
     function handleTelemRunList(telemRunArray) {
-	$('#debugContainer').append("<p>"+telemRunArray+"</p>");
+	var runnum=0;
+	for(var i=0;i<telemRunArray.length;i++) {
+	    runnum=baseName(telemRunArray[i].name);
+	    //	    $('#debugContainer').append("<p>"+runnum+"</p>");
+	    $('<option/>').val(runnum).html(runnum).appendTo('#telemRunForm');
+	}
+	$('#telemRunForm').val(runnum);
+	updateTelemFile();
     }
-    
+ 
+    telemRunUrl="telemRunList.php?telemType="+thisTelemType;
+
+
+    ajaxLoadingLog(telemRunUrl);
     $.ajax({
-	    url: "config/"+getInstrumentNameFromForm()+"/telemRunList.php?telemType="+thisTelemType,
+	    url: telemRunUrl,
 	type: "GET",
 	dataType: "json", 
-	success: handleTelemRunList
+		success: handleTelemRunList,
+		error: handleAjaxError
     });      
- }
+}
+
+
+
+function updateTelemFile() {
+    thisTelemType=getTelemTypeFromForm();
+    thisTelemRun=getTelemRunFromForm();
+    $('#telemFileForm').empty();
+    function handleTelemFileList(telemFileArray) {
+	var filenum=0;
+	for(var i=0;i<telemFileArray.length;i++) {
+	    filenum=baseName(telemFileArray[i].name);
+	    //	    $('#debugContainer').append("<p>"+filenum+"</p>");
+	    $('<option/>').val(filenum).html(filenum).appendTo('#telemFileForm');
+	}
+	$('#telemFileForm').val(filenum);
+
+    }
+ 
+    telemFileUrl="telemFileList.php?telemType="+thisTelemType+"&telemRun="+thisTelemRun;
+
+
+    ajaxLoadingLog(telemFileUrl);
+    $.ajax({
+	    url: telemFileUrl,
+	type: "GET",
+	dataType: "json", 
+		success: handleTelemFileList,
+		error: handleAjaxError
+    });      
+}
