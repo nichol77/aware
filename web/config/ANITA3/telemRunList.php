@@ -22,6 +22,7 @@ class mFile
     public $name;
 }
 
+
 $telemDir=ucfirst($telemType);
 
 foreach (glob("output/ANITA3/ghd/$telemDir/*") as $curFilename)

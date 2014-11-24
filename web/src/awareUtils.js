@@ -28,7 +28,7 @@ function timeConverter(UNIX_timestamp){
   var date = a.getDate();
   var hour = a.getHours();
   var min = a.getMinutes();
-  var sec = a.getSeconds();
+h  var sec = a.getSeconds();
   var time = date + ',' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
   return time;
 }
@@ -309,6 +309,14 @@ function getYaxisOpt(plotName) {
  */
 function getHkTypeFromForm() {
     return document.getElementById("hkTypeForm").value;
+}
+
+/**
+ * Gets the keyword for the selected value in the hkTypeForm UI element
+ * @returns A string corresponding to the hk type keyword
+ */
+function getTelemTypeFromForm() {
+    return document.getElementById("telemTypeForm").value;
 }
 
 
@@ -927,6 +935,25 @@ function initialiseAwareHkTime() {
 
 
 /**
+* Utility function that initialises the the aware hk time plotting thing
+*/
+function initialiseAwareTelem() {
+
+    $('#debugContainer').hide();
+
+    //First initialise the plot-holder div
+    initialisePlotHolder();
+
+    initialiseTelemMenus();
+
+    updateTelemType(getTelemTypeFromForm());
+    
+    
+
+}
+
+
+/**
  * This function gets the run number and instrument name from the UI elements. In addition the date code is obtained from the run list file
  */
 function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
@@ -1029,3 +1056,37 @@ function getPlotNameLabelList() {
 
     return plotList;
 }
+
+
+
+function initialiseTelemMenus() {
+      
+    $('#runForm').change(function() {
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>runForm... drawPlots</p>");
+	drawPlots(AwareUtils);
+    });
+    
+    $('#telemTypeForm').change(function(e) {
+	var selectedValue = $(this).val();
+	e.stopPropagation();
+	updateTelemType(selectedValue);	
+    });
+
+}
+
+
+function updateTelemType(thisTelemType) {
+    AwareUtils.telemType=thisTelemType;	
+    
+    function handleTelemRunList(telemRunArray) {
+	$('#debugContainer').append("<p>"+telemRunArray+"</p>");
+    }
+    
+    $.ajax({
+	    url: "config/"+getInstrumentNameFromForm()+"/telemRunList.php?telemType="+thisTelemType,
+	type: "GET",
+	dataType: "json", 
+	success: handleTelemRunList
+    });      
+ }
