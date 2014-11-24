@@ -19,15 +19,15 @@ if($_GET["telemType"] === null) {
 
 class mFile
 {
-    public $name, $time, $size;
+    public $name;
 }
 
-foreach (glob("output/ANITA3/ghd/$telemType/*") as $curFilename)
+$telemDir=ucfirst($telemType);
+
+foreach (glob("output/ANITA3/ghd/$telemDir/*") as $curFilename)
 {
     $curFileObj = new mFile;
     $curFileObj->name = $curFilename;
-    $curFileObj->time = date("d/m/Y - H:i", filectime($curFilename));
-    $curFileObj->size = filesize($curFilename);
     $fileArray[] = $curFileObj;
 }
 printf("%s", json_encode($fileArray));
