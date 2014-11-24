@@ -22,6 +22,8 @@ class mFile
     public $name, $time, $size;
 }
 
+
+
 foreach (glob("output/ANITA3/ghd/$telemType/*") as $curFilename)
 {
     $curFileObj = new mFile;
