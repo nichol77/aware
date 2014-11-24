@@ -25,10 +25,13 @@ foreach($inst_array as $inst => $properties){
     echo "<option value=$key label=\"$value\">$value</option>";    
   }         
 }
-
+echo "</select>";
+echo "</fieldset>";
+echo "<fieldset>";
 //Load the telemType array config file
-$telemType_array = parse_ini_file("config/$instrument/telemTypeList.ini", true);
-echo 'Hk. Type:<br> <select id="telemTypeForm">';
+echo "<label>Telem Type:</label>";
+$telemType_array = parse_ini_file("config/ANITA3/telemTypeList.ini", true);
+echo '<select id="telemTypeForm">';
 foreach($telemType_array as $inst => $properties){
   $key=$properties[name];
   $value=$properties[title];
@@ -44,6 +47,8 @@ foreach($telemType_array as $inst => $properties){
 
 
 ?>
+</select>
+</fieldset>
 <fieldset>
 <div id="telemRunDiv">
 <label>Telem Run:</label>
