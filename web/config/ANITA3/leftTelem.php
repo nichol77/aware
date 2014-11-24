@@ -40,6 +40,9 @@ foreach($telemType_array as $inst => $properties){
     echo "<option value=$key label=\"$value\">$value</option>";    
   }    
 }
+
+
+
 ?>
 <fieldset>
 <div id="telemRunDiv">
