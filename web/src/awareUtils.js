@@ -133,6 +133,45 @@ function getConfigName(instrument, run, configBase) {
 * Utility function that returns the name of the hk time JSON file
 * @returns {String}
 */
+function getTelemName(instrument, telemType,telemRun,telemFile ) {    
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+telemRun+"/"+telemFile+"/ghdSummary.json.gz"
+    return name;
+}
+
+/**
+* Utility function that returns the name of the hk time JSON file
+* @returns {String}
+*/
+function getTelemTimeName(instrument, telemType,telemRun,telemFile ) {    
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+telemRun+"/"+telemFile+"/ghdTime.json.gz"
+    return name;
+}
+
+
+/**
+* Utility function that returns the name of the full hk time JSON file
+* @returns {String}
+*/
+function getFullTelemTimeName(instrument,telemType,telemRun,telemFile) {
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+telemRun+"/"+telemFile+"/full/ghd_time.json.gz"
+
+    return name;
+}
+
+/**
+* Utility function that returns the name of the full hk time JSON file
+* @returns {String}
+*/
+function getFullTelemHkName(instrument,telemType,telemRun,telemFile,hkType) {
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+telemRun+"/"+telemFile+"/full/ghd_"+hkType+".json.gz"
+    return name;
+}
+
+
+/**
+* Utility function that returns the name of the hk time JSON file
+* @returns {String}
+*/
 function getHkTimeName(instrument, run, year, datecode,hkType) {    
     var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/"+hkType+"Time.json.gz"; 
     return name;
@@ -1089,6 +1128,12 @@ function initialiseTelemMenus() {
 	    $('#debugContainer').append("<p>runForm... drawPlots</p>");
 	updateTelemFile();
     });
+
+    $('#telemFileForm').change(function() {
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>fileForm... drawPlots</p>");
+	drawPlots(AwareUtils);
+    });
     
     $('#telemTypeForm').change(function(e) {
 	var selectedValue = $(this).val();
@@ -1129,8 +1174,10 @@ function updateTelemType(thisTelemType) {
 
 
 function updateTelemFile() {
+
     thisTelemType=getTelemTypeFromForm();
     thisTelemRun=getTelemRunFromForm();
+    AwareUtils.telemType=thisTelemType;
     $('#telemFileForm').empty();
     function handleTelemFileList(telemFileArray) {
 	var filenum=0;
@@ -1140,6 +1187,7 @@ function updateTelemFile() {
 	    $('<option/>').val(filenum).html(filenum).appendTo('#telemFileForm');
 	}
 	$('#telemFileForm').val(filenum);
+	drawPlots(AwareUtils);
 
     }
  

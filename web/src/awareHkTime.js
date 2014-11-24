@@ -1022,20 +1022,11 @@ function drawPlots(plotControl) {
     awareControl.timeArray=[];
     awareControl.timeArray.length=0;
 
-
-    //    var plotName=awareControl.plotList[plotId].name;
-    //    var plotType=getXaxisOpt(plotName);
-    //    if(plotType=="time") {
     if(awareControl.timeType.indexOf("simple")>=0) drawSimpleHkTimePlot(awareControl);
     else if(awareControl.timeType.indexOf("full")>=0) drawFullHkTimePlot(awareControl);
     else if(awareControl.timeType.indexOf("multiRun")>=0) doMultiRunPlot(awareControl);
     else if(awareControl.timeType.indexOf("timeRange")>=0) doMultiRunPlot(awareControl);
     else if(awareControl.timeType.indexOf("histo")>=0) drawHistogram(awareControl);
-
-	//    }
-	//    else {
-	//	$('#debugContainer').append("<p>Got non time plot</p>");
-	//    }
 
 	    
 }
