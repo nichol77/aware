@@ -1087,27 +1087,24 @@ function doMultiFilePlot(awareControl) {
 
     var countFilesNeeded=0;
     for(var thisFile=startFile;thisFile<=endFile;thisFile++) {	
-	
 	var telemFileName=getTelemTimeName(instrumentName,awareControl.telemType,getTelemRunFromForm(),thisFile);
-		    countFilesNeeded++;		
+	countFilesNeeded++;		
 	
-
-		    ajaxLoadingLog(telemFileName);
-		    $.ajax({
-			    url: telemFileName,
-				type: "GET",
-				dataType: "json",
-				success: addTelemTimeFileToArrays,
-				error: errorTelemTimeFile
-				});
-		    //Get simple telem files
-		    //Add to some arrays
-		    //Fill variables for plot   		    
-		}
-	    }
-	}
+	
+	ajaxLoadingLog(telemFileName);
+	$.ajax({
+	    url: telemFileName,
+	    type: "GET",
+	    dataType: "json",
+	    success: addTelemTimeFileToArrays,
+	    error: errorTelemTimeFile
+	});
+	//Get simple telem files
+	//Add to some arrays
+	//Fill variables for plot   		    
     }
-
+    
+    
     var countFilesGot=0;
     function errorTelemTimeFile() {
 	countFilesGot++;
@@ -1115,7 +1112,7 @@ function doMultiFilePlot(awareControl) {
 	    actuallyDrawTheStuff(awareControl);
 	}
     }
-
+    
     function addTelemTimeFileToArrays(jsonObject) {
 	countFilesGot++;
 	if(countFilesGot==1) updatePlotTitle(jsonObject,awareControl);
@@ -1127,30 +1124,21 @@ function doMultiFilePlot(awareControl) {
 	    var timePoint=timeList[index];
 	    awareControl.timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
 	    tempTimeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
-	    //	    canContainer.append("<p>"+awareControl.timeArray[awareControl.timeArray.length-1]+"</p>")
 	}
-
-	//	canContainer.append("<p>"+countFilesGot+"</p>");
-	//	canContainer.append("<p>"+awareControl.timeArray.length+" "+tempTimeArray.length+"</p>");
 
 	
 	for(var varIndex=0;varIndex<varList.length;varIndex++) {
 	    var varPoint=varList[varIndex];
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
-	    //	document.write(varName+"<br>");
 	    if(varName.indexOf(varNameKey)>=0) {
 		if(varName in awareControl.datasets) {
-		    //		canContainer.append("<p>Got"+varName+"</p>");
 		}
 		else {
-		    //	    document.write(varNameKey);
 		    ///Got a variable
 		    var dataSetsIndex=$.inArray(varName, awareControl.datasets);
-		    //		canContainer.append("<p>Not got"+varName+"</p>");		    
-
+		    
 		    if(dataSetsIndex<0) {
-			
 			var dataList = new Object();
 			dataList.label=varLabel;
 			dataList.data= new Array();
@@ -1161,11 +1149,7 @@ function doMultiFilePlot(awareControl) {
 			if("voidValue" in varPoint) {
 			    dataList.voidFlag=true;
 			    dataList.voidValue=varPoint.voidValue;
-			}	    
-			
-
-			
-			
+			}			
 			awareControl.datasets[varName]=dataList;
 		    }
 		}
@@ -1173,7 +1157,7 @@ function doMultiFilePlot(awareControl) {
 		var varTimeList=varPoint.timeList;	    
 		for(var index=0;index<varTimeList.length;index++) {
 		    var dataPoint=varTimeList[index];
-
+		    
 		    if(awareControl.datasets[varName].voidFlag)
 			if(Math.abs(dataPoint.mean-awareControl.datasets[varName].voidValue)<1e-3) continue;
 
@@ -1184,13 +1168,11 @@ function doMultiFilePlot(awareControl) {
 		    awareControl.datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev 
 		}
 	    }
-	}
-	
+	}	
 	if(countFilesNeeded==countFilesGot) {
 	    actuallyDrawTheStuff(awareControl);
 	}
     }
-
 }
 
 
