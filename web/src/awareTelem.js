@@ -26,13 +26,13 @@
 function updatePlotTitleTelem() {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
-    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&telemType="+getTelemTypeFromForm();
+    currentUrl=currentUrl;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var canContainer = $("#titleContainer"); 
     canContainer.empty();
-    canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
+    canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run </h1>");
 }
 
 
@@ -40,6 +40,8 @@ function updatePlotTitleTelem() {
 /* Globals */
 
 function drawTelemBarChart(canName,varNameKey,colour,dpList) {
+
+    $('#debugContainer').append("<p>drawTelemBarChart: "+canName+"</p>");
     var dataArray = [];
     var dataArrayErrors = [];
     var countData=0;
@@ -163,13 +165,15 @@ function drawTelem2DChart(canName,varNameKey,xNameKey,colour,dpList,legendShowOp
 
 function drawHistogram(awareControl) {
     
-    var simpleTelemUrl=getTelemName(getInstrumentNameFromForm(),telemType,getTelemRunFromForm(),getTelemFileFromForm());
+    var simpleTelemUrl=getTelemName(getInstrumentNameFromForm(),awareControl.telemType,getTelemRunFromForm(),getTelemFileFromForm());
 
+    $('#debugContainer').append("<p>simpleTelemUrl: "+simpleTelemUrl+"</p>");
     function handleTelemJsonFile(jsonObject) {
 	updatePlotTitleTelem();
 	var plotId=1;
 	var plotName=getPlotNameFromForm();
 	var plotType=getXaxisOpt(plotName);
+	
 	if(plotType=="time") {
 	    drawTelemBarChart(awareControl.timeCanName,plotName,plotId,jsonObject.runsum.varList);
 	}
@@ -234,7 +238,7 @@ function makePlotGrid(awareControl) {
 	var headerName="runsum-header-"+plotId;
 	var contName="runsum-cont-"+plotId;
 	var plotLabel=awareControl.plotList[plotId].label;
-	var plotUrl="awareTelem.php?run="+getStartRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&telemType="+getTelemTypeFromForm()+"&plot="+awareControl.plotList[plotId].name;
+	var plotUrl="awareTelem.php";
 	plotDiv.append("<a href=\""+plotUrl+"\"><div class=\"runsum-holder\" id=\""+holderName+"\" style=\"float:left;height:"+awareControl.height+"%; width:"+awareControl.width+"%;\"> <div class=\"runsum-header\" id=\""+headerName+"\" ><h4 style=\"padding-top:0px\">"+plotLabel+"</h4></div><div class=\"runsum-cont\" id=\""+contName+"\"></div></div></a>");
     }
 
@@ -333,25 +337,6 @@ function getYMax() {
     return Number(document.getElementById("yMaxInput").value);
 }
     
-
-/**
- * Gets the run number from the endRunInput UI element
- * @returns The run number from the endRunInput UI element
- */
-function getEndRunFromForm() {
-    return document.getElementById("endRunInput").value;
-} 
-
-
-/**
- * Sets the endRunInput UI element to thisRun
- * @params thisRun is the new end run number 
- */
-function setEndRunOnForm(thisRun) {
-    document.getElementById("endRunInput").value=thisRun;
-
-} 
-
 
 /**
  * Gets the desired number of time points from the maxTimePointsForm UI element
@@ -928,13 +913,13 @@ function drawSimpleTelemTimePlot(awareControl) {
 function updatePlotTitle(jsonObject,awareControl) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
-    currentUrl=currentUrl+"?run="+getStartRunFromForm()+"&endrun="+getEndRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&plot="+getPlotNameFromForm()+"&timeType="+awareControl.timeType+"&telemType="+awareControl.telemType;
+    currentUrl=currentUrl;
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var canContainer = $("#titleContainer"); 
     canContainer.empty();
-    canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
+    canContainer.append("<h1>"+getInstrumentNameFromForm()+"</h1>");
     var plotHeader = $("#plot-header-"+awareControl.plotId+" h3");
     plotHeader.text(getPlotLabelFromForm() +"-- Start Time "+jsonObject.timeSum.startTime);
 }
@@ -944,7 +929,7 @@ function updatePlotTitle(jsonObject,awareControl) {
  * This function actually draws the simple telem time plot
  */
 function simpleTelemPlotDrawer(awareControl) {
-    var simpleTelemTimeUrl=getTelemTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.telemType);
+    var simpleTelemTimeUrl=getTelemTimeName(getInstrumentNameFromForm(),awareControl.telemType,getTelemRunFromForm(),getTelemFileFromForm());
 
     function handleTelemTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -985,7 +970,7 @@ function drawFullTelemTimePlot(awareControl) {
  * This function actually draws the full telem time plot
  */
 function fullTelemPlotDrawer(awareControl) {
-    var simpleTelemTimeUrl=getTelemTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.telemType);
+    var simpleTelemTimeUrl=getTelemTimeName(getInstrumentNameFromForm(),awareControl.telemType,getTelemRunFromForm(),getTelemFileFromForm());
 
     function handleTelemTimeJsonFile(jsonObject) {
 	//Preparation by emptying things and writing labels
@@ -1016,7 +1001,7 @@ function fullTelemPlotDrawer(awareControl) {
  * This function fetches the full telem time JSON files and then does the plotting
  */
 function fetchFullTelemTime(varNameKey,awareControl) {
-    var fullTelemTimeUrl=getFullTelemTimeName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.telemType);
+    var fullTelemTimeUrl=getFullTelemTimeName(getInstrumentNameFromForm(),awareControl.telemType,getTelemRunFromForm(),getTelemFileFromForm());
 
     var countFilesNeeded=0;
     var countFilesGot=0;
@@ -1032,7 +1017,7 @@ function fetchFullTelemTime(varNameKey,awareControl) {
 	    var varName = new String(varPoint.name);
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
-		var fullTelemUrl=getFullTelemName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,varName,awareControl.telemType);
+		var fullTelemUrl=getFullTelemName(getInstrumentNameFromForm(),awareControl.telemType,getTelemRunFromForm(),getTelemFileFromForm(),varName);
 		countFilesNeeded++;
 
 		//The jquery ajax call to fetch the full telem variable files
@@ -1087,29 +1072,23 @@ function fetchFullTelemTime(varNameKey,awareControl) {
 /**
  * This function is the multi run plotting master function
  */
-function doMultiRunPlot(awareControl) {
+function doMultiFilePlot(awareControl) {
     
     var plotName=getPlotNameFromForm();    
     var instrumentName=getInstrumentNameFromForm();
-    var startRun=getStartRunFromForm();
-    var endRun=getEndRunFromForm();
-    if(endRun<=startRun) {
-	return drawSimpleTelemTimePlot(awareControl);	
+    var startFile=getTelemFileFromForm();
+    var endFile=getTelemEndFileFromForm();
+    if(endFile<=startFile) {
+	return drawHisotgram(awareControl);	
     }
 
 
     var lastRunListFile;
 
     var countFilesNeeded=0;
-    for(var thisRun=startRun;thisRun<=endRun;thisRun++) {	
-	var runListFile=getRunListName(instrumentName,thisRun);
+    for(var thisFile=startFile;thisFile<=endFile;thisFile++) {	
 	
-	function handleRunList(jsonObject) {
-	    for(var i=0;i<jsonObject.runList.length;i++) {
-		if(jsonObject.runList[i][0]>=startRun && jsonObject.runList[i][0]<=endRun) {
-		    awareControl.year=jsonObject.runList[i][1];
-		    awareControl.dateCode=jsonObject.runList[i][2]; ///RJN need to zero pad the string  	    
-		    var telemFileName=getTelemTimeName(instrumentName,jsonObject.runList[i][0],awareControl.year,awareControl.dateCode,awareControl.telemType);
+	var telemFileName=getTelemTimeName(instrumentName,awareControl.telemType,getTelemRunFromForm(),thisFile);
 		    countFilesNeeded++;		
 	
 
@@ -1127,18 +1106,6 @@ function doMultiRunPlot(awareControl) {
 		}
 	    }
 	}
-	if(runListFile!=lastRunListFile) {
-	    //	    canContainer.append("<p>"+runListFile+"</p>");
-
-	    ajaxLoadingLog(runListFile);
-	    $.ajax({
-		    url: runListFile,
-			type: "GET",
-			dataType: "json",
-			success: handleRunList
-			});
-	}
-	lastRunListFile=runListFile;
     }
 
     var countFilesGot=0;
@@ -1233,9 +1200,7 @@ function doMultiRunPlot(awareControl) {
 function drawPlots(plotControl) {   
 
     var awareControl = plotControl;
-    awareControl.year=2013;
-    awareControl.datecode=123;
-
+    awareControl.timeType=document.getElementById("timeForm").value;
     var timePlotCan=$("#"+awareControl.timeCanName);
     var projPlotCan=$("#"+awareControl.projCanName);
     var choiceContainer =$("#choices-"+awareControl.plotId);
@@ -1253,10 +1218,11 @@ function drawPlots(plotControl) {
     awareControl.timeArray=[];
     awareControl.timeArray.length=0;
 
-    if(awareControl.timeType.indexOf("simple")>=0) drawSimpleTelemTimePlot(awareControl);
-    else if(awareControl.timeType.indexOf("full")>=0) drawFullTelemTimePlot(awareControl);
-    else if(awareControl.timeType.indexOf("multiRun")>=0) doMultiRunPlot(awareControl);
-    else if(awareControl.timeType.indexOf("timeRange")>=0) doMultiRunPlot(awareControl);
+
+
+    $('#debugContainer').append("<p>drawPlots "+awareControl.timeType+"</p>");
+
+    if(awareControl.timeType.indexOf("multiFile")>=0) doMultiFilePlot(awareControl);
     else if(awareControl.timeType.indexOf("histo")>=0) drawHistogram(awareControl);
 
 	    

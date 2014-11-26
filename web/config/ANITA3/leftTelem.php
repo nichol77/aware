@@ -43,24 +43,51 @@ foreach($telemType_array as $inst => $properties){
     echo "<option value=$key label=\"$value\">$value</option>";    
   }    
 }
-
-
-
+echo "</select>";
+echo "</fieldset>";
+echo "<fieldset>";
+echo "<label>Plot:</label><select id=\"plotForm\"></select>";
+echo "</fieldset>";
+echo "<fieldset>";
+//Load the timeType array config file
+$timeType_array = parse_ini_file("config/ANITA3/telemTimeTypeList.ini", true);
+echo 'Type:<br> <select id="timeForm">';
+foreach($timeType_array as $inst => $properties){
+  $key=$properties[name];
+  $value=$properties[title];
+  $pos = strpos($timeType,$key);  
+  if($pos !== false) {
+    echo "<option value=$key selected=\"selected\" label=\"$value\">$value</option>";
+  }
+  else {
+    echo "<option value=$key label=\"$value\">$value</option>";    
+  }    
+}
+echo "</select>";
+echo "</fieldset>";
 ?>
-</select>
-</fieldset>
+
 <fieldset>
 <div id="telemRunDiv">
 <label>Telem Run:</label>
 <select id="telemRunForm"></select>
 </div>
 </fieldset>
+
 <fieldset>
 <div id="telemFileDiv">
 <label>Telem File:</label>
 <select id="telemFileForm"></select>
 </div>
 </fieldset>
+
+<fieldset>
+<div id="telemEndFileDiv">
+<label>Telem End File:</label>
+<select id="telemEndFileForm"></select>
+</div>
+</fieldset>
+
 <div id="fullMaxDiv">
 <fieldset>
 <legend>Plot Points</legend>

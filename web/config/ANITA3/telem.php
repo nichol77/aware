@@ -22,6 +22,7 @@ header("Connection: keep-alive");
 <script type="text/javascript" src="src/flot/jquery.flot.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.resize.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.symbol.js.gz"></script>
@@ -41,17 +42,37 @@ header("Connection: keep-alive");
 <body>
 
 
-<DIV class="heading">
-<h1>AWARE Telemetry</h1>
-</DIV>
-<DIV class=middle>
-<DIV class=content>
-<div id="titleContainer"></div>
-<div id="divEvent" style="width:100%; height:85%; padding: 0px; float : left;"></div>
+<div class="heading">
+<div id="titleContainer">
+<h1>AWARE Housekeeping</h1>
+</div>
+</div>
+<div class=middle><div id="plot-holder-1" class="plot-holder"  >
+
+<div id="plot-header-1" class="plot-header">
+<h3>Time Plot</h3>
+</div>
+<div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; ">
+<div id="plot-preamble" class="plot-preamble">
+<span style="float:left;" id="plot-text-1" class="plot-text"></span>
+<form>
+<div id="layoutRadio" style="float:right; padding-right:10px;">
+    <input type="radio" value="both" id="layoutBoth" name="layoutRadio" checked="checked" /><label for="layoutBoth">Both</label>
+    <input type="radio" value="time" id="layoutTime" name="layoutRadio"  /><label for="layoutTime">Time</label>
+    <input type="radio" value="projection" id="layoutProjection" name="layoutRadio" /><label for="layoutProjection">Projection</label>
+  </div>
+</form>
+</div>
+<div id="divTime-1" style="width:70%; height:70%; padding: 0px; float : left; "></div>
+<div id="divProjection-1" style="width:30%; height:70%; padding: 0px; float : left;"></div>
+<div id="divLabel-1" style="width:0%; height:0%; padding: 0px; float : right;"></div>
+<div id="divChoices-1" style="width:80%; height:10%; padding: 0px; float : left;">
+  <p class="choiceList" id="choices-1" style=""></p></div>
+</div>
+</div>
 <div id="debugContainer"></div>
 
-
-</div></div>
+</div>
 
 <div class="leftBar" id="leftbar">
 <?php

@@ -374,11 +374,19 @@ function getTelemRunFromForm() {
 }
 
 /**
- * Gets the keyword for the selected value in the telemRunForm UI element
+ * Gets the keyword for the selected value in the telemFileForm UI element
  * @returns A string corresponding to the telem run
  */
 function getTelemFileFromForm() {
     return document.getElementById("telemFileForm").value;
+}
+
+/**
+ * Gets the keyword for the selected value in the telemEndFileForm UI element
+ * @returns A string corresponding to the telem run
+ */
+function getTelemEndFileFromForm() {
+    return document.getElementById("telemEndFileForm").value;
 }
 
 
@@ -1003,6 +1011,9 @@ function initialiseAwareTelem() {
 
     $('#debugContainer').show();
 
+    AwareUtils.timeCanName='divTime-1';
+    AwareUtils.projCanName='divProjection-1';
+    AwareUtils.plotId=1;
     //First initialise the plot-holder div
     initialisePlotHolder();
 
@@ -1140,6 +1151,18 @@ function initialiseTelemMenus() {
 	e.stopPropagation();
 	updateTelemType(selectedValue);	
     });
+    
+    $('#timeForm').change(function(e) {
+	var selectedValue = $(this).val();
+	e.stopPropagation();
+	drawPlots(AwareUtils);
+    });
+
+    $('#plotForm').change(function(e) {
+	var selectedValue = $(this).val();
+	e.stopPropagation();
+	drawPlots(AwareUtils);
+    });
 
 }
 
@@ -1168,7 +1191,25 @@ function updateTelemType(thisTelemType) {
 	dataType: "json", 
 		success: handleTelemRunList,
 		error: handleAjaxError
+    });    
+
+	
+    
+    function updatePlotList(plotFormArray) {
+	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == 'all'; });	   
+	fillPlotFormAndPlotTypeList(tempArray);
+
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>updatePlotList</p>");	   
+    }
+    
+    $.ajax({
+	    url: "config/"+getInstrumentNameFromForm()+"/telemTypeList.json",
+	type: "GET",
+	dataType: "json", 
+	success:updatePlotList
     });      
+  
 }
 
 
@@ -1185,8 +1226,10 @@ function updateTelemFile() {
 	    filenum=baseName(telemFileArray[i].name);
 	    //	    $('#debugContainer').append("<p>"+filenum+"</p>");
 	    $('<option/>').val(filenum).html(filenum).appendTo('#telemFileForm');
+	    $('<option/>').val(filenum).html(filenum).appendTo('#telemEndFileForm');
 	}
 	$('#telemFileForm').val(filenum);
+	$('#telemEndFileForm').val(filenum);
 	drawPlots(AwareUtils);
 
     }
