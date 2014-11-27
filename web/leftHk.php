@@ -31,6 +31,7 @@ $hkType=$_GET["hkType"];
 if($_GET["hkType"] === null) {
   $hkType=$realDefaults[hkType];
  }
+
 $timeType=$_GET["timeType"];
 if($_GET["timeType"] === null) {
   $timeType=$realDefaults[timeType];

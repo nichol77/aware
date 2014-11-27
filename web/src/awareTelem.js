@@ -1122,6 +1122,7 @@ function doMultiFilePlot(awareControl) {
 	var varList=jsonObject.timeSum.varList;
 	for(var index=0;index<timeList.length;index++) {
 	    var timePoint=timeList[index];
+	    $('#debugContainer').append("<p>timePoint "+timePoint.startTime+"</p>");
 	    awareControl.timeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
 	    tempTimeArray.push(timePoint.startTime*1000); ///< Javascript needs the number in milliseconds
 	}

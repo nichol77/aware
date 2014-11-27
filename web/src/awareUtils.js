@@ -58,7 +58,7 @@ function capitaliseFirstLetter(string)
  * @returns {String}
 */
 function pad4(number) {
-    return ("0000" + h).slice (-5); // "001" si h=1; "012" si h=12;"123" si h = 123
+    return ("0000" + number).slice (-5); // "001" si h=1; "012" si h=12;"123" si h = 123
 }
 /**
 * Utility function that zero pads a number to four digits, eg. 777 -> 0777
@@ -66,7 +66,7 @@ function pad4(number) {
  * @returns {String}
 */
 function pad5(number) {
-    return ("00000" + h).slice (-6); // "001" si h=1; "012" si h=12;"123" si h = 123
+    return ("00000" + number).slice (-6); // "001" si h=1; "012" si h=12;"123" si h = 123
 }
 /**
 * Utility function that zero pads a number to four digits, eg. 777 -> 0777
@@ -74,7 +74,7 @@ function pad5(number) {
  * @returns {String}
 */
 function pad6(number) {
-    return ("000000" + h).slice (-7); // "001" si h=1; "012" si h=12;"123" si h = 123
+    return ("000000" + number).slice (-7); // "001" si h=1; "012" si h=12;"123" si h = 123
 }
 
 function which10000(number) {
@@ -148,7 +148,7 @@ function getConfigName(instrument, run, configBase) {
 * @returns {String}
 */
 function getTelemName(instrument, telemType,telemRun,telemFile ) {    
-    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+pad5(telemRun)+"/"+pad6(telemFile)+"/ghdSummary.json.gz"
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+pad4(telemRun)+"/"+pad5(telemFile)+"/ghdSummary.json.gz"
     return name;
 }
 
@@ -157,7 +157,7 @@ function getTelemName(instrument, telemType,telemRun,telemFile ) {
 * @returns {String}
 */
 function getTelemTimeName(instrument, telemType,telemRun,telemFile ) {    
-    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+pad5(telemRun)+"/"+pad6(telemFile)+"/ghdTime.json.gz"
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+pad4(telemRun)+"/"+pad5(telemFile)+"/ghdTime.json.gz"
     return name;
 }
 
@@ -167,7 +167,7 @@ function getTelemTimeName(instrument, telemType,telemRun,telemFile ) {
 * @returns {String}
 */
 function getFullTelemTimeName(instrument,telemType,telemRun,telemFile) {
-    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+pad5(telemRun)+"/"+pad6(telemFile)+"/full/ghd_time.json.gz"
+    var name="output/"+instrument+"/ghd/"+capitaliseFirstLetter(telemType)+"/"+pad4(telemRun)+"/"+pad5(telemFile)+"/full/ghd_time.json.gz"
 
     return name;
 }

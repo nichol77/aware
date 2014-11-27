@@ -57,6 +57,43 @@ $lastEvent='output/ANITA3/lastEvent';
   echo "</div>";
   echo "</a>";
 
+
+$telemType_array = parse_ini_file("config/ANITA3/telemTypeList.ini", true);
+
+foreach($telemType_array as $inst => $properties){
+  $key=$properties[name];
+  $Key= ucfirst($key);
+  $value=$properties[title];
+  # echo "$key";
+  $lastTelem="output/ANITA3/last$Key";
+if (file_exists($lastTelem)) {
+    $timeStarted =  " started " . date ("F d Y H:i.", filemtime($lastTelem));
+    $timeSinceLast = floor((time()-filemtime($lastTelem)));
+    $colourString = "class='lastBoxNew'";
+    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
+    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
+    $colourString= "class='lastBoxMiddle'";}
+    else {$colourString = "class='lastBoxNew'";}
+  }
+  else {
+    $colourString = "class='lastBoxOld'";
+  }
+
+
+  echo "<a href=\"telem.php?instrument=ANITA3&telemType=$key\">";
+  echo "<div ".$colourString."  >";
+  echo "Last $value:";
+  echo "<span id=\"lastTelem\">";
+  include $lastTelem ;
+  echo "</span>";
+  echo $timeStarted;
+  #echo " ".$timeSinceLast." ".$oldPoint." ".$midPoint." ";
+  echo "</div>";
+  echo "</a>";
+
+}
+
+
 $hkType_array = parse_ini_file("config/ANITA3/hkTypeList.ini", true);
 
 foreach($hkType_array as $inst => $properties){

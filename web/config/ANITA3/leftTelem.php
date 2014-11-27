@@ -8,6 +8,16 @@ include("leftMain.php");
 
 <form class="runForm" id="runForm" action=" javascript:void(0);">  
 <?php
+$defaults_array = parse_ini_file("config/defaultValues.ini", true);
+$realDefaults = array();
+foreach($defaults_array as $ignore => $properties){
+  $realDefaults["telemType"]=$properties[telemType];
+ }
+                                                  
+$telemType=$_GET["telemType"];
+if($_GET["telemType"] === null) {
+  $telemType=$realDefaults[telemType];
+ }                             
 
 echo "<fieldset>";     
 echo "<legend>Update Plot</legend>";
