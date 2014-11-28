@@ -961,7 +961,7 @@ function setLastRun(thisRun) {
  */
 function getConfigFromForm() {
 //    return document.getElementById("runInput").value;
-    return "Acqd";
+    return "Cmdd";
 } 
 
 

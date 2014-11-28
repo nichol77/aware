@@ -23,7 +23,6 @@ header("Connection: keep-alive");
 <DIV class=single>
 <DIV class=content>
 <h2>ANITA-3</h2>
-<a href="events.php?instrument=ANITA3">
 <?php 
 
 
@@ -32,30 +31,8 @@ header("Connection: keep-alive");
 $oldPoint = 86400; //In seconds 86400 is 24 hours
 $midPoint = 3600;  //One hour
 
-$lastEvent='output/ANITA3/lastEvent';
 
-  if (file_exists($lastEvent)) {
-    $timeStarted =  " started " . date ("F d Y H:i.", filemtime($lastEvent));
-    $timeSinceLast = floor((time()-filemtime($lastEvent)));
-    $colourString = "class='lastBoxNew'";
-    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
-    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
-    $colourString= "class='lastBoxMiddle'";}
-    else {$colourString = "class='lastBoxNew'";}
-  }
-  else {
-    $colourString = "class='lastBoxOld'";
-  }
-
-
-  echo "<div ".$colourString."  >";
-  echo "Last Event:";
-  echo "<span id=\"lastEvent\">";
-  include $lastEvent ;
-  echo "</span>";
-  echo $timeStarted;
-  echo "</div>";
-  echo "</a>";
+echo "<h3>Telemetry Types</h3>";
 
 
 $telemType_array = parse_ini_file("config/ANITA3/telemTypeList.ini", true);
@@ -67,7 +44,7 @@ foreach($telemType_array as $inst => $properties){
   # echo "$key";
   $lastTelem="output/ANITA3/last$Key";
 if (file_exists($lastTelem)) {
-    $timeStarted =  " started " . date ("F d Y H:i.", filemtime($lastTelem));
+    $timeStarted =  " from " . date ("F d Y H:i. e", filemtime($lastTelem));
     $timeSinceLast = floor((time()-filemtime($lastTelem)));
     $colourString = "class='lastBoxNew'";
     if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
@@ -93,6 +70,35 @@ if (file_exists($lastTelem)) {
 
 }
 
+echo "<h3>Packet Types</h3>";
+
+echo '<a href="events.php?instrument=ANITA3">';
+$lastEvent='output/ANITA3/lastEvent';
+
+  if (file_exists($lastEvent)) {
+    $timeStarted =  " started " . date ("F d Y H:i. e", filemtime($lastEvent));
+    $timeSinceLast = floor((time()-filemtime($lastEvent)));
+    $colourString = "class='lastBoxNew'";
+    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
+    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
+    $colourString= "class='lastBoxMiddle'";}
+    else {$colourString = "class='lastBoxNew'";}
+  }
+  else {
+    $colourString = "class='lastBoxOld'";
+  }
+
+
+  echo "<div ".$colourString."  >";
+  echo "Last Event:";
+  echo "<span id=\"lastEvent\">";
+  include $lastEvent ;
+  echo "</span>";
+  echo $timeStarted;
+  echo "</div>";
+  echo "</a>";
+
+
 
 $hkType_array = parse_ini_file("config/ANITA3/hkTypeList.ini", true);
 
@@ -103,7 +109,7 @@ foreach($hkType_array as $inst => $properties){
   # echo "$key";
   $lastHk="output/ANITA3/last$Key";
 if (file_exists($lastHk)) {
-    $timeStarted =  " started " . date ("F d Y H:i.", filemtime($lastHk));
+    $timeStarted =  " from " . date ("F d Y H:i. e", filemtime($lastHk));
     $timeSinceLast = floor((time()-filemtime($lastHk)));
     $colourString = "class='lastBoxNew'";
     if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}

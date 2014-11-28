@@ -705,7 +705,7 @@ function updatePlotTitle(jsonObject,awareControl) {
     canContainer.empty();
     canContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+getStartRunFromForm()+"</h1>");
     var plotHeader = $("#plot-header-"+awareControl.plotId+" h3");
-    plotHeader.text(getPlotLabelFromForm() +"-- Start Time "+jsonObject.timeSum.startTime);
+    plotHeader.text(getPlotLabelFromForm() +"-- Start Time "+jsonObject.timeSum.startTime+" UTC");
 }
 
 
