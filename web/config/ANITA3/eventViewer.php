@@ -14,8 +14,7 @@
 		}
 	}
 	function viewAll() {
-		$("#loader").show();
-		localStorage.clear();
+		$("#loader").css("visibility","visible");
 		var first = null;
 		var runNum = $("#runNumInput").val();
 		$.ajax({ 
@@ -56,12 +55,11 @@
 				//changeImage(findFirst(first));
 			}
    		});
-		$("#loader").hide();
+		$("#loader").css("visibility","hidden");
 	}
 
 	function viewRun(typed) {
-		$("#loader").show();
-		localStorage.clear();
+		$("#loader").css("visibility","visible");
 		var first = null;
 		if (($("#runNumInput").val() != "Run Number" || $("#runNumInput").val() == "")&& typed == 1){
 			var runNum = $("#runNumInput").val();
@@ -93,13 +91,13 @@
 					$.each(eventValue, function(key,value) {
 						var png = value.png;
 						var name = value.png.replace("output/ANITA3/event/all/run"+runNum+"/"+eventKey+"/event_","").replace(".png","");
-						localStorage.setItem(name, png);
+						if (localStorage.getItem(name)!= null) {localStorage.setItem(name, png);}
 					});
 				});
 				if($("#current").val() == '0' && first != null){changeImage(findFirst(first));}
 			}
    		});
-		$("#loader").hide();
+		$("#loader").css("visibility","hidden");
 	}
 		
 	function findFirst(base) {
@@ -165,6 +163,7 @@
 	
 	//Check every 30 secs for new images and add them to the list 
 	$(document).ready(function () {var timer = setInterval(runRefresher,30000)});
+	localStorage.clear();
 	
 </script>
 </head>
