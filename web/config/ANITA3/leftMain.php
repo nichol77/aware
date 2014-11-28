@@ -3,6 +3,7 @@
 
 <script type="application/javascript">
 function checkFiles() {
+	// Make new ajax query on the newFileChecker.php file which returns a json string.
 	$.ajax({ 
         type: 'GET', 
         url: 'newFileChecker.php',  
@@ -14,7 +15,9 @@ function checkFiles() {
 				// If the value in local storage is older than the new value
 				// (in fileTimes) replace the local storage value + do something
 				if (value > localStorage.getItem(key)){
+					// Do something
 					$("#statusBox").text("New files have been processed!\n A new "+key+" is available.");
+					// Set the new time data in the localstorage
 					localStorage.setItem(key,value);
 				}
 			});
