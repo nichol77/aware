@@ -37,7 +37,7 @@ function getList(item, $list) {
 
 function showConfig() {
     var configUrl=getConfigName(getInstrumentNameFromForm(),getStartRunFromForm(),getConfigFromForm());
-    
+    $("#plot-content-1").empty();
     function handleConfigJsonFile(jsonObject) {
 	var $ul = $('<ul></ul>');
 	getList(jsonObject.sectionList,$ul);

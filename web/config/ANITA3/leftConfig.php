@@ -51,6 +51,14 @@ echo "<label>Run:</label>";
 echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\"  >";
 ?>
 </fieldset>
+
+<fieldset>
+<div id="configFileDiv">
+<label>Config File:</label>
+<select id="configFileForm"></select>
+</div>
+</fieldset>
+
 </form>
 </div>
 

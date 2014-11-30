@@ -885,6 +885,24 @@ function updateHkType(thisHkType) {
     });      
  }
 
+function setRunToLastRun(){
+    if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>setRunToLastRun</p>");
+
+    var tempString="output/"+AwareUtils.instrument+"/lastRun";
+    function actuallyUpdateLastRun(runString) {
+	$('#debugContainer').append("<p>setRunToLastRun "+runString+"</p>");
+	setStartRunOnForm(Number(runString));
+    }
+
+    $.ajax({
+	    url: tempString,
+		type: "GET",
+		dataType: "text",
+		success: actuallyUpdateLastRun
+		});
+
+}
 
 
 function updateLastRun(setStartToLast, doUpdateHk) {
@@ -960,8 +978,8 @@ function setLastRun(thisRun) {
  * @returns The configName from the configInput UI element
  */
 function getConfigFromForm() {
-//    return document.getElementById("runInput").value;
-    return "Cmdd";
+    return document.getElementById("configFileForm").value;
+
 } 
 
 
@@ -1114,7 +1132,30 @@ function initialiseConfigView() {
 
     $('#debugContainer').hide();
     //    $("#debugContainer").append("<p>initialiseConfigView</p>");
-    showConfig();
+    AwareUtils.instrument=document.getElementById("instrumentForm").value;
+    AwareUtils.runAlreadySet=false;
+    if(getUrlParameter('run')) {
+        AwareUtils.run=getUrlParameter('run');//urlVars["run"];                                                            
+        AwareUtils.runAlreadySet=true;
+	setStartRunOnForm(AwareUtils.run);
+    }
+    else {
+	setRunToLastRun();
+    }
+    updateConfigFileForm();
+
+    $('#runInput').change(function(e) {
+	    e.stopPropagation();
+	    updateConfigFileForm();
+	});
+
+
+    $('#configFileForm').change(function(e) {
+	    var selectedValue = $(this).val();
+	    e.stopPropagation();
+	    showConfig();
+	});
+
 
 }
 /**
@@ -1179,6 +1220,38 @@ function initialiseTelemMenus() {
     });
 
 }
+
+
+function updateConfigFileForm() {
+    $('#configFileForm').empty();
+    function handleConfigFileList(configFileArray) {
+        var configName="";
+        for(var i=0;i<configFileArray.length;i++) {
+            configName=baseName(configFileArray[i].name);
+            //      $('#debugContainer').append("<p>"+configName+"</p>");                                                                          
+            $('<option/>').val(configName).html(configName).appendTo('#configFileForm');
+        }
+        $('#configFileForm').val(configName);
+	showConfig();
+
+    }
+
+    configFileUrl="configFileList.php?run="+getStartRunFromForm();
+
+
+    ajaxLoadingLog(configFileUrl);
+    $.ajax({
+            url: configFileUrl,
+		type: "GET",
+		dataType: "json",
+		success: handleConfigFileList,
+		error: handleAjaxError
+		});
+
+
+
+}
+
 
 
 function updateTelemType(thisTelemType) {
