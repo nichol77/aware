@@ -96,7 +96,7 @@ function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+getRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&eventNumber="+getEventNumberFromForm());
+    currentUrl=currentUrl+"?run="+getRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&eventNumber="+getEventNumberFromForm();
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
@@ -113,10 +113,9 @@ function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
     $("#debugContainer").append("<p>"+getEventPngName()+"</p>");
-//    $("#divEvent").empty();
-//    $("#divEvent").append("<img class=\"magicDisplay\" src=\""+getEventPngName()+"\">");
-    $("#img").attr("src", getEventPngName());
-    $("#current").val("ev"+id);
+    $("#divEvent").empty();
+    $("#divEvent").append("<img class=\"magicDisplay\" src=\""+getEventPngName()+"\">");
+    //    $("#img").attr("src", getEventPngName());
     $("#loader").css("visibility","hidden");
 
 
