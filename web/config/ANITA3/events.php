@@ -47,6 +47,7 @@ header("Connection: keep-alive");
 <DIV class=middle>
 <DIV class=content>
 <div id="titleContainer"></div>
+<img id="loader" src="images/ajaxLoading.gif" style="visibility:hidden">
 <div id="divEvent" style="width:100%; height:100%; padding: 0px; float : left;"></div>
 <div id="debugContainer"></div>
 

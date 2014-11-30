@@ -16,9 +16,6 @@ var AwareMagic = {};
 
 
 
-
-
-
 /**
  * The UI interface function that gets the run from the runInput form.
  * @returns {number}
@@ -44,47 +41,13 @@ function setLastRun(thisRun) {
 } 
 
 
-/**
- * The UI interface function that gets the event number from the eventNumberInput form.
- * @returns {number}
- */
-function getEventNumberFromForm() {
-    return document.getElementById("eventNumberInput").value;
-} 
 
 
-/**
- * The UI interface function that sets the event number on the eventNumberInput form.
- */
-function setEventNumberOnForm(evNum) {
-    document.getElementById("eventNumberInput").value=evNum;
-} 
 
 function getEventPngName() {
     return document.getElementById("eventNumberForm").value;
 }
 
-
-/**
- * The UI interface function that gets the next run and then executes nextFunction, which is typically to draw the event
- */
-function getNextRun(nextFunction) {
-    var runNumber=document.getElementById("runInput").value;
-    runNumber++;
-    document.getElementById("runInput").value=runNumber;
-    nextFunction();
-}
-
-
-/**
- * The UI interface function that gets the previous run and then executes nextFunction, which is typically to draw the event
- */
-function getPreviousRun(nextFunction) {
-    var runNumber=document.getElementById("runInput").value;
-    runNumber--;
-    document.getElementById("runInput").value=runNumber;
-    nextFunction();
-}
 
 
 /**
@@ -127,33 +90,18 @@ function playEvents() {
 
 
 /**
- * The UI interface function that gets the instrument name from the instrumentForm.
-* @returns {string}
- */ 
-function getInstrumentNameFromForm() {
-    return document.getElementById("instrumentForm").value;
-}
-
-
-
-
-
-
-/**
  * The function that updates both the plot title and the URL in the lcoation bar, to ensure if reload is hit that same event display is returned. This works at some level but does not remember things like the xAutoScale
  */
 function updatePlotTitle(jsonObject) {
     //Also update the page URL
     var currentUrl = [location.protocol, '//', location.host, location.pathname].join('');
     //    var currentUrl = window.location.href;
-    currentUrl=currentUrl+"?run="+getRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&eventNumber="+getEventNumberFromForm()+"&eventIndex="+getEventIndexFromForm();
+    currentUrl=currentUrl+"?run="+getRunFromForm()+"&instrument="+getInstrumentNameFromForm()+"&eventNumber="+getEventNumberFromForm());
     var stateObj = { foo: "bar" };
     history.replaceState(stateObj, "page 2", currentUrl);
 
     var titleContainer = $("#titleContainer"); 
     titleContainer.empty();
-    titleContainer.append("<h1>"+getInstrumentNameFromForm()+" -- Run "+jsonObject.event.run+"</h1>");
-    titleContainer.append("<h2>Event: "+jsonObject.event.eventNumber+" -- Time: "+jsonObject.event.time+" -- Trigger: "+jsonObject.event.triggerTime+"</h2>");
     
 }
 
@@ -164,16 +112,25 @@ function updatePlotTitle(jsonObject) {
 function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
-    titleContainer.append("<h2>Boo</h2>");
     $("#debugContainer").append("<p>"+getEventPngName()+"</p>");
-    $("#divEvent").empty();
-    $("#divEvent").append("<img class=\"magicDisplay\" src=\""+getEventPngName()+"\">");
+//    $("#divEvent").empty();
+//    $("#divEvent").append("<img class=\"magicDisplay\" src=\""+getEventPngName()+"\">");
+    $("#img").attr("src", getEventPngName());
+    $("#current").val("ev"+id);
+    $("#loader").css("visibility","hidden");
 
 
 }
 
-function updateEventList() {
+function updateEventList(plotLastEvent) {
     
+
+    if(!plotLastEvent) {
+	var lastPng= $('#eventNumberForm').val();
+    }
+    else {	  
+	  $("#loader").css("visibility","visible");
+    }
     $('#eventNumberForm').empty();
     
     function handleEventNumberList(eventNumberArray) {
@@ -189,8 +146,13 @@ function updateEventList() {
 	    AwareMagic.eventIndex=i;
             $('<option/>').val(pngName).html(event).appendTo('#eventNumberForm');
         }
-        $('#eventNumberForm').val(pngName);
-	plotEvent();
+	if(plotLastEvent) {
+            $('#eventNumberForm').val(pngName);
+	    plotEvent();
+	}
+	else {
+	    $('#eventNumberForm').val(lastPng);
+	}
     }
     
     eventNumberUrl="pngCrawler.php?run="+getStartRunFromForm();
@@ -224,17 +186,12 @@ function initialiseAwareMagicDisplay() {
 	var tempString="output/"+getInstrumentNameFromForm()+"/lastEvent";
 	
 	function actuallyUpdateLastRun(runString) {
-	  setLastRun(Number(runString));
-	  if(setStartToLast) {
-	      setRunOnForm(Number(runString));
-	      updateEventList();
-	  }
+	    setRunOnForm(Number(runString));
+	    updateEventList(true);	  
 	}
-	
-	if(setStartToLast) {
+
 	  $('#titleContainer').empty();
 	  $('#titleContainer').append("<h2>Fetching most recent run</h2>");
-	}
 	
 
 	$.ajax({
@@ -291,10 +248,6 @@ function initialiseAwareMagicDisplay() {
 
 
 
-      $('#eventIndexInput').change(function() {
-				     plotEvent();
-				   });
-
       $('#eventNumberForm').change(function() {
 	      plotEvent();
 	  });
@@ -303,9 +256,11 @@ function initialiseAwareMagicDisplay() {
 
 
 
-      $('#refreshButton').click(function() {
-				  plotEvent();
-				});
+
+    $(document).ready(function () {var timer = setInterval(runRefresher,30000)});
 
 }
 
+function runRefresher(){
+    updateEventList(false)
+}
