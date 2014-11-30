@@ -47,7 +47,7 @@ header("Connection: keep-alive");
 <DIV class=middle>
 <DIV class=content>
 <div id="titleContainer"></div>
-<div id="divEvent" style="width:100%; height:85%; padding: 0px; float : left;"></div>
+<div id="divEvent" style="width:100%; height:100%; padding: 0px; float : left;"></div>
 <div id="debugContainer"></div>
 
 
@@ -62,36 +62,7 @@ include("leftEvent.php");
 
 
 
-<div id="openStationHelp" class="helpDialog">
-  <div>
-<a href="#close" title="Close" class="close">X</a>
-<?php
-include "help/stationHelp.php";
-?>
-</div>
-</div>
 
-
-
-<div id="openLayoutHelp" class="helpDialog">
-  <div>
-<a href="#close" title="Close" class="close">X</a>
-<?php
-include "help/layoutHelp.php";
-?>
-</div>
-</div>
-
-
-
-<div id="openWaveformHelp" class="helpDialog">
-  <div>
-<a href="#close" title="Close" class="close">X</a>
-<?php
-include "help/waveformHelp.php";
-?>
-</div>
-</div>
 
 </body></html>
 

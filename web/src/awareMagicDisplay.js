@@ -13,23 +13,8 @@
  */
 var AwareMagic = {};
 
-AwareMagic.eventList;
-AwareMagic.gotEventListForRun;
-AwareMagic.year=2013;
-AwareMagic.datecode=123;
-AwareMagic.gotDateCode=0;
-AwareMagic.nRows=5;
-AwareMagic.nCols=4;
-AwareMagic.nChans=20;
-AwareMagic.nScaleGroups=0;
-AwareMagic.fRowLabels;
-AwareMagic.fColLabels;   
-AwareMagic.chanToScaleGroup;
-AwareMagic.chanRowColArray;
-AwareMagic.showXaxis;
-AwareMagic.showYaxis;
 
-var Cinice=0.299792458/1.78;
+
 
 
 
@@ -60,23 +45,6 @@ function setLastRun(thisRun) {
 
 
 /**
- * The UI interface function that gets the event index from the eventIndexInput form.
- * @returns {number}
- */
-function getEventIndexFromForm() {
-    eventIndex=document.getElementById("eventIndexInput").value;
-    return eventIndex;
-} 
-
-
-/**
- * The UI interface function that sets the event index on the eventIndexInput form.
- */
-function setEventIndexOnForm(evNum) {
-    document.getElementById("eventIndexInput").value=evNum;
-} 
-
-/**
  * The UI interface function that gets the event number from the eventNumberInput form.
  * @returns {number}
  */
@@ -91,6 +59,11 @@ function getEventNumberFromForm() {
 function setEventNumberOnForm(evNum) {
     document.getElementById("eventNumberInput").value=evNum;
 } 
+
+function getEventPngName() {
+    return document.getElementById("eventNumberForm").value;
+}
+
 
 /**
  * The UI interface function that gets the next run and then executes nextFunction, which is typically to draw the event
@@ -118,9 +91,8 @@ function getPreviousRun(nextFunction) {
  * The UI interface function that gets the next event and then executes nextFunction, which is typically to draw the event
  */
 function getNextEvent(nextFunction) {
-    eventIndex=getEventIndexFromForm();
-    eventIndex++;
-    document.getElementById("eventIndexInput").value=eventIndex;
+    if(AwareMagic.eventIndex<AwareMagic.pngList.length-1) AwareMagic.eventIndex++;
+    $('#eventNumberForm').val(AwareMagic.pngList[AwareMagic.eventIndex]);
     nextFunction();
 }
 
@@ -129,9 +101,8 @@ function getNextEvent(nextFunction) {
  * The UI interface function that gets the previous event and then executes nextFunction, which is typically to draw the event
  */
 function getPreviousEvent(nextFunction) {
-    eventIndex=document.getElementById("eventIndexInput").value;
-    eventIndex--;
-    document.getElementById("eventIndexInput").value=eventIndex;
+    if(AwareMagic.eventIndex>0) AwareMagic.eventIndex--;
+    $('#eventNumberForm').val(AwareMagic.pngList[AwareMagic.eventIndex]);
     nextFunction();
 }
 
@@ -194,7 +165,47 @@ function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
     titleContainer.append("<h2>Boo</h2>");
+    $("#debugContainer").append("<p>"+getEventPngName()+"</p>");
+    $("#divEvent").empty();
+    $("#divEvent").append("<img class=\"magicDisplay\" src=\""+getEventPngName()+"\">");
+
+
 }
+
+function updateEventList() {
+    
+    $('#eventNumberForm').empty();
+    
+    function handleEventNumberList(eventNumberArray) {
+	AwareMagic.eventList = new Array();
+	AwareMagic.pngList = new Array();
+
+        var pngName="";
+        for(var i=0;i<eventNumberArray.length;i++) {
+            pngName=eventNumberArray[i].name;
+            event=eventNumberArray[i].event;
+	    AwareMagic.pngList.push(pngName);
+	    AwareMagic.eventList.push(event);
+	    AwareMagic.eventIndex=i;
+            $('<option/>').val(pngName).html(event).appendTo('#eventNumberForm');
+        }
+        $('#eventNumberForm').val(pngName);
+	plotEvent();
+    }
+    
+    eventNumberUrl="pngCrawler.php?run="+getStartRunFromForm();
+    
+    
+    ajaxLoadingLog(eventNumberUrl);
+    $.ajax({
+            url: eventNumberUrl,
+		type: "GET",
+		dataType: "json",
+		success: handleEventNumberList,
+		error: handleAjaxError
+		});   
+}
+
 
 
 function initialiseAwareMagicDisplay() {
@@ -202,8 +213,8 @@ function initialiseAwareMagicDisplay() {
 
       var docHeight=$(window).height();
       var docWidth=$(window).width();
-      var heightPercentage=60;
-      if(docWidth>=800) heightPercentage=80;
+      var heightPercentage=100;
+      if(docWidth>=800) heightPercentage=100;
 
       var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
       $('#divEvent').height(maxPlotHeight); 
@@ -215,14 +226,14 @@ function initialiseAwareMagicDisplay() {
 	function actuallyUpdateLastRun(runString) {
 	  setLastRun(Number(runString));
 	  if(setStartToLast) {
-	    setRunOnForm(Number(runString));
+	      setRunOnForm(Number(runString));
+	      updateEventList();
 	  }
 	}
 	
 	if(setStartToLast) {
 	  $('#titleContainer').empty();
 	  $('#titleContainer').append("<h2>Fetching most recent run</h2>");
-
 	}
 	
 
@@ -284,10 +295,10 @@ function initialiseAwareMagicDisplay() {
 				     plotEvent();
 				   });
 
-      $('#eventNumberInput').change(function() {
-				      getEventIndexFromNumber(plotEvent);
-				   });
-      $('#debugContainer').show();
+      $('#eventNumberForm').change(function() {
+	      plotEvent();
+	  });
+      $('#debugContainer').hide();
       $('#instrumentDiv').hide();
 
 

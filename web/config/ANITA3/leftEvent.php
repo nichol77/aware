@@ -5,7 +5,6 @@ include("leftMain.php");
 
 
 
-
 <form class="runForm" id="runForm" action="">  
 
 <?php
@@ -64,7 +63,6 @@ echo "<li>";
 echo "<label>Run:</label>";
 echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:plotEvent();\" >";
 echo "</li>";
-
 echo "<li>";
 $eventIndex=$_GET["eventIndex"];
 if($_GET["eventIndex"] === null) {
@@ -73,15 +71,16 @@ if($_GET["eventIndex"] === null) {
 $eventNumber=$_GET["eventNumber"];
 if($_GET["eventNumber"] === null) {
   $eventNumber=0;
- }		
-echo "<label>Index:</label> <input type=\"number\" name=\"eventIndexInput\" id=\"eventIndexInput\" value=\"$eventIndex\" step =\"1\" >";
-echo "<label>Number:</label> <input type=\"number\" name=\"eventNumberInput\" id=\"eventNumberInput\" value=\"$eventNumber\" step =\"1\" >";
+ }	
+echo "<fieldset>";
+echo '<div id="eventNumberDiv">';
+echo '<label>Event:</label>';
+echo '<select id="eventNumberForm"></select>';
+echo '</div>';
+echo '</fieldset>';
 echo '<button type="button" value="Previous" onclick="javascript:getPreviousEvent(plotEvent);">Previous</button>';
 echo '<button type="button" value="Next" onclick="javascript:getNextEvent(plotEvent);">Next</button>';
 echo "</li>";
-
-
-
 echo "<li>";
 echo "<input id='playButton' type='button' value='Play' onclick='javascript:playEvents();'>";
 echo "</li>";
@@ -93,6 +92,7 @@ echo "</li>";
 </fieldset>
 </form>
 </div>
+
 
 
 
