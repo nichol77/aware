@@ -79,8 +79,8 @@ if($_GET["eventNumber"] === null) {
 <select id="eventNumberForm"></select>
 </div>
 <div class="ui-widget">
-  <label for="eventNumber">Event: </label>
-  <input id="eventNumber">
+  <label for="eventNumberAuto">Event: </label>
+  <input id="eventNumberAuto">
 </div>
 </fieldset>
 <button type="button" value="Previous" onclick="javascript:getPreviousEvent(plotEvent);">Previous</button>
