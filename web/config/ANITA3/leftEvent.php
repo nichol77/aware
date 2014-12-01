@@ -71,23 +71,27 @@ if($_GET["eventIndex"] === null) {
 $eventNumber=$_GET["eventNumber"];
 if($_GET["eventNumber"] === null) {
   $eventNumber=0;
- }	
-echo "<fieldset>";
-echo '<div id="eventNumberDiv">';
-echo '<label>Event:</label>';
-echo '<select id="eventNumberForm"></select>';
-echo '</div>';
-echo '</fieldset>';
-echo '<button type="button" value="Previous" onclick="javascript:getPreviousEvent(plotEvent);">Previous</button>';
-echo '<button type="button" value="Next" onclick="javascript:getNextEvent(plotEvent);">Next</button>';
-echo "</li>";
-echo "<li>";
-echo "<input id='playButton' type='button' value='Play' onclick='javascript:playEvents();'>";
-echo "</li>";
-echo "<li>";
-echo "<label>Speed:</label><input id='speedSlide' type='range' value='10' min='1' max='1000'>";
-echo "</li>";
-?>
+ }
+?>	
+<fieldset>
+<div id="eventNumberDiv">
+<label>Event:</label>
+<select id="eventNumberForm"></select>
+</div>
+<div class="ui-widget">
+  <label for="eventNumber">Event: </label>
+  <input id="eventNumber">
+</div>
+</fieldset>
+<button type="button" value="Previous" onclick="javascript:getPreviousEvent(plotEvent);">Previous</button>
+<button type="button" value="Next" onclick="javascript:getNextEvent(plotEvent);">Next</button>
+</li>
+<li>
+<input id='playButton' type='button' value='Play' onclick='javascript:playEvents();'>
+</li>
+<li>
+<label>Speed:</label><input id='speedSlide' type='range' value='10' min='1' max='1000'>
+</li>
 </ul>
 </fieldset>
 </form>

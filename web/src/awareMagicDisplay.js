@@ -135,6 +135,8 @@ function updateEventList(plotLastEvent) {
     function handleEventNumberList(eventNumberArray) {
 	AwareMagic.eventList = new Array();
 	AwareMagic.pngList = new Array();
+	sessionStorage.clear();
+
 
         var pngName="";
         for(var i=0;i<eventNumberArray.length;i++) {
@@ -144,7 +146,13 @@ function updateEventList(plotLastEvent) {
 	    AwareMagic.eventList.push(event);
 	    AwareMagic.eventIndex=i;
             $('<option/>').val(pngName).html(event).appendTo('#eventNumberForm');
+	    sessionStorage.setItem(event,pngName);
         }
+	$( "#eventNumber" ).autocomplete({
+	    source: AwareMagic.eventList
+	});
+
+
 	if(plotLastEvent) {
             $('#eventNumberForm').val(pngName);
 	    plotEvent();
