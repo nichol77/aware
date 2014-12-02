@@ -47,8 +47,9 @@ function getEventNumberFromForm() {
 
 
 function getEventPngName() {
-//    return document.getElementById("eventNumberForm").value;
-    return sessionStorage.getIten(getEventNumberFromForm);
+    return AwareMagic.pngList[AwareMagic.eventIndex];
+    //    return document.getElementById("eventNumberForm").value;
+    //    return sessionStorage.getItem(getEventNumberFromForm());
 }
 
 
@@ -57,7 +58,8 @@ function getEventPngName() {
  * The UI interface function that gets the next event and then executes nextFunction, which is typically to draw the event
  */
 function getNextEvent(nextFunction) {
-    if(AwareMagic.eventIndex<AwareMagic.pngList.length-1) AwareMagic.eventIndex++;
+    if(AwareMagic.eventIndex<AwareMagic.eventList.length-1) AwareMagic.eventIndex++;
+    $('#eventIndex').val(AwareMagic.eventIndex);
     $('#eventNumberAuto').val(AwareMagic.eventList[AwareMagic.eventIndex]);
     nextFunction();
 }
@@ -68,6 +70,7 @@ function getNextEvent(nextFunction) {
  */
 function getPreviousEvent(nextFunction) {
     if(AwareMagic.eventIndex>0) AwareMagic.eventIndex--;
+    $('#eventIndex').val(AwareMagic.eventIndex);
     $('#eventNumberAuto').val(AwareMagic.eventList[AwareMagic.eventIndex]);
     nextFunction();
 }
@@ -115,7 +118,9 @@ function updatePlotTitle(jsonObject) {
 function plotEvent() {
     titleContainer=$("#titleContainer");
     titleContainer.empty();
-    $("#debugContainer").append("<p>"+getEventPngName()+"</p>");
+    //    $("#debugContainer").append("<p>getEventNumberFromForm: "+getEventNumberFromForm()+"</p>");
+    //    $("#debugContainer").append("<p>"+AwareMagic.eventIndex+" "+AwareMagic.pngList.length+"</p>");
+    //    $("#debugContainer").append("<p>getEventPngName: "+getEventPngName()+"</p>");
     $("#divEvent").empty();
     $("#divEvent").append("<img class=\"magicDisplay\" src=\""+getEventPngName()+"\">");
     //    $("#img").attr("src", getEventPngName());
@@ -126,43 +131,64 @@ function plotEvent() {
 
 function updateEventList(plotLastEvent) {
     
+    //    $("#debugContainer").append("<p>updateEventList</p>");
 
     if(!plotLastEvent) {
-	var lastEvent= $('#eventNumberAuto').val();
+	var lastIndex=0;
+    	var lastEvent= $('#eventNumberAuto').val();
     }
     else {	  
-	  $("#loader").css("visibility","visible");
+	$("#loader").css("visibility","visible");
     }
-//    $('#eventNumberForm').empty();
-    
+    //    $('#eventNumberForm').empty();
+    //    sessionStorage.clear();
     function handleEventNumberList(eventNumberArray) {
 	AwareMagic.eventList = new Array();
 	AwareMagic.pngList = new Array();
-	sessionStorage.clear();
+	//	AwareMagic.eventKey = new Object();
 
 
         var pngName="";
 	var eventName="";
-        for(var i=0;i<eventNumberArray.length;i++) {
+	if($('#debugContainer').is(":visible")) {
+	    $("#debugContainer").append("<p>Num events:"+eventNumberArray.length+"</p>");
+	}
+	for(var i=0;i<eventNumberArray.length;i++) {
+	//	for(var i=0;i<1000;i++) {
             pngName=eventNumberArray[i].name;
             eventName=eventNumberArray[i].event;
-	    AwareMagic.pngList.push(pngName);
 	    AwareMagic.eventList.push(eventName);
+	    AwareMagic.pngList.push(pngName);
 	    AwareMagic.eventIndex=i;
-//            $('<option/>').val(pngName).html(event).appendTo('#eventNumberForm');
-	    sessionStorage.setItem(eventName,pngName);
+	    //            $('<option/>').val(pngName).html(eventName).appendTo('#eventNumberForm');
+	    //	    sessionStorage.setItem(eventName,pngName);
         }
+	// Set maximum for eventIndex
+	document.getElementById("eventIndex").max=AwareMagic.eventIndex;
+	document.getElementById("maxEventIndex").value=AwareMagic.eventIndex;
+	
+
 	$( "#eventNumberAuto" ).autocomplete({
-	    source: AwareMagic.eventList
-	});
+		source: AwareMagic.eventList,
+		close: function() {
+
+		    AwareMagic.eventIndex=AwareMagic.eventList.indexOf($("#eventNumberAuto").val());
+		    $('#eventIndex').val(AwareMagic.eventIndex);
+		    plotEvent();
+		}});
+		
 
 
 	if(plotLastEvent) {
-            $('#eventNumberAuto').val(eventName);
+	    $('#eventIndex').val(AwareMagic.eventIndex);
+	    $('#eventNumberAuto').val(eventName);
 	    plotEvent();
 	}
 	else {
 	    $('#eventNumberAuto').val(lastEvent);
+	    AwareMagic.eventIndex=AwareMagic.eventList.indexOf($("#eventNumberAuto").val());
+	    $('#eventIndex').val(AwareMagic.eventIndex);
+
 	}
     }
     
@@ -243,32 +269,32 @@ function initialiseAwareMagicDisplay() {
       if(!runAlreadySet) {
 	updateLastRun(true);
       }
-      else {
-	updateLayoutForm();
-      }
 
 
 
 
       $('#instrumentForm').change(function() {
-				    setEventIndexOnForm(0);
 				    runAlreadySet=false;
-				    updateLayoutForm();
 				    updateLastRun(true);
 				  });
 
 
-
-      $('#eventNumberForm').change(function() {
+      $("#eventIndex").change(function() {
+	      AwareMagic.eventIndex=$(this).val();
+	      //	      $("#debugContainer").append("<p>Got event index "+AwareMagic.eventIndex+"</p>");
+	      $("#eventNumberAuto").val(AwareMagic.eventList[AwareMagic.eventIndex]);
 	      plotEvent();
+
+	  });
+
+
+      $('#runInput').change(function() {
+	      updateEventList(true);
 	  });
     
 
-      $('#debugContainer').show();
+      $('#debugContainer').hide();
       $('#instrumentDiv').hide();
-
-
-
 
     $(document).ready(function () {var timer = setInterval(runRefresher,30000)});
 

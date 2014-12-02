@@ -27,7 +27,7 @@ function checkFiles() {
 }
 
 //Check every 10 seconds 
-$(document).ready(function () {var timer = setInterval(checkFiles,10000);});
+//$(document).ready(function () {var timer = setInterval(checkFiles,10000);});
 </script>
 
 <div id="statusBox" style="color:red;"></div>

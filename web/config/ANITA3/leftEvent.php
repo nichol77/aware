@@ -61,7 +61,7 @@ echo "</div>";
 
 echo "<li>";
 echo "<label>Run:</label>";
-echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\" onchange=\"javascript:plotEvent();\" >";
+echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\">";
 echo "</li>";
 echo "<li>";
 $eventIndex=$_GET["eventIndex"];
@@ -74,9 +74,11 @@ if($_GET["eventNumber"] === null) {
  }
 ?>	
 <fieldset>
-<div id="eventNumberDiv">
-<label>Event:</label>
-<select id="eventNumberForm"></select>
+
+<div class="ui-widget">
+  <label for="eventIndex">Index: </label>
+  <input type="number" id="eventIndex" min="0" max="100000">
+  <input  type="number"   min="0" max="100000" id="maxEventIndex" disabled>
 </div>
 <div class="ui-widget">
   <label for="eventNumberAuto">Event: </label>
