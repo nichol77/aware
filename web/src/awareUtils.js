@@ -1104,7 +1104,7 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
 function initialiseRunSummary() {
 
 
-    $('#debugContainer').show();
+    $('#debugContainer').hide();
     $('#plotDiv').hide();
 
     //First initialise the plot-holder div

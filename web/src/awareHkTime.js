@@ -253,6 +253,8 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     smallHolder.timeDataset = new Object();
     smallHolder.projDataset = new Object();
 
+    //    $('#debugContainer').append("<p>getDataForPlot</p>");
+
     var yAxisOpt=getYaxisOpt(getPlotNameFromForm());
     var maxPointsToShow=getMaxTimePointsToShow();
     var doZoom=0;
@@ -286,6 +288,8 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     var haveVoidValue=false;
     awareControl.maxPoints=0;
     $.each(awareControl.datasets, function(key, val) {
+	    //	    $('#debugContainer').append("<p>"+key+" "+val.data.length+"</p>");
+	    if(val.data.length>0) {
 	       if(val.voidFlag) haveVoidValue=true;
 	       if(fullTimePoints.length==0 || haveVoidValue) {
 		   fullTimePoints=new Array();
@@ -402,7 +406,8 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 	       smallHolder.timeDataset[varName]=timeDataList; 
 	       smallHolder.projDataset[varName]=projDataList;
 	   }
-	   );
+	}
+	);
     
 
     return smallHolder;	           
