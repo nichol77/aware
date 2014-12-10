@@ -1,10 +1,13 @@
 <?php
+require("awareUtils.php");
+
+
 class mFile
 {
     public $name, $time, $size;
 }
 
-foreach (glob("output/ANITA3/cmdSend/tdrss/*.json") as $curFilename)
+foreach (glob("output/ANITA3/cmdSend/palestine/*.json") as $curFilename)
 {
     $curFileObj = new mFile;
     $curFileObj->name = $curFilename;
