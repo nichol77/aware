@@ -44,14 +44,22 @@ header("Connection: keep-alive");
 <div class=middle>
 
 
-<h3>Commands Sent</h3>
-<div id="cmdSent" class="cmdSent" ></div>
 <h3>Command Echos</h3>
 <h3>Ground</h3>
 <div id="cmdEchoGround" class="cmdEchoGround" ></div>
 <h3>Payload</h3>
 <div id="cmdEchoPayload" class="cmdEchoPayload" ></div>
+
+<h3>Commands Sent</h3>
+<h3>Palestine</h3>
+<div id="tdrssCmdSent" class="tdrssCmdSent" ></div>
+<h3>LOS</h3>
+<div id="losCmdSent" class="losCmdSent" ></div>
+
+
 <div id="debugContainer"></div>
+
+
 
 </div> 
 
