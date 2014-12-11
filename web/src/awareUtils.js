@@ -1165,6 +1165,15 @@ function initialiseCmdView() {
 
     $('#debugContainer').hide();
     //    $("#debugContainer").append("<p>initialiseConfigView</p>");
+
+
+
+    $('#cmdForm').change(function(e) {
+            var selectedValue = $(this).val();
+            e.stopPropagation();
+            showCmd();
+        });
+
     showCmd();
 
 }

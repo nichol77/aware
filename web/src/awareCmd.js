@@ -29,14 +29,25 @@ function writeCmdSentList(cmdList,cmdSentDiv) {
 
 
     //First thing is determine how many to show
-    document.getElementById(cmdSentDiv+"End").value=cmdList.length-1
+    document.getElementById(cmdSentDiv+"End").value=cmdList.length;
+    var startValue=1;
+    if(! $("#"+cmdSentDiv+"Start").val()) {
+	startValue=cmdList.length-9;
+	if(startValue<1) startValue=1;
+	document.getElementById(cmdSentDiv+"Start").value=startValue;
+    }
+    else {
+	startValue=document.getElementById(cmdSentDiv+"Start").value;
+    }
+    var endValue=cmdList.length-startValue;
+	
     
 
     var table = $('<table></table>').addClass('commandTable');
     var hrow=$('<tr></tr>').addClass('headRow');
     hrow.append('<th>Count</th><th>Time</th><th>Link-Route</th><th>Code</th><th>Bytes</th><th>Response</th><th>Description</th></tr>');
     table.append(hrow);
-    for(i=0; i<cmdList.length; i++){
+    for(i=0; i<=endValue; i++){
 	var row = $('<tr></tr>').addClass('bar');
 	row.append('<td>'+cmdList[i].cmdNumber+'</td>'+
 		   '<td>'+timeConverter(cmdList[i].time)+'</td>'+
@@ -49,6 +60,7 @@ function writeCmdSentList(cmdList,cmdSentDiv) {
 
 	table.append(row);
     }
+    $('#'+cmdSentDiv).empty();
     $('#'+cmdSentDiv).append(table);
 
 }
@@ -56,11 +68,29 @@ function writeCmdSentList(cmdList,cmdSentDiv) {
 
 function writeCmdEchoList(cmdList,cmdEchoDiv) {
     cmdList.sort(timeSortCmdEcho);   
+
+
+    //First thing is determine how many to show
+    document.getElementById(cmdEchoDiv+"End").value=cmdList.length;
+    var startValue=1;
+    if(! $("#"+cmdEchoDiv+"Start").val()) {
+	startValue=cmdList.length-9;
+	if(startValue<1) startValue=1;
+	document.getElementById(cmdEchoDiv+"Start").value=startValue;
+    }
+    else {
+	startValue=document.getElementById(cmdEchoDiv+"Start").value;
+    }
+    var endValue=cmdList.length-startValue;
+	
+
+
+
     var table = $('<table></table>').addClass('commandTable');
     var hrow=$('<tr></tr>').addClass('headRow');
     hrow.append('<th>Time</th><th>Code</th><th>Bytes</th><th>Flag</th><th>Description</th></tr>');
     table.append(hrow);
-    for(i=0; i<cmdList.length; i++){
+    for(i=0; i<=endValue; i++){
 	var row = $('<tr></tr>').addClass('bar');
 	row.append('<td>'+timeConverter(cmdList[i].unixTime)+'</td>'+
 		   '<td>'+cmdList[i].cmd[0]+'</td>'+
@@ -72,12 +102,14 @@ function writeCmdEchoList(cmdList,cmdEchoDiv) {
 	table.append(row);
     }
 
+    $('#'+cmdEchoDiv).empty();
     $('#'+cmdEchoDiv).append(table);
 
 }
 
 
 function showCmd() {
+    showCmdSent("losCmdList.php","losCmdSent");
     showCmdSent("tdrssCmdList.php","tdrssCmdSent");
     showCmdEchos("groundCmdEchoList.php","cmdEchoGround");
     showCmdEchos("payloadCmdEchoList.php","cmdEchoPayload");
