@@ -24,8 +24,14 @@ function timeSortCmdEcho(a,b) {
     return b.unixTime-a.unixTime;
 }
 
-function writeCmdSentList(cmdList) {
+function writeCmdSentList(cmdList,cmdSentDiv) {
     cmdList.sort(timeSortCmdSent);
+
+
+    //First thing is determine how many to show
+    document.getElementById(cmdSentDiv+"End").value=cmdList.length-1
+    
+
     var table = $('<table></table>').addClass('commandTable');
     var hrow=$('<tr></tr>').addClass('headRow');
     hrow.append('<th>Count</th><th>Time</th><th>Link-Route</th><th>Code</th><th>Bytes</th><th>Response</th><th>Description</th></tr>');
@@ -43,8 +49,7 @@ function writeCmdSentList(cmdList) {
 
 	table.append(row);
     }
-
-    $('#cmdSent').append(table);
+    $('#'+cmdSentDiv).append(table);
 
 }
 
@@ -73,13 +78,13 @@ function writeCmdEchoList(cmdList,cmdEchoDiv) {
 
 
 function showCmd() {
-    showCmdSent();
+    showCmdSent("tdrssCmdList.php","tdrssCmdSent");
     showCmdEchos("groundCmdEchoList.php","cmdEchoGround");
     showCmdEchos("payloadCmdEchoList.php","cmdEchoPayload");
 }
 
-function showCmdSent() {
-    var cmdUrl="tdrssCmdList.php";
+function showCmdSent(cmdUrl,cmdSentDiv) {
+
     
     var countFilesNeeded=0;
     var countFilesGot=0;
@@ -91,7 +96,7 @@ function showCmdSent() {
 	cmdSentList.push(cmd);
 	//	$("#debugContainer").append("<p>"+cmd+"</p>")	
 	if(countFilesNeeded==countFilesGot) {
-	    writeCmdSentList(cmdSentList);
+	    writeCmdSentList(cmdSentList,cmdSentDiv);
 	}
     }
 
@@ -101,7 +106,7 @@ function showCmdSent() {
     function handleCmdJsonFileError() {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
-	    writeCmdSentList(cmdSentList);
+	    writeCmdSentList(cmdSentList,cmdSentDiv);
 	}
     }
 
