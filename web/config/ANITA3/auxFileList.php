@@ -20,12 +20,14 @@ if($_GET["run"] === null) {
 class mFile
 {
     public $name;
+public $time;	
 }
 
 foreach (glob("output/ANITA3/aux/run$run/archive/*") as $curFilename)
 {
     $curFileObj = new mFile;
     $curFileObj->name = $curFilename;
+    $curFileObj->time = date("d/m/Y - H:i", filectime($curFilename));
     $fileArray[] = $curFileObj;
 }
 printf("%s", json_encode($fileArray));
