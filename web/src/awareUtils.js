@@ -1165,7 +1165,7 @@ function initialiseConfigView() {
 */
 function initialiseFileView() {
 
-    $('#debugContainer').show();
+    $('#debugContainer').hide();
     //    $("#debugContainer").append("<p>initialiseConfigView</p>");
     AwareUtils.instrument=document.getElementById("instrumentForm").value;
     AwareUtils.runAlreadySet=false;
@@ -1173,11 +1173,11 @@ function initialiseFileView() {
         AwareUtils.run=getUrlParameter('run');//urlVars["run"];                                                            
         AwareUtils.runAlreadySet=true;
     }
-    updateFileForm();
+    updateFileRunList();
 
     $('#runInput').change(function(e) {
 	    e.stopPropagation();
-	    updateFileForm();
+	    updateFileList();
     });
 
 
@@ -1296,25 +1296,29 @@ function updateConfigFileForm() {
 }
 
 
-function updateFileForm() {
+function updateFileRunList() {
 
 
     function handleRunList(runArray) {
+	$('#debugContainer').append("<p>"+runArray+"</p>");
 	AwareUtils.runArray=runArray;
 	$( "#runInput" ).autocomplete({
 	    source: AwareUtils.runArray,
 	    close: function() {	
-		$( "#runInput" ).val(runArray[runArray.length-1]);	
-		if(AwareUtils.runAlreadySet) {
-		    if(runArray.indexOf(AwareUtils.run)>=0) {
-			$( "#runInput" ).val(AwareUtils.run);			
-		    }		    
-		}
 		updateFileList();
 	    }});
+	$( "#runInput" ).val(runArray[runArray.length-1]);	
+	if(AwareUtils.runAlreadySet) {
+	    if(runArray.indexOf(AwareUtils.run)>=0) {
+		$( "#runInput" ).val(AwareUtils.run);			
+	    }		    
+	}
+	updateFileList();	
     }
 
-    fileRunUrl="telemRunList.php"
+
+
+    fileRunUrl="fileRunList.php"
     ajaxLoadingLog(fileRunUrl);
     $.ajax({
         url: fileRunUrl,
@@ -1341,7 +1345,7 @@ function updateFileList() {
 	showFile();
 
     }
-    fileUrl="telemFileList.php?run="+$( "#runInput" ).val();
+    fileUrl="auxFileList.php?run="+$( "#runInput" ).val();
     ajaxLoadingLog(fileUrl);
     $.ajax({
         url: fileUrl,

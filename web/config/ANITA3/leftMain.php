@@ -38,27 +38,31 @@ function checkFiles() {
 
 <a class=
 "leftBar" title="Events" href="events.php"
-accesskey="C">Events</a>
+>Events</a>
 
 
 <a class=
 "leftBar" title="Housekeeping" href="awareHk.php"
-accesskey="C">Housekeeping</a>
+>Housekeeping</a>
 
 
 <a class=
 "leftBar" title="Command" href="cmd.php"
-accesskey="C">Command</a>
+>Command</a>
 
 <a class=
 "leftBar" title="Config" href="runConfig.php"
-accesskey="C">Config</a>
+>Config</a>
+
+<a class=
+"leftBar" title="Aux. File" href="auxFile.php"
+>File</a>
 
 <a class=
 "leftBar" title="Telemetry" href="telem.php"
-accesskey="C">Telemetry</a>
+>Telemetry</a>
 
 <a class=
 "leftBar" title="Summary" href="runSum.php"
-accesskey="C">Summary</a>
+>Summary</a>
 </p>
