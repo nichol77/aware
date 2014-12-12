@@ -1165,7 +1165,7 @@ function initialiseConfigView() {
 */
 function initialiseFileView() {
 
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
     //    $("#debugContainer").append("<p>initialiseConfigView</p>");
     AwareUtils.instrument=document.getElementById("instrumentForm").value;
     AwareUtils.runAlreadySet=false;
