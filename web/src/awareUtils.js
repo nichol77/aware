@@ -1158,6 +1158,44 @@ function initialiseConfigView() {
 
 
 }
+
+
+/**
+* Utility function that initialises the the aware hk time plotting thing
+*/
+function initialiseFileView() {
+
+    $('#debugContainer').hide();
+    //    $("#debugContainer").append("<p>initialiseConfigView</p>");
+    AwareUtils.instrument=document.getElementById("instrumentForm").value;
+    AwareUtils.runAlreadySet=false;
+    if(getUrlParameter('run')) {
+        AwareUtils.run=getUrlParameter('run');//urlVars["run"];                                                            
+        AwareUtils.runAlreadySet=true;
+	setStartRunOnForm(AwareUtils.run);
+    }
+    else {
+	setRunToLastRun();
+    }
+    updateConfigFileForm();
+
+    $('#runInput').change(function(e) {
+	    e.stopPropagation();
+	    updateConfigFileForm();
+	});
+
+
+    $('#configFileForm').change(function(e) {
+	    var selectedValue = $(this).val();
+	    e.stopPropagation();
+	    showConfig();
+	});
+
+
+}
+
+
+
 /**
 * Utility function that initialises the the aware hk time plotting thing
 */

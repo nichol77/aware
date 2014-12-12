@@ -13,7 +13,8 @@ if($_GET["instrument"] === null) {
 
 class mFile
 {
-    public $name;
+//    public $name;
+    public $run;
 }
 
 
@@ -21,8 +22,12 @@ class mFile
 foreach (glob("output/ANITA3/aux/run*") as $curFilename)
 {
     $curFileObj = new mFile;
-    $curFileObj->name = $curFilename;
-    $fileArray[] = $curFileObj;
+//    $curFileObj->name = $curFilename;
+    $curFileObj->run = substr(basename($curFilename),3);	
+  //  $fileArray[] = $curFileObj;
+  $fileArray[] = intval($curFileObj->run);
 }
+
+sort($fileArray);
 printf("%s", json_encode($fileArray));
 ?> 
