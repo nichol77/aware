@@ -58,6 +58,27 @@ function showConfig() {
 }
 
 
+function showFile() {
+    
+    $("#plot-content-1").empty();
+    function handleFile(file) {
+	$("#plot-content-1").append("<pre>"+file+"</pre>");
+    }
+
+    fileUrl=$("#fileForm").val();
+
+    ajaxLoadingLog(fileUrl);
+    $.ajax({
+	url: fileUrl,
+	type: "GET",
+	dataType: "text",
+	success: handleFile,
+	error: handleAjaxError
+    }); 
+
+}
+
+
 /**
  * This function simply updates the plot title and the URL
  */

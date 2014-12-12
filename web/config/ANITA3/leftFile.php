@@ -42,12 +42,14 @@ foreach($inst_array as $inst => $properties){
     echo "<option value=$key label=\"$value\">$value</option>";    
   }         
 }
-echo "</select>";
-echo "<br>";
-
-echo "<label>Run:</label>";
-echo "<input type=\"number\" name=\"runInput\" id=\"runInput\" value=\"$run\" max=\"100000\" min=\"0\"  >";
 ?>
+</select>
+<br>
+<div class="ui-widget">
+<label>Run:</label>
+<input type="number" name="runInput" id="runInput" value="$run" max="100000" min="0"  >
+</div>
+
 </fieldset>
 
 <fieldset>

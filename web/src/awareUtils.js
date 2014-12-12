@@ -1165,30 +1165,26 @@ function initialiseConfigView() {
 */
 function initialiseFileView() {
 
-    $('#debugContainer').hide();
+    $('#debugContainer').show();
     //    $("#debugContainer").append("<p>initialiseConfigView</p>");
     AwareUtils.instrument=document.getElementById("instrumentForm").value;
     AwareUtils.runAlreadySet=false;
     if(getUrlParameter('run')) {
         AwareUtils.run=getUrlParameter('run');//urlVars["run"];                                                            
         AwareUtils.runAlreadySet=true;
-	setStartRunOnForm(AwareUtils.run);
     }
-    else {
-	setRunToLastRun();
-    }
-    updateConfigFileForm();
+    updateFileForm();
 
     $('#runInput').change(function(e) {
 	    e.stopPropagation();
-	    updateConfigFileForm();
-	});
+	    updateFileForm();
+    });
 
 
-    $('#configFileForm').change(function(e) {
+    $('#fileForm').change(function(e) {
 	    var selectedValue = $(this).val();
 	    e.stopPropagation();
-	    showConfig();
+	    showFile();
 	});
 
 
@@ -1298,6 +1294,64 @@ function updateConfigFileForm() {
 
 
 }
+
+
+function updateFileForm() {
+
+
+    function handleRunList(runArray) {
+	AwareUtils.runArray=runArray;
+	$( "#runInput" ).autocomplete({
+	    source: AwareUtils.runArray,
+	    close: function() {	
+		$( "#runInput" ).val(runArray[runArray.length-1]);	
+		if(AwareUtils.runAlreadySet) {
+		    if(runArray.indexOf(AwareUtils.run)>=0) {
+			$( "#runInput" ).val(AwareUtils.run);			
+		    }		    
+		}
+		updateFileList();
+	    }});
+    }
+
+    fileRunUrl="telemRunList.php"
+    ajaxLoadingLog(fileRunUrl);
+    $.ajax({
+        url: fileRunUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleRunList,
+	error: handleAjaxError
+    });
+    
+}
+
+function updateFileList() {
+
+    $('#fileForm').empty();
+    function handleFileList(fileArray) {
+        var name="";
+	var fullName=""
+        for(var i=0;i<fileArray.length;i++) {
+	    fullName=fileArray[i].name;
+            name=baseName(fileArray[i].name);
+            $('<option/>').val(fileArray[i].name).html(name).appendTo('#fileForm');
+        }
+        $('#fileForm').val(fullName);
+	showFile();
+
+    }
+    fileUrl="telemFileList.php?run="+$( "#runInput" ).val();
+    ajaxLoadingLog(fileUrl);
+    $.ajax({
+        url: fileUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleFileList,
+	error: handleAjaxError
+    });
+}
+
 
 
 
