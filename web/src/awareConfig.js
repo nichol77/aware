@@ -20,7 +20,7 @@ function getList(item, $list) {
     if (item) {
         var $li = $('<li />');
 	if(item.type=="ConfigItem") {
-	    $li.append(item.name + ' = ' + item.value);
+	    $li.append(item.name + '#'+item.varType+ ' = ' + item.value);
 	}
         else if (item.name) {
             $li.append($('<a href="#">' + item.name + '</a>'));
