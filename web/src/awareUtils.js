@@ -1140,9 +1140,9 @@ function initialiseConfigView() {
 	setStartRunOnForm(AwareUtils.run);
     }
     else {
-	setRunToLastRun();
+	updateConfigRunList();
     }
-    updateConfigFileForm();
+    //    updateConfigFileForm();
 
     $('#runInput').change(function(e) {
 	    e.stopPropagation();
@@ -1297,8 +1297,6 @@ function updateConfigFileForm() {
 
 
 function updateFileRunList() {
-
-
     function handleRunList(runArray) {
 	$('#debugContainer').append("<p>"+runArray+"</p>");
 	AwareUtils.runArray=runArray;
@@ -1316,9 +1314,37 @@ function updateFileRunList() {
 	updateFileList();	
     }
 
-
-
     fileRunUrl="fileRunList.php"
+    ajaxLoadingLog(fileRunUrl);
+    $.ajax({
+        url: fileRunUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleRunList,
+	error: handleAjaxError
+    });
+    
+}
+
+function updateConfigRunList() {
+    function handleRunList(runArray) {
+	$('#debugContainer').append("<p>"+runArray+"</p>");
+	AwareUtils.runArray=runArray;
+	$( "#runInput" ).autocomplete({
+	    source: AwareUtils.runArray,
+	    close: function() {	
+		updateConfigFileForm();
+	    }});
+	$( "#runInput" ).val(runArray[runArray.length-1]);	
+	if(AwareUtils.runAlreadySet) {
+	    if(runArray.indexOf(AwareUtils.run)>=0) {
+		$( "#runInput" ).val(AwareUtils.run);			
+	    }		    
+	}
+	updateConfigFileForm();	
+    }
+
+    fileRunUrl="configRunList.php"
     ajaxLoadingLog(fileRunUrl);
     $.ajax({
         url: fileRunUrl,
