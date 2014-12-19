@@ -1,4 +1,5 @@
 <?php
+require("jsonwrapper.php");
 $defaults_array = parse_ini_file("config/defaultValues.ini", true);
 $realDefaults = array();
 foreach($defaults_array as $ignore => $properties){

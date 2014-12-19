@@ -1,4 +1,6 @@
 <?php
+require("jsonwrapper.php");
+
 class mFile
 {
     public $name, $time, $size;
