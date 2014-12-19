@@ -1,4 +1,7 @@
 [			  
+	{"sym":"altitude","desc":"Altitude","hkCode":"slow"},
+	{"sym":"latitude","desc":"Latitude","hkCode":"slow"},
+	{"sym":"longitude","desc":"Longitude","hkCode":"slow"},
 	{"sym":"eventRate","desc":"Event Rate","hkCode":"slow"},
 	{"sym":"temp","desc":"Temperature","hkCode":"slow"},
 	{"sym":"power","desc":"Power","hkCode":"slow"},
