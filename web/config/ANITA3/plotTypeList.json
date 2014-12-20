@@ -319,5 +319,22 @@
 	{"sym":"scalerVals_8","desc":"Thresh SURF 9","hkCode":"acqdStart","xAxis":"threshVals"},
 	{"sym":"scalerVals_9","desc":"Thresh SURF 10","hkCode":"acqdStart","xAxis":"threshVals"},
 	{"sym":"scalerVals_10","desc":"Thresh SURF 11","hkCode":"acqdStart","xAxis":"threshVals"},
-	{"sym":"scalerVals_11","desc":"Thresh SURF 12","hkCode":"acqdStart","xAxis":"threshVals"}
+	{"sym":"scalerVals_11","desc":"Thresh SURF 12","hkCode":"acqdStart","xAxis":"threshVals"},
+	{"sym":"rms","desc":"RMS -- All","hkCode":"waveform"},
+	{"sym":"rms1_","desc":"RMS Phi 1","hkCode":"waveform"},
+	{"sym":"rms2_","desc":"RMS Phi 2","hkCode":"waveform"},
+	{"sym":"rms3_","desc":"RMS Phi 3","hkCode":"waveform"},
+	{"sym":"rms4_","desc":"RMS Phi 4","hkCode":"waveform"},
+	{"sym":"rms5_","desc":"RMS Phi 5","hkCode":"waveform"},
+	{"sym":"rms6_","desc":"RMS Phi 6","hkCode":"waveform"},
+	{"sym":"rms7_","desc":"RMS Phi 7","hkCode":"waveform"},
+	{"sym":"rms8_","desc":"RMS Phi 8","hkCode":"waveform"},
+	{"sym":"rms9_","desc":"RMS Phi 9","hkCode":"waveform"},
+	{"sym":"rms10_","desc":"RMS Phi 10","hkCode":"waveform"},
+	{"sym":"rms11_","desc":"RMS Phi 11","hkCode":"waveform"},
+	{"sym":"rms12_","desc":"RMS Phi 12","hkCode":"waveform"},
+	{"sym":"rms13_","desc":"RMS Phi 13","hkCode":"waveform"},
+	{"sym":"rms14_","desc":"RMS Phi 14","hkCode":"waveform"},
+	{"sym":"rms15_","desc":"RMS Phi 15","hkCode":"waveform"},
+	{"sym":"rms16_","desc":"RMS Phi 16","hkCode":"waveform"}
 	]
