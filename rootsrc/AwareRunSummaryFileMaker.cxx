@@ -8,6 +8,7 @@
 #include "AwareRunSummaryFileMaker.h"
 #include "TSystem.h"
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
@@ -119,7 +120,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   for(fRawMapIt=fRawMap.begin();fRawMapIt!=fRawMap.end();fRawMapIt++) {
     //First do the time file
     if(!firstInArray) TimeFile << ",\n";
-    TimeFile <<  fRawMapIt->first;
+    TimeFile <<  std::setw( 20 ) << std::setprecision( 10 ) << fRawMapIt->first;
     firstInArray=0;
   }  
   TimeFile << " ]\n}\n}\n";
