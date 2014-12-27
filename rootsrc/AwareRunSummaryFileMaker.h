@@ -42,7 +42,7 @@ class AwareRunSummaryFileMaker
   std::map<std::string,AwareVariableSummary> summaryMap;
   std::map<std::string,std::string> fLabelMap;
   
-  std::map<UInt_t, std::map<std::string, Double_t> > fRawMap;
+  std::map<Double_t, std::map<std::string, Double_t> > fRawMap;
 
 
 };

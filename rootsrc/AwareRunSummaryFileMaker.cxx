@@ -49,7 +49,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
 
   //  std::map<UInt_t, std::map<std::string, Double_t> > fRawMap;
 
-  std::map<UInt_t, std::map<std::string, Double_t> >::iterator rawIt=fRawMap.find(timeStamp.GetSec());
+  std::map<Double_t, std::map<std::string, Double_t> >::iterator rawIt=fRawMap.find(timeStamp.AsDouble());
   if(rawIt!=fRawMap.end()) {
     //Already have this time point;
     rawIt->second.insert( std::pair <std::string, Double_t > (elString, variable));
@@ -58,7 +58,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     //    First time for this one need to make map
     std::map<std::string, Double_t> newTimePoint;
     newTimePoint.insert(std::pair <std::string, Double_t > (elString, variable) );
-    fRawMap.insert( std::pair < UInt_t, std::map<std::string, Double_t> > (timeStamp.GetSec(), newTimePoint));
+    fRawMap.insert( std::pair < Double_t, std::map<std::string, Double_t> > (timeStamp.AsDouble(), newTimePoint));
   }
   
 }
@@ -104,8 +104,8 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
   std::map<std::string, std::ofstream*> fJsonFileMap;
   
   //For now get the first time point in the raw map
-  std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();  
-  std::map<UInt_t, std::map<std::string, Double_t> >::iterator fRawMapIt2=fRawMap.begin();  
+  std::map<Double_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();  
+  std::map<Double_t, std::map<std::string, Double_t> >::iterator fRawMapIt2=fRawMap.begin();  
   //Then get an iterator for all the variables at the first timePoint
   std::map<std::string, Double_t>::iterator subMapIt=fRawMapIt->second.begin();
   std::map<std::string, Double_t>::iterator subMapIt2=fRawMapIt->second.begin();
