@@ -52,18 +52,10 @@ header("Connection: keep-alive");
 <div id="plot-preamble" class="plot-preamble">
 <span style="float:left;" id="plot-text-1" class="plot-text"></span>
 <form>
-
-<div>
-<div class="mlabel">
-Color:
-</div>
-<div>
-<span id="color">
+<div id="colorRadio style="float:right; padding-right:10px;">
 <input type="radio" name="color" id="default" checked="checked"/><label for="default">Default</label>
 <input type="radio" name="color" id="single" /><label for="single">Mono</label>
 <input type="radio" name="color" id="multi" /><label for="multi">Multi</label>
-</span>
-</div>
 </div>
 <div id="layoutRadio" style="float:right; padding-right:10px;">
     <input type="radio" value="both" id="layoutBoth" name="layoutRadio" checked="checked" /><label for="layoutBoth">Both</label>
