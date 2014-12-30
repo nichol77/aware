@@ -486,7 +486,7 @@ function actuallyDrawTheStuff(awareControl) {
 	fakeArray.push(count);
 	count++;
     });
-    var options = new Object{};
+    var options {};
 	   //Step two is to assign colours to the variables for the plot
     if ( $('#color :checked').attr('id') == 'single' ) {
         options.colors = $.map( fakeArray, function ( o, i ) {
