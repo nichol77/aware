@@ -77,8 +77,33 @@ function actuallyDrawMap(xyPoints) {
     var graph = $.plot.image.loadDataImages(data, options, function () {
 						$.plot($("#divMap-1"), data, options);
 					    });
-    
 
+    $("<div id='tooltip'></div>").css({
+	position: "absolute",
+	display: "none",
+	border: "1px solid #fdd",
+	padding: "2px",
+	"background-color": "#fee",
+	opacity: 0.80
+    }).appendTo("body");
+
+    
+    $("#divMap-1").bind("plothover", function (event, pos, item) {
+
+	
+	if ($("#enableTooltip:checked").length > 0) {
+	    if (item) {
+		var x = item.datapoint[0].toFixed(2),
+		y = item.datapoint[1].toFixed(2);
+		
+		$("#tooltip").html(item.series.label + " of " + x + " = " + y)
+		    .css({top: item.pageY+5, left: item.pageX+5})
+		    .fadeIn(200);
+	    } else {
+		$("#tooltip").hide();
+	    }
+	}
+    });
 
 
 
