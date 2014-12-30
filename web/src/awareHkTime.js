@@ -489,11 +489,11 @@ function actuallyDrawTheStuff(awareControl) {
     var len=count;
     var options = {};
 	   //Step two is to assign colours to the variables for the plot
-    if ( $('#color :checked').attr('id') == 'single' ) {
+    if ( $('#colorRadio :checked').attr('id') == 'single' ) {
         options.colors = $.map( fakeArray, function ( o, i ) {
 	    return jQuery.Color('blue').lightness(0.7-i/(len*1.2)).toHexString();
         });
-    } else if ( $('#color :checked').attr('id') == 'multi' ) {
+    } else if ( $('#colorRadio :checked').attr('id') == 'multi' ) {
         options.colors = $.map( fakeArray, function ( o, i ) {
             return jQuery.Color({ hue: (i*200/len), saturation: 0.95, lightness: 0.35, alpha: 1 }).toHexString();
         });
