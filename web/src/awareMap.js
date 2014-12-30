@@ -95,7 +95,7 @@ function actuallyDrawMap(xyPoints) {
 	    var x = item.datapoint[0].toFixed(2),
 	    y = item.datapoint[1].toFixed(2);
 	    
-	    $("#divMapInfo").html(item.series.label + " of " + x + " = " + y);
+	    $("#divMapInfo").html(item.series.label + " pos "+ pos + " = " + x + " , " + y);
 		
 	}
     });
