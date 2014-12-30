@@ -30,15 +30,30 @@ function initialiseAwareMap() {
     $('#divMap-1').height(maxPlotHeight); 
 
 
-
-    var xyPoints = new Array();
     
-    var latitude=-75;
-    for(var longitude=180;longitude>0;longitude--) {
-	xyPoints.push(getXYFromLatLong(latitude,longitude));
+    function handlePosSumFile(jsonObject) {
+	var xyPoints = new Array();
+	for(var i=0;i<jsonObject.poslist.length;i++) {
+	    xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
+	}
+	actuallyDrawMap(xyPoints);
+	
     }
 
+    posSumUrl="output/ANITA3/map/posSum.json";
+       
+    $.ajax({
+	url: posSumUrl,
+	type: "GET",
+	dataType: "json",
+	success: handlePosSumFile,
+	error: handleFailure
+    });
+	
 
+}
+
+function actuallyDrawMap(xyPoints) {
 
     var data = [ 
     { data: [["antarcticaIceMap.png", -3000,-2500,+3000,+2500]],
@@ -48,9 +63,7 @@ function initialiseAwareMap() {
       images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}}
     ];
     
-    
-
-
+   
 
     var options = {
 	series: { images: { show: true } },
@@ -66,8 +79,10 @@ function initialiseAwareMap() {
 					    });
     
 
-}
 
+
+
+}
 
 
 
