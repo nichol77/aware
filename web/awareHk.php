@@ -48,24 +48,21 @@ header("Connection: keep-alive");
 <div id="plot-header-1" class="plot-header">
 <h3>Time Plot</h3>
 </div>
-<div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; ">
-<div id="plot-preamble" class="plot-preamble">
-<span style="float:left;" id="plot-text-1" class="plot-text"></span>
+<div id="plot-content-1" class="plot-content" style="width:100%; height:100% ; ">
+
+<div>
 <form>
 
 <div>
-<div class="mlabel">
-         Color:
-         </div>
-         <div>
-            <span id="color">
-               <input type="radio" name="color" id="default" checked="checked"/><label for="default">Default</label>
-               <input type="radio" name="color" id="single" /><label for="single">Mono</label>
-               <input type="radio" name="color" id="multi" /><label for="multi">Multi</label>
-            </span>
-         </div>
-      </div>
-<div id="layoutRadio" style="float:right; padding-right:10px;">
+<div>
+<span id="color" style="float:left;">
+  <input type="radio" name="color" id="default" /><label for="default">Default</label>
+  <input type="radio" name="color" id="single" /><label for="single">Mono</label>
+  <input type="radio" name="color" id="multi" checked="checked" /><label for="multi">Multi</label>
+  </span>
+  </div>
+  </div>
+  <div id="layoutRadio" style="float:right; padding-right:10px;">
     <input type="radio" value="both" id="layoutBoth" name="layoutRadio" checked="checked" /><label for="layoutBoth">Both</label>
     <input type="radio" value="time" id="layoutTime" name="layoutRadio"  /><label for="layoutTime">Time</label>
     <input type="radio" value="projection" id="layoutProjection" name="layoutRadio" /><label for="layoutProjection">Projection</label>
@@ -74,7 +71,9 @@ header("Connection: keep-alive");
 </div>
 <div id="divTime-1" style="width:70%; height:70%; padding: 0px; float : left; "></div>
 <div id="divProjection-1" style="width:30%; height:70%; padding: 0px; float : left;"></div>
-<div id="divLabel-1" style="width:0%; height:0%; padding: 0px; float : right;"></div>
+<div id="plot-preamble" class="plot-preamble" style="height:10%">
+<span style="float:left;" id="plot-text-1" class="plot-text"></span>
+</div>
 <div id="divChoices-1" style="width:80%; height:10%; padding: 0px; float : left;">
   <p class="choiceList" id="choices-1" style=""></p></div>
 </div>

@@ -470,7 +470,10 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 }
 
 
-
+function sortKeyNames(a,b) {
+    var plotName=getPlotNameFromForm();
+    return parseInt(a.substr(plotName.length))-parseInt(b.substr(plotName.length));
+}
 /**
 * This function is the one that actually draws the time and projection plots on the canvases
 * @params awareControl is the object containing the data for 
@@ -479,13 +482,21 @@ function actuallyDrawTheStuff(awareControl) {
     //Step one is to time sort
     sortDataSets(awareControl);
 
-    var fakeArray = new Array();
+    var keyArray = [];
+    var fakeArray = [];
+    for (var prop in awareControl.datasets) {
+	keyArray.push(prop);
+    }
+    keyArray.sort(sortKeyNames);
+
     
+
     var count=0;
-    $.each(awareControl.datasets, function(key, dataset) {
+    for (var i = 0; i < keyArray.length; i++) {
+	var key = keyArray[i];
 	fakeArray.push(count);
 	count++;
-    });
+    }
     var len=count;
     var options = {};
 	   //Step two is to assign colours to the variables for the plot
@@ -502,13 +513,13 @@ function actuallyDrawTheStuff(awareControl) {
     }
     
     var numPoints=0;
-    var count=0;
-    $.each(awareControl.datasets, function(key, dataset) {
+    for (var i = 0; i < keyArray.length; i++) {
+	var key = keyArray[i];
+	//	$('#debugContainer').append("<p>"+i+ " - "+key+"</p>");
+	var dataset = awareControl.datasets[key];
 	numPoints=dataset.data.length;
-
-	dataset.color = options.colors[count];
-	count++;
-    });
+	dataset.color = options.colors[i];
+    }
     
     var canContainer = $("#plot-text-"+awareControl.plotId); 
     if(numPoints>getMaxTimePointsToShow()) numPoints=getMaxTimePointsToShow();
@@ -519,16 +530,17 @@ function actuallyDrawTheStuff(awareControl) {
     // Add some checkboxes to turn plots on and off
     var countNum=0;
     var choiceContainer = $("#choices-"+awareControl.plotId);
-    $.each(awareControl.datasets, function(key, dataset) {
-	       if(countNum%4==0) {
-		   choiceContainer.append("<br />");
-	       }
-	       choiceContainer.append("<input type='checkbox' name='" + key +
-				      "' checked='checked' id='id" + key + "'></input>" +
-				      "<label for='id" + key + "'>"
-				      + dataset.label + "</label>");
-	       countNum++;
-	   });    
+    for (var i = 0; i < keyArray.length; i++) {
+	var key = keyArray[i];
+	var dataset = awareControl.datasets[key];
+	if(i%4==0) {
+	    choiceContainer.append("<br />");
+	}
+	choiceContainer.append("<input type='checkbox' name='" + key +
+			       "' checked='checked' id='id" + key + "'></input>" +
+			       "<label for='id" + key + "'>"
+			       + dataset.label + "</label>");
+    }
     choiceContainer.find("input").click(plotAccordingToChoices);
 
     //Set up the options for the time and projection plots

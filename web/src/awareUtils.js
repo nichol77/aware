@@ -614,8 +614,15 @@ function initialiseTimeViewButtons() {
 	document.getElementById("endRunInput").min=
 	    document.getElementById("runInput").value;
     });
+
     $('#color').buttonset();
     $("#layoutRadio").buttonset();
+
+    $("input:radio[name=color]").click(function() { 
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>color clicked... drawPlots</p>");
+	drawPlots(AwareUtils);
+			  });
 
     $("input:radio[name=layoutRadio]").click(function(){
 	var str=$(this).val();	;
