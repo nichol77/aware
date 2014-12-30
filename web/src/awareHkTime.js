@@ -479,13 +479,34 @@ function actuallyDrawTheStuff(awareControl) {
     //Step one is to time sort
     sortDataSets(awareControl);
 
-    //Step two is to assign colours to the variables for the plot
-    var colorIndex=0;
+    var fakeArray = new Array();
+    
+    var count=0;
+    $.each(awareControl.datasets, function(key, dataset) {
+	fakeArray.push(count);
+	count++;
+    });
+    var options = new Object{};
+	   //Step two is to assign colours to the variables for the plot
+    if ( $('#color :checked').attr('id') == 'single' ) {
+        options.colors = $.map( fakeArray, function ( o, i ) {
+	    return jQuery.Color('blue').lightness(0.7-i/(len*1.2)).toHexString();
+        });
+    } else if ( $('#color :checked').attr('id') == 'multi' ) {
+        options.colors = $.map( fakeArray, function ( o, i ) {
+            return jQuery.Color({ hue: (i*200/len), saturation: 0.95, lightness: 0.35, alpha: 1 }).toHexString();
+        });
+    } else {	
+        options.colors = fakeArray;
+    }
+    
     var numPoints=0;
+    var count=0;
     $.each(awareControl.datasets, function(key, dataset) {
 	numPoints=dataset.data.length;
-	dataset.color = colorIndex;
-	++colorIndex;
+
+	dataset.color = options.colors[count];
+	count++;
     });
     
     var canContainer = $("#plot-text-"+awareControl.plotId); 
@@ -528,6 +549,8 @@ function actuallyDrawTheStuff(awareControl) {
 	selection : { mode : "x" },
 	canvas : true
     }
+    
+   
 
     var timePlot;	
     var projPlot;
