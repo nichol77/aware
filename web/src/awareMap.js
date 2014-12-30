@@ -19,6 +19,8 @@
 /////   December 2014, r.nichol@ucl.ac.uk                                /////
 //////////////////////////////////////////////////////////////////////////////
 
+AwareMap = new Object();
+
 
 function initialiseAwareMap() {
     $("#debugContainer").show();
@@ -32,6 +34,7 @@ function initialiseAwareMap() {
 
     
     function handlePosSumFile(jsonObject) {
+	AwareMap=jsonObject;
 	var xyPoints = new Array();
 	for(var i=0;i<jsonObject.poslist.length;i++) {
 	    xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
@@ -94,8 +97,11 @@ function actuallyDrawMap(xyPoints) {
 	if (item) {
 	    var x = item.datapoint[0].toFixed(2),
 	    y = item.datapoint[1].toFixed(2);
-	    
-	    $("#divMapInfo").html(item.series.label + " index "+ item.dataIndex + " = " + x + " , " + y);
+	     + " index "+ item.dataIndex + " = " + x + " , " + y);
+	
+	$("#divMapInfo").html("<ul><li>Run: "+AwareMap.posList[item.dataIndex].run+"</li></ul>")
+
+
 		
 	}
     });
