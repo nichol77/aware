@@ -91,17 +91,12 @@ function actuallyDrawMap(xyPoints) {
     $("#divMap-1").bind("plothover", function (event, pos, item) {
 
 	
-	if ($("#enableTooltip:checked").length > 0) {
-	    if (item) {
-		var x = item.datapoint[0].toFixed(2),
-		y = item.datapoint[1].toFixed(2);
+	if (item) {
+	    var x = item.datapoint[0].toFixed(2),
+	    y = item.datapoint[1].toFixed(2);
+	    
+	    $("#divMapInfo").html(item.series.label + " of " + x + " = " + y);
 		
-		$("#tooltip").html(item.series.label + " of " + x + " = " + y)
-		    .css({top: item.pageY+5, left: item.pageX+5})
-		    .fadeIn(200);
-	    } else {
-		$("#tooltip").hide();
-	    }
 	}
     });
 

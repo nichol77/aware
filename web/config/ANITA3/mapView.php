@@ -57,9 +57,7 @@ header("Connection: keep-alive");
 <div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; ">
 <div id="divMap-1" style="width:80%; height80%; padding: 0px; float : left; "></div>
 
-
-<p>A tooltip is easy to build with a bit of jQuery code and the data returned from the plot.</p>	
-<p><label><input id="enableTooltip" type="checkbox" checked="checked"></input>Enable tooltip</label></p>
+<div id="divMapInfo" style="width:80%; height10%; padding: 0px; float : left;
 </div>
 
 <div id="debugContainer"></div>
