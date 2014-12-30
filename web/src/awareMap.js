@@ -47,7 +47,7 @@ function initialiseAwareMap() {
 	type: "GET",
 	dataType: "json",
 	success: handlePosSumFile,
-	error: handleFailure
+	error: handleAjaxError
     });
 	
 
