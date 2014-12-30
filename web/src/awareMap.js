@@ -96,7 +96,10 @@ function actuallyDrawMap(xyPoints) {
 	
 	if (item) {
 	
+	    var d = new Date(AwareMap.poslist[item.dataIndex].unixTime*1000);
+
 	$("#divMapInfo").html("<ul>"
+			      +"<li>Date: "+d.toUTCString()+"</li>"
 			      +"<li>Run: "+AwareMap.poslist[item.dataIndex].run+"</li>"
 			      +"<li>Event: "+AwareMap.poslist[item.dataIndex].eventNumber+"</li>"
 			      +"<li>Rate: "+AwareMap.poslist[item.dataIndex].eventRate+"</li>"
