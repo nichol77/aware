@@ -96,7 +96,7 @@ function actuallyDrawMap(xyPoints) {
 	
 	if (item) {
 	
-	$("#divMapInfo").html("<ul><li>Run: "+AwareMap.posList[item.dataIndex].run+"</li></ul>")
+	$("#divMapInfo").html("<ul><li>Run: "+AwareMap.poslist[item.dataIndex].run+"</li></ul>")
 
 
 		
