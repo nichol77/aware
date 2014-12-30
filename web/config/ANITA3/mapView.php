@@ -57,8 +57,8 @@ header("Connection: keep-alive");
 <div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; ">
 
 <div id="divMap-1" style="width:80%; height80%; padding: 0px; float : left; "></div>
-
-<div id="divMapInfo" ></div>
+</div>
+<div id="divMapInfo"></div>
 <div id="debugContainer"></div>
 </div>
 </div>
@@ -71,37 +71,6 @@ include("leftMap.php");
 </div>
 
 
-
-<div id="openStationHelp" class="helpDialog">
-  <div>
-<a href="#close" title="Close" class="close">X</a>
-<?php
-include "help/stationHelp.php";
-?>
-</div>
-</div>
-
-
-
-<div id="openLayoutHelp" class="helpDialog">
-  <div>
-<a href="#close" title="Close" class="close">X</a>
-<?php
-include "help/layoutHelp.php";
-?>
-</div>
-</div>
-
-
-
-<div id="openWaveformHelp" class="helpDialog">
-  <div>
-<a href="#close" title="Close" class="close">X</a>
-<?php
-include "help/waveformHelp.php";
-?>
-</div>
-</div>
 
 </body></html>
 
