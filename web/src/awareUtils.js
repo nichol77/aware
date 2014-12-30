@@ -615,7 +615,6 @@ function initialiseTimeViewButtons() {
 	    document.getElementById("runInput").value;
     });
 
-    $("#colorRadio").buttonset();
     $("#layoutRadio").buttonset();
 
     $("input:radio[name=layoutRadio]").click(function(){
