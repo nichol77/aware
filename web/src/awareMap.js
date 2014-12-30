@@ -95,9 +95,6 @@ function actuallyDrawMap(xyPoints) {
 
 	
 	if (item) {
-	    var x = item.datapoint[0].toFixed(2),
-	    y = item.datapoint[1].toFixed(2);
-	     + " index "+ item.dataIndex + " = " + x + " , " + y);
 	
 	$("#divMapInfo").html("<ul><li>Run: "+AwareMap.posList[item.dataIndex].run+"</li></ul>")
 
