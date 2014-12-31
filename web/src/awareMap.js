@@ -85,7 +85,7 @@ function actuallyDrawMap() {
     }
     
 
-
+    mapPlotCan=$("#divMap-1");
 //   
 
 
@@ -110,13 +110,13 @@ function actuallyDrawMap() {
     
     function doPlot() {
 	var graph = $.plot.image.loadDataImages(data, options, function () {
-	    $.plot($("#divMap-1"), data, options);
+	    $.plot(mapPlotCan, data, options);
 	})
     }
 
     doPlot();
 	
-    $("#divMap-1").bind("plothover", function (event, pos, item) {		
+    mapPlotCan.bind("plothover", function (event, pos, item) {		
 	if (item) {	    
 	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
 	    $("#divMapInfo").html("<ul>"
@@ -129,7 +129,9 @@ function actuallyDrawMap() {
     });
 
  // This is where the zoom function is bound to the time plot
-    $("#divMap-1").bind("plotselected", function (event, ranges) {
+    mapPlotCan.bind("plotselected", function (event, ranges) {
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>plotselected</p>");
 	options.xaxis.min=ranges.xaxis.from;
 	options.xaxis.max=ranges.xaxis.to;
 	options.yaxis.min=ranges.yaxis.from;
@@ -139,7 +141,7 @@ function actuallyDrawMap() {
 
 
 
-    $("#divMap-1").bind("plotunselected", function (event, ranges) {
+    mapPlotCan.bind("plotunselected", function (event, ranges) {
 	options.xaxis.min=AwareMap.xMin
 	options.xaxis.max=AwareMap.xMax;
 	options.yaxis.min=AwareMap.yMin;
