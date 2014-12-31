@@ -58,11 +58,17 @@ function initialiseAwareMap() {
 
 function actuallyDrawMap(xyPoints) {
 
-    AwareMap.pngName="antarcticaIceMapOld.png";
-    AwareMap.xMin=-3000;
-    AwareMap.xMax=+3000;
-    AwareMap.yMin=-2500;
-    AwareMap.yMax=+2500;
+//    AwareMap.pngName="antarcticaIceMapOld.png";
+//    AwareMap.xMin=-3000;
+//    AwareMap.xMax=+3000;
+//    AwareMap.yMin=-2500;
+//    AwareMap.yMax=+2500;
+
+    AwareMap.pngName="antarcticaIceMap_small.png";
+    AwareMap.xMin=-3333.5;
+    AwareMap.xMax=+3333.5;
+    AwareMap.yMin=-3333.5;
+    AwareMap.yMax=+3333.5;
 
 
 
