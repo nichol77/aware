@@ -58,8 +58,16 @@ function initialiseAwareMap() {
 
 function actuallyDrawMap(xyPoints) {
 
+    AwareMap.pngName="antarcticaIceMapOld.png";
+    AwareMap.xMin=-3000;
+    AwareMap.xMax=+3000;
+    AwareMap.yMin=-2500;
+    AwareMap.yMax=+2500;
+
+
+
     var data = [ 
-    { data: [["antarcticaIceMap.png", -3000,-2500,+3000,+2500]],
+    { data: [[AwareMap.pngName, AwareMap.xMin,AwareMap.yMin,AwareMap.xMax,AwareMap.yMax]],
       images: {show: true}, bars: {show: false}, points: {show: false}, lines: {show: false}},
 
     { data: xyPoints, 
@@ -70,8 +78,8 @@ function actuallyDrawMap(xyPoints) {
 
     var options = {
 	series: { images: { show: true } },
-	xaxis: { min: -3000, max: 3000 },
-	yaxis: { min: -2500, max: 2500 },
+	xaxis: { min: AwareMap.xMin, max: AwareMap.xMax },
+	yaxis: { min: AwareMap.yMin, max: AwareMap.yMax },
 	lines: { show: true },
 	grid: { hoverable: true, clickable: true },
 	
