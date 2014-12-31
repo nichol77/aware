@@ -113,6 +113,8 @@ function actuallyDrawMap() {
 	    $.plot($("#divMap-1"), data, options);
 	})
     }
+
+    doPlot();
 	
     $("#divMap-1").bind("plothover", function (event, pos, item) {		
 	if (item) {	    
