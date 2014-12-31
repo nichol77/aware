@@ -108,40 +108,42 @@ function actuallyDrawMap() {
 	
     };
     
-    var graph = $.plot.image.loadDataImages(data, options, function () {
-						$.plot($("#divMap-1"), data, options);
-					    });
-
-    $("<div id='tooltip'></div>").css({
-	position: "absolute",
-	display: "none",
-	border: "1px solid #fdd",
-	padding: "2px",
-	"background-color": "#fee",
-	opacity: 0.80
-    }).appendTo("body");
-
-    
-    $("#divMap-1").bind("plothover", function (event, pos, item) {
-
+    function doPlot() {
+	var graph = $.plot.image.loadDataImages(data, options, function () {
+	    $.plot($("#divMap-1"), data, options);
+	})
+    }
 	
-	if (item) {
-	
-	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);
-
-	$("#divMapInfo").html("<ul>"
-			      +"<li>Date: "+d.toUTCString()+"</li>"
-			      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
-			      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
-			      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
-			      +"</ul>")
-
-
-		
+    $("#divMap-1").bind("plothover", function (event, pos, item) {		
+	if (item) {	    
+	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
+	    $("#divMapInfo").html("<ul>"
+				  +"<li>Date: "+d.toUTCString()+"</li>"
+				  +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
+				  +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
+				  +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
+				  +"</ul>");		
 	}
     });
 
+ // This is where the zoom function is bound to the time plot
+    $("#divMap-1").bind("plotselected", function (event, ranges) {
+	options.xaxis.min=ranges.xaxis.from;
+	options.xaxis.max=ranges.xaxis.to;
+	options.yaxis.min=ranges.yaxis.from;
+	options.yaxis.max=ranges.yaxis.to;
+	doPlot();
+    });
 
+
+
+    $("#divMap-1").bind("plotunselected", function (event, ranges) {
+	options.xaxis.min=AwareMap.xMin
+	options.xaxis.max=AwareMap.xMax;
+	options.yaxis.min=AwareMap.yMin;
+	options.yaxis.max=AwareMap.yMax;
+
+    });
 
 }
 
