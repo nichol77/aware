@@ -60,7 +60,7 @@ function checkFiles() {
 
 <a class=
 "leftBar" title="Map View" href="mapView.php"
->File</a>
+>Map</a>
 
 <a class=
 "leftBar" title="Telemetry" href="telem.php"
