@@ -54,6 +54,13 @@ header("Connection: keep-alive");
 <h3>ANITA Course</h3>
 </div>
 
+<form>
+  <div id="mapRadio" style="float:right; padding-right:10px;">
+    <input type="radio" value="old" id="layoutOld" name="mapRadio" checked="checked" /><label for="layoutOld">Bedmap1</label>
+    <input type="radio" value="low" id="layoutLow" name="mapRadio"  /><label for="layoutLow">Bedmap2 (SD)</label>
+    <input type="radio" value="high" id="layoutHigh" name="mapRadio" /><label for="layoutHigh">Bedmap2 (HD)</label>
+  </div>
+  </form>
 <div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; ">
 
 <div id="divMap-1" style="width:80%; height80%; padding: 0px; float : left; "></div>
