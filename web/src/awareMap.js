@@ -30,16 +30,23 @@ function initialiseAwareMap() {
     if(docWidth>=800) heightPercentage=80;
     var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
     $('#divMap-1').height(maxPlotHeight); 
+    $("#mapRadio").buttonset();
 
 
-    
+    $("input:radio[name=mapRadio]").click(function() { 
+        if($('#debugContainer').is(":visible"))
+	    $('#debugContainer').append("<p>color clicked... drawPlots</p>");
+	actuallyDrawMap();
+    });
+
+
     function handlePosSumFile(jsonObject) {
-	AwareMap=jsonObject;
-	var xyPoints = new Array();
+	AwareMap.object=jsonObject;
+	AwareMap.xyPoints = new Array();
 	for(var i=0;i<jsonObject.poslist.length;i++) {
-	    xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
+	    AwareMap.xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
-	actuallyDrawMap(xyPoints);
+	actuallyDrawMap();
 	
     }
 
@@ -56,27 +63,37 @@ function initialiseAwareMap() {
 
 }
 
-function actuallyDrawMap(xyPoints) {
+function actuallyDrawMap() {
+    if ( $('#mapRadio :checked').attr('id') == 'mapLow' ) {
+	AwareMap.pngName="antarcticaIceMap_small.png";
+	AwareMap.xMin=-3333.5;
+	AwareMap.xMax=+3333.5;
+	AwareMap.yMin=-3333.5;
+	AwareMap.yMax=+3333.5;
+    } else if ( $('#mapRadio :checked').attr('id') == 'mapHigh' ) {
+	AwareMap.pngName="antarcticaIceMap.png";
+	AwareMap.xMin=-3333.5;
+	AwareMap.xMax=+3333.5;
+	AwareMap.yMin=-3333.5;
+	AwareMap.yMax=+3333.5;
+    } else {
+	AwareMap.pngName="antarcticaIceMapOld.png";
+	AwareMap.xMin=-3000;
+	AwareMap.xMax=+3000;
+	AwareMap.yMin=-2500;
+	AwareMap.yMax=+2500;	
+    }
+    
 
-//    AwareMap.pngName="antarcticaIceMapOld.png";
-//    AwareMap.xMin=-3000;
-//    AwareMap.xMax=+3000;
-//    AwareMap.yMin=-2500;
-//    AwareMap.yMax=+2500;
 
-    AwareMap.pngName="antarcticaIceMap_small.png";
-    AwareMap.xMin=-3333.5;
-    AwareMap.xMax=+3333.5;
-    AwareMap.yMin=-3333.5;
-    AwareMap.yMax=+3333.5;
-
+//   
 
 
     var data = [ 
     { data: [[AwareMap.pngName, AwareMap.xMin,AwareMap.yMin,AwareMap.xMax,AwareMap.yMax]],
       images: {show: true}, bars: {show: false}, points: {show: false}, lines: {show: false}},
 
-    { data: xyPoints, 
+    { data: AwareMap.xyPoints, 
       images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}}
     ];
     
@@ -110,13 +127,13 @@ function actuallyDrawMap(xyPoints) {
 	
 	if (item) {
 	
-	    var d = new Date(AwareMap.poslist[item.dataIndex].unixTime*1000);
+	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);
 
 	$("#divMapInfo").html("<ul>"
 			      +"<li>Date: "+d.toUTCString()+"</li>"
-			      +"<li>Run: "+AwareMap.poslist[item.dataIndex].run+"</li>"
-			      +"<li>Event: "+AwareMap.poslist[item.dataIndex].eventNumber+"</li>"
-			      +"<li>Rate: "+AwareMap.poslist[item.dataIndex].eventRate+"</li>"
+			      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
+			      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
+			      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
 			      +"</ul>")
 
 

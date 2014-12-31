@@ -56,9 +56,9 @@ header("Connection: keep-alive");
 
 <form>
   <div id="mapRadio" style="float:right; padding-right:10px;">
-    <input type="radio" value="old" id="layoutOld" name="mapRadio" checked="checked" /><label for="layoutOld">Bedmap1</label>
-    <input type="radio" value="low" id="layoutLow" name="mapRadio"  /><label for="layoutLow">Bedmap2 (SD)</label>
-    <input type="radio" value="high" id="layoutHigh" name="mapRadio" /><label for="layoutHigh">Bedmap2 (HD)</label>
+    <input type="radio" value="old" id="mapOld" name="mapRadio" checked="checked" /><label for="mapOld">Bedmap1</label>
+    <input type="radio" value="low" id="mapLow" name="mapRadio"  /><label for="mapLow">Bedmap2 (SD)</label>
+    <input type="radio" value="high" id="mapHigh" name="mapRadio" /><label for="mapHigh">Bedmap2 (HD)</label>
   </div>
   </form>
 <div id="plot-content-1" class="plot-content" style="width:100%; height:96% ; ">
