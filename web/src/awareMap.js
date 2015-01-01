@@ -129,12 +129,17 @@ function actuallyDrawMap() {
 					       AwareMap.object.poslist[item.dataIndex].longitude,
 					       AwareMap.object.poslist[item.dataIndex].altitude);
 
-		var pulserDist = new Array()
-		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]);
-		pulserDist[1]=getDistance(cartCos,AwareMap.pulserCartArray[1]);
+		var pulserDist = new Array();
+		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]); //m
+ 		pulserDist[1]=getDistance(cartCos,AwareMap.pulserCartArray[1]); //m
 		var minPulser=0;
 		if(pulserDist[1]<pulserDist[0]) minPulser=1;
 
+		var pulserTime=new Array();
+		for(var i=0;i<pulserDist.length;i++) {
+		    pulserTime[i]=1e9*(pulserDist[i]/C_LIGHT);
+		    pulserDist[i]/=1000;
+		}
 
 
     		$("#divMapInfo").html("<ul>"
@@ -142,7 +147,9 @@ function actuallyDrawMap() {
     				      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
     				      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
     				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
-    				      +"<li>Distance to: "+AwareMap.pulserNames[minPulser]+" = "+pulserDist[minPulser]+"</li>"
+    				      +"<li>"+AwareMap.pulserNames[minPulser]+"</li>"
+				      +"<ul><li>Dist = "+pulserDist[minPulser].toFixed(2)+"km</li>"
+				      +"<ul><li>Time = "+pulserTime[minPulser].toFixed(0)+"ns</li></ul>"
     				      +"</ul>");		
 	    }
 	    else if(item.seriesIndex==2) {
@@ -210,14 +217,12 @@ function getCalPulserPositionList() {
 
 var R_EARTH=6.378137E6;
 var GEOID_MAX=6.378137E6; // parameters of geoid model
-var GEOID_MIN=6.356752E6l
+var GEOID_MIN=6.356752E6;
 var C_LIGHT=299792458; //meters
 var FLATTENING_FACTOR=(1./298.257223563);
 
 function getGeoid(theta) {
-
-
-    Double_t c=Math.cos(theta);
+    var c=Math.cos(theta);
     return GEOID_MIN*GEOID_MAX/Math.sqrt(GEOID_MIN*GEOID_MIN-
 					 (GEOID_MIN*GEOID_MIN-GEOID_MAX*GEOID_MAX)*c*c);    
 }   ///<Returns the geoid radiuus as a function of theta (the polar angle?)
