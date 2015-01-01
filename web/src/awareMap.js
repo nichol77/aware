@@ -124,12 +124,25 @@ function actuallyDrawMap() {
     	if (item) {	   
 
 	    if(item.seriesIndex==1) {		
-    		var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
+    		var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);
+		var cartCos=getCartesianCoords(AwareMap.object.poslist[item.dataIndex].latitude,
+					       AwareMap.object.poslist[item.dataIndex].longitude,
+					       AwareMap.object.poslist[item.dataIndex].altitude);
+
+		var pulserDist = new Array()
+		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]);
+		pulserDist[1]=getDistance(cartCos,AwareMap.pulserCartArray[1]);
+		var minPulser=0;
+		if(pulserDist[1]<pulserDist[0]) minPulser=1;
+
+
+
     		$("#divMapInfo").html("<ul>"
     				      +"<li>Date: "+d.toUTCString()+"</li>"
     				      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
     				      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
     				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
+    				      +"<li>Distance to: "+AwareMap.pulserNames[minPulser]+" = "+pulserDist[minPulser]+"</li>"
     				      +"</ul>");		
 	    }
 	    else if(item.seriesIndex==2) {
@@ -169,7 +182,7 @@ function actuallyDrawMap() {
 function getXYFromLatLong(latitude, longitude) {       	
     var TrueScaleLat=71;
     var CentralMeridian=0;
-    var RadiusOfEarth=6378.1; //Metres
+    var RadiusOfEarth=6378.1; //Kilometres
     //Negative longitude is west
  //    //All latitudes assumed south
     var absLat=Math.abs(latitude);
@@ -182,13 +195,74 @@ function getXYFromLatLong(latitude, longitude) {
 
 
 function getCalPulserPositionList() {
-    var sipleDomeLatLon=[-81.65232,-149.00016];
-    var waisLatLon=[-79.46562,-112.1125];
-    AwareMap.pulserNames=["Siple Dome","WAIS"];
-
-    var pulserArray=new Array();
-    pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
-    pulserArray.push(getXYFromLatLong(waisLatLon[0],waisLatLon[1]));
-    return pulserArray;
+    var sipleDomeLatLon=[-81.65232,-149.00016,650];
+    var waisLatLon=[-79.46562,-112.1125,1775.68];
+    AwareMap.pulserNames=["Siple Dome","WAIS"];    
+    AwareMap.pulserArray=new Array();
+    AwareMap.pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
+    AwareMap.pulserArray.push(getXYFromLatLong(waisLatLon[0],waisLatLon[1]));
+    AwareMap.pulserCartArray=new Array();
+    AwareMap.pulserCartArray.push(getCartesianCoords(sipleDomeLatLon[0],sipleDomeLatLon[1],sipleDomeLatLon[2]));
+    AwareMap.pulserCartArray.push(getCartesianCoords(waisLatLon[0],waisLatLon[1],waisLatLon[2]));
+    return AwareMap.pulserArray;
 }
 
+
+var R_EARTH=6.378137E6;
+var GEOID_MAX=6.378137E6; // parameters of geoid model
+var GEOID_MIN=6.356752E6l
+var C_LIGHT=299792458; //meters
+var FLATTENING_FACTOR=(1./298.257223563);
+
+function getGeoid(theta) {
+
+
+    Double_t c=Math.cos(theta);
+    return GEOID_MIN*GEOID_MAX/Math.sqrt(GEOID_MIN*GEOID_MIN-
+					 (GEOID_MIN*GEOID_MIN-GEOID_MAX*GEOID_MAX)*c*c);    
+}   ///<Returns the geoid radiuus as a function of theta (the polar angle?)
+  
+function getLat(theta) {      
+    return (90.-(theta*180./Math.PI)); 
+} ///< Converts polar angle to latitude
+  
+function getLon(phi){ 
+    //Need to fix this somehow
+    var phi_deg = phi*180./Math.PI;
+    if (phi_deg>270)
+	phi_deg-=360;	
+    return (90.-phi_deg);
+} ///< Converts a azimuthal angle to longitude
+
+function getThetaFromLat(lat) {       
+    return (90.- lat)*Math.PI/180.; 
+} ///< Converts latitude to polar angle
+
+function getPhiFromLon(lon){ 
+    //Need to fix this somehow
+    var phi_deg = 90. - lon;
+    if(phi_deg<0) phi_deg+=360;
+    return phi_deg*Math.PI/180.;
+} ///<Converts longitude to azimuthal angle
+  
+
+function getCartesianCoords(lat, lon, alt)
+{
+    if(lat<0) lat*=-1;
+    //Note that x and y are switched to conform with previous standards
+    lat*=Math.PI/180.;
+    lon*=Math.PI/180.;
+    //calculate x,y,z coordinates
+    var C2=Math.pow(Math.cos(lat)*Math.cos(lat)+(1-FLATTENING_FACTOR)*(1-FLATTENING_FACTOR)*Math.sin(lat)*Math.sin(lat),-0.5);
+    var Q2=(1-FLATTENING_FACTOR)*(1-FLATTENING_FACTOR)*C2;
+    var p = new Array();
+    p[1]=(R_EARTH*C2+alt)*Math.cos(lat)*Math.cos(lon);
+    p[0]=(R_EARTH*C2+alt)*Math.cos(lat)*Math.sin(lon);
+    p[2]=(R_EARTH*Q2+alt)*Math.sin(lat);
+    return p;
+}
+
+function getDistance(p1,p2)
+{
+    return Math.sqrt((p1[0]-p2[0])*(p1[0]-p2[0])+(p1[1]-p2[1])*(p1[1]-p2[1])+(p1[2]-p2[2])*(p1[2]-p2[2]));
+}   
