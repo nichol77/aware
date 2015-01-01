@@ -105,6 +105,7 @@ function actuallyDrawMap() {
 	yaxis: { min: AwareMap.yMin, max: AwareMap.yMax },
 	lines: { show: true },
 	grid: { hoverable: true, clickable: true },
+	selection: {mode: "xy"}
 	
     };
     
@@ -114,19 +115,18 @@ function actuallyDrawMap() {
 	})
     }
 
-    doPlot();
 	
     mapPlotCan.bind("plothover", function (event, pos, item) {		
-	if (item) {	    
-	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
-	    $("#divMapInfo").html("<ul>"
-				  +"<li>Date: "+d.toUTCString()+"</li>"
-				  +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
-				  +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
-				  +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
-				  +"</ul>");		
-	}
-    });
+    	if (item) {	    
+    	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
+    	    $("#divMapInfo").html("<ul>"
+    				  +"<li>Date: "+d.toUTCString()+"</li>"
+    				  +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
+    				  +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
+    				  +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
+    				  +"</ul>");		
+    	}
+        });
 
  // This is where the zoom function is bound to the time plot
     mapPlotCan.bind("plotselected", function (event, ranges) {
@@ -146,8 +146,10 @@ function actuallyDrawMap() {
 	options.xaxis.max=AwareMap.xMax;
 	options.yaxis.min=AwareMap.yMin;
 	options.yaxis.max=AwareMap.yMax;
-
+	doPlot();
     });
+
+    doPlot();
 
 }
 
