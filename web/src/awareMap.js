@@ -33,13 +33,15 @@ function initialiseAwareMap() {
     $("#mapRadio").buttonset();
 
 
+    AwareMap.pulserPoints=getCalPulserPositionList();
+
     $("input:radio[name=mapRadio]").click(function() { 
         if($('#debugContainer').is(":visible"))
 	    $('#debugContainer').append("<p>color clicked... drawPlots</p>");
 	actuallyDrawMap();
     });
 
-
+    
     function handlePosSumFile(jsonObject) {
 	AwareMap.object=jsonObject;
 	AwareMap.xyPoints = new Array();
@@ -89,12 +91,14 @@ function actuallyDrawMap() {
 //   
 
 
-    var data = [ 
-    { data: [[AwareMap.pngName, AwareMap.xMin,AwareMap.yMin,AwareMap.xMax,AwareMap.yMax]],
-      images: {show: true}, bars: {show: false}, points: {show: false}, lines: {show: false}},
 
-    { data: AwareMap.xyPoints, 
-      images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}}
+    var data = [ 
+	{ data: [[AwareMap.pngName, AwareMap.xMin,AwareMap.yMin,AwareMap.xMax,AwareMap.yMax]],
+	  images: {show: true}, bars: {show: false}, points: {show: false}, lines: {show: false}},	
+	{ data: AwareMap.xyPoints, 
+	  images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}},
+	{ data: AwareMap.pulserPoints, 
+	  images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}}
     ];
     
    
@@ -171,5 +175,13 @@ function getXYFromLatLong(latitude, longitude) {
 
 
 
+function getCalPulserPositionList() {
+    var sipleDomeLatLon=[-81.65232,-149.00016];
+    var waisLatLon=[-79.46562,-112.1125];
 
+    var pulserArray=new Array();
+    pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
+    pulserArray.push(getXYFromLatLong(waisLatLon[0],waisLatLon[1]));
+    return pulserArray;
+}
 
