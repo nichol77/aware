@@ -121,15 +121,21 @@ function actuallyDrawMap() {
 
 	
     mapPlotCan.bind("plothover", function (event, pos, item) {		
-    	if (item) {	    
-    	    var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
-    	    $("#divMapInfo").html("<ul>"
-    				  +"<li>Date: "+d.toUTCString()+"</li>"
-    				  +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
-    				  +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
-    				  +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
-    				  +"</ul>");		
-    	}
+    	if (item) {	   
+
+	    if(item.seriesIndex==1) {		
+    		var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);	    
+    		$("#divMapInfo").html("<ul>"
+    				      +"<li>Date: "+d.toUTCString()+"</li>"
+    				      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
+    				      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
+    				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
+    				      +"</ul>");		
+	    }
+	    else if(item.seriesIndex==2) {
+		$("#divMapInfo").html("<ul>"+"<li>Pulser: "+AwareMap.pulserNames[item.dataIndex]+"</li></ul>");
+	    }
+   	}
         });
 
  // This is where the zoom function is bound to the time plot
@@ -178,6 +184,7 @@ function getXYFromLatLong(latitude, longitude) {
 function getCalPulserPositionList() {
     var sipleDomeLatLon=[-81.65232,-149.00016];
     var waisLatLon=[-79.46562,-112.1125];
+    AwareMap.pulserNames=["Siple Dome","WAIS"];
 
     var pulserArray=new Array();
     pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
