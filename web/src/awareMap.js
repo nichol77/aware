@@ -23,7 +23,7 @@ AwareMap = new Object();
 
 
 function initialiseAwareMap() {
-    $("#debugContainer").show();
+    $("#debugContainer").hide();
     var docHeight=$(window).height();
     var docWidth=$(window).width();
     var heightPercentage=60;
@@ -160,9 +160,6 @@ function getXYFromLatLong(latitude, longitude) {
     var TrueScaleLat=71;
     var CentralMeridian=0;
     var RadiusOfEarth=6378.1; //Metres
-    //    var xOffest=375;
-    //    var yOffset=312.5;
-    //    var scale=271.5/2.19496e+06;
     //Negative longitude is west
  //    //All latitudes assumed south
     var absLat=Math.abs(latitude);
