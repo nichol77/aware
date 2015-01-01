@@ -98,7 +98,7 @@ function actuallyDrawMap() {
 	{ data: AwareMap.xyPoints, 
 	  images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}},
 	{ data: AwareMap.pulserPoints, 
-	  images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}}
+	  images: {show: false}, bars: {show: false}, points: {show: true, symbol:"cross"}, lines: {show: false}}
     ];
     
    
