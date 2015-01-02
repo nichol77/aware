@@ -29,7 +29,7 @@
 	var runHundred = runNumPadded.charAt(1);
 	if(runHundred != 0) {runHundred = runHundred * 100} // IE add 00 to the end
 	
-	var output = {};
+	var allConfigs = {};
 	//Load config data
 	console.log("Getting run configs for run: "+runNum);
 	$.ajax({ 
@@ -40,24 +40,61 @@
 			console.log(configs);
 			$.each(configs.sectionList, function(topConfigKey,topConfigValue) {
 				$.each(topConfigValue.itemList, function(configKey, configValue) {
-					output[configValue.name] = configValue.value;
+					allConfigs[configValue.name] = configValue.value;
 					console.log(configValue.name+":"+configValue.value);
 				});
 			});
 		 },
 		 async:   false
 		});
-	console.log(output);
+	console.log(allConfigs);
 	
 	// Add 1 to the number of times i have forgotten to wait for the page to be ready...
+	// If the config entry is interesting print it
 	$( document ).ready(function() {
-		$.each(output, function(name, value) {
-			$('#output').append(name+":"+value+"<br>");
+		$.each(allConfigs, function(name, value) {
+			if(name == "enablePPS1Trigger"
+			|| name == "enablePPS2Trigger"
+			|| name == "disableExtTrigger"
+			
+			|| name == "sendSoftTrigger"
+			|| name == "softTrigPeriod"
+			
+			|| name == "enabledDynamicPhiMasking"
+			|| name == "enabledDynamicAntMasking"
+			
+			|| name == "dynamicPhiThresholdOverRate"
+			|| name == "dynamicPhiThresholdOverWindow"
+			|| name == "dynamicPhiThresholdUnderRate"
+			|| name == "dynamicPhiThresholdUnderWindow"
+			
+			|| name == "dynamicAntThresholdOverRate"
+			|| name == "dynamicAntThresholdOverWindow"
+			|| name == "dynamicAntThresholdUnderRate"
+			|| name == "dynamicAntThresholdUnderWindow"
+			
+			|| name == "enableChanServo"
+			|| name == "pidGoals"
+			){
+				$('#output').append(name+":"+value+"<br>");
+			}
 		});
 	});
 	
+	function viewAllConfig() {
+		$('#output').html("");
+		$( document ).ready(function() {
+			$.each(allConfigs, function(name, value) {
+				$('#output').append(name+":"+value+"<br>");
+			});
+		});
+	}
+	
 	
 </script>
-<div id="output">output will go here</div>
+<h2>Configuration values from the most recent run</h2>
+<div id="output"> </div>
+<br> 
+<button onClick="viewAllConfig();"  value="View all">View all</button>
 </body>
 </html>
