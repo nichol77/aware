@@ -32,8 +32,10 @@ function initialiseAwareMap() {
     $('#divMap-1').height(maxPlotHeight); 
     $("#mapRadio").buttonset();
 
-
+    AwareMap.gotRunSourceMap=false;
     AwareMap.pulserPoints=getCalPulserPositionList();
+
+
 
     $("input:radio[name=mapRadio]").click(function() { 
         if($('#debugContainer').is(":visible"))
@@ -48,7 +50,12 @@ function initialiseAwareMap() {
 	for(var i=0;i<jsonObject.poslist.length;i++) {
 	    AwareMap.xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
-	actuallyDrawMap();
+	if(true) {
+	    getRunSourceMap();
+	}
+	else {
+	    actuallyDrawMap();
+	}
 	
     }
 
@@ -64,6 +71,35 @@ function initialiseAwareMap() {
 	
 
 }
+
+function getRunSourceMap() {
+    AwareMap.runNumber=347;
+
+    function handleMapRunFile(jsonObject) {
+	AwareMap.gotRunSourceMap=true;
+	AwareMap.mapRun=jsonObject;
+	AwareMap.mapRunPoints = new Array();
+	for(var i=0;i<jsonObject.poslist.length;i++) {
+	    AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
+	}
+	actuallyDrawMap();	
+    }
+
+
+    mapRunUrl="output/ANITA3/map/mapRun"+AwareMap.runNumber+".json";
+       
+    $.ajax({
+	url: mapRunUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleMapRunFile,
+	error: handleAjaxError
+    });
+
+
+}
+
+
 
 function actuallyDrawMap() {
     if ( $('#mapRadio :checked').attr('id') == 'mapLow' ) {
@@ -98,8 +134,18 @@ function actuallyDrawMap() {
 	{ data: AwareMap.xyPoints, 
 	  images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}},
 	{ data: AwareMap.pulserPoints, 
-	  images: {show: false}, bars: {show: false}, points: {show: true, symbol:"cross"}, lines: {show: false}}
+	  images: {show: false}, bars: {show: false}, points: {show: true, symbol:"triangle"}, lines: {show: false}}
     ];
+    
+    if(AwareMap.gotRunSourceMap) {
+	//At some point will do soemthing 
+	var MapRun={ data: AwareMap.mapRunPoints, 
+		     images: {show: false}, 
+		     bars: {show: false}, 
+		     points: {show: true, symbol:"cross"}, 
+		     lines: {show: false}};
+	data.push(MapRun);
+    }
     
    
 
