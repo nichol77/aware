@@ -48,8 +48,8 @@ function initialiseAwareMap() {
 	AwareMap.object=jsonObject;
 	AwareMap.lapXYPoints = new Array();
 
-	lapXYPoints[0] = new Array(); // lap 1
-	lapXYPoints[1] = new Array(); // lap 2
+	AwareMap.lapXYPoints[0] = new Array(); // lap 1
+	AwareMap.lapXYPoints[1] = new Array(); // lap 2
 	
 	var lapNum=0;
 
