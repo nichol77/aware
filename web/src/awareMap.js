@@ -50,7 +50,7 @@ function initialiseAwareMap() {
 	for(var i=0;i<jsonObject.poslist.length;i++) {
 	    AwareMap.xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
-	if(true) {
+	if(false) {
 	    getRunSourceMap();
 	}
 	else {
