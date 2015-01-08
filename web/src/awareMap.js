@@ -46,9 +46,17 @@ function initialiseAwareMap() {
     
     function handlePosSumFile(jsonObject) {
 	AwareMap.object=jsonObject;
-	AwareMap.xyPoints = new Array();
+	AwareMap.lapXYPoints = new Array();
+
+	lapXYPoints[0] = new Array(); // lap 1
+	lapXYPoints[1] = new Array(); // lap 2
+	
+	var lapNum=0;
+
 	for(var i=0;i<jsonObject.poslist.length;i++) {
-	    AwareMap.xyPoints.push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
+	    if(jsonobject.poslist[item.dataIndex].run>382) 
+		lapNum=1;	    
+	    AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
 	if(false) {
 	    getRunSourceMap();
@@ -130,12 +138,28 @@ function actuallyDrawMap() {
 
     var data = [ 
 	{ data: [[AwareMap.pngName, AwareMap.xMin,AwareMap.yMin,AwareMap.xMax,AwareMap.yMax]],
-	  images: {show: true}, bars: {show: false}, points: {show: false}, lines: {show: false}},	
-	{ data: AwareMap.xyPoints, 
-	  images: {show: false}, bars: {show: false}, points: {show: true}, lines: {show: false}},
-	{ data: AwareMap.pulserPoints, 
-	  images: {show: false}, bars: {show: false}, points: {show: true, symbol:"triangle"}, lines: {show: false}}
+	  images: {show: true}, bars: {show: false}, points: {show: false}, lines: {show: false}}
     ];
+    	
+    for(var lap=0;lap<AwareMap.lapXYPoints.length;lap++) {
+	var LapData={ 
+	    data: AwareMap.lapXYPoints, 
+	    images: {show: false}, 
+	    bars: {show: false}, 
+	    points: {show: true}, 
+	    lines: {show: false}};
+	data.push(LapData);
+    }
+    
+
+
+
+    var PulserData= { data: AwareMap.pulserPoints, 
+		      images: {show: false}, 
+		      bars: {show: false}, 
+		      points: {show: true, symbol:"triangle"}, 
+		      lines: {show: false}};
+    data.push(PulserData);
     
     if(AwareMap.gotRunSourceMap) {
 	//At some point will do soemthing 
