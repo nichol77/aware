@@ -54,7 +54,7 @@ function initialiseAwareMap() {
 	var lapNum=0;
 
 	for(var i=0;i<jsonObject.poslist.length;i++) {
-	    if(jsonObject.poslist[item.dataIndex].run>382) 
+	    if(jsonObject.poslist[i].run>382) 
 		lapNum=1;	    
 	    AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
