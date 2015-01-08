@@ -143,7 +143,7 @@ function actuallyDrawMap() {
     	
     for(var lap=0;lap<AwareMap.lapXYPoints.length;lap++) {
 	var LapData={ 
-	    data: AwareMap.lapXYPoints, 
+	    data: AwareMap.lapXYPoints[lap], 
 	    images: {show: false}, 
 	    bars: {show: false}, 
 	    points: {show: true}, 
