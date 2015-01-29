@@ -69,4 +69,8 @@ function checkFiles() {
 <a class=
 "leftBar" title="Summary" href="runSum.php"
 >Summary</a>
+
+<a class=
+"leftBar" title="Status" href="status.php"
+>Status</a>
 </p>

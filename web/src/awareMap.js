@@ -84,13 +84,13 @@ function getRunSourceMap() {
     AwareMap.runNumber=347;
 
     function handleMapRunFile(jsonObject) {
-	AwareMap.gotRunSourceMap=true;
-	AwareMap.mapRun=jsonObject;
-	AwareMap.mapRunPoints = new Array();
-	for(var i=0;i<jsonObject.poslist.length;i++) {
-	    AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
-	}
-	actuallyDrawMap();	
+		AwareMap.gotRunSourceMap=true;
+		AwareMap.mapRun=jsonObject;
+		AwareMap.mapRunPoints = new Array();
+		for(var i=0;i<jsonObject.poslist.length;i++) {
+			AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
+		}
+		actuallyDrawMap();	
     }
 
 
