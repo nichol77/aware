@@ -700,6 +700,9 @@ function actuallyDrawTheStuff(awareControl) {
 		    title : {
 			text:'Thing2'
 		    }
+		    events: {
+			setExtremes: doSomeProjPlotZoomingXaxis
+		    }
 		},
 		yAxis: {title: { text:'Thing' }},
 		legend: { enabled: true , 
@@ -723,9 +726,6 @@ function actuallyDrawTheStuff(awareControl) {
 	    
 	    timePlotCan.highcharts(highchartsTimeObj);
 	    projPlotCan.highcharts(highchartsProjObj);
-
-//	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
-//	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
 	    timePlot=timePlotCan.highcharts();
 	    projPlot=projPlotCan.highcharts();
@@ -759,6 +759,16 @@ function actuallyDrawTheStuff(awareControl) {
 	    projPlot.xAxis[0].setExtremes(event.min,event.max);
 	else
 	    projPlot.xAxis[0].setExtremes(undefined,undefined);	    	
+    }
+
+
+      function doSomeProjPlotZoomingXaxis(event) {
+	//Need to zoom in on the proj plot
+	$('#debugContainer').append("<p>doSomeProjPlotZoomingXaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
+	if(event.min!=null)
+	    timePlot.yAxis[0].setExtremes(event.min,event.max);
+	else
+	    timePlot.yAxis[0].setExtremes(undefined,undefined);	    	
     }
 
     
