@@ -556,7 +556,13 @@ function actuallyDrawTheStuff(awareControl) {
 		setExtremes: doSomeTimePlotZoomingYaxis
 	    }
 	},
-	legend: { enabled: true },
+	legend: {
+	    enabled: true ,
+	    itemStyle: {
+                color: '#000000',
+                fontSize: '8px'
+	    }
+	},
 	tooltip: { enabled: false},
 	plotOptions: {
 	    series: {
@@ -584,7 +590,7 @@ function actuallyDrawTheStuff(awareControl) {
 		    }
 	},
 	yAxis: {title: { text:'' }},
-	legend: { enabled: true , 
+	legend: { enabled: false , 
 		  floating: true,
 		  align: 'right',
 		  verticalAlign: 'top',
