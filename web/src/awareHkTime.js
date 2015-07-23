@@ -672,7 +672,9 @@ function actuallyDrawTheStuff(awareControl) {
 		xAxis: {type: 'datetime'},
 		yAxis: {
 		    title: { text:'Thing' },
-		    setExtremes: doSomeTimePlotZoomingYaxis
+		    events: {
+			setExtremes: doSomeTimePlotZoomingYaxis
+		    }
 		},
 		legend: { enabled: false },
 		tooltip: { enabled: false},
