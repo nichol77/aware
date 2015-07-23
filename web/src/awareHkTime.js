@@ -322,10 +322,11 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		timeDataList.type='line';
 		timeDataList.name=String(val.label);
 		projDataList.name=val.label;
-	       if("color" in val) {
-		   timeDataList.color=val.color;
-		   projDataList.color=val.color;
-	       }
+		projDataList.type='column';
+		if("color" in val) {
+		    timeDataList.color=val.color;
+		    projDataList.color=val.color;
+		}
 
 		if("points" in val) {
 		    timeDataList.points=val.points;
@@ -684,11 +685,38 @@ function actuallyDrawTheStuff(awareControl) {
 		series: timeData //[ { type: 'line', name: 'Something', data:  timeData } ]
 	    }
 
-	    timePlotCan.highcharts(highchartsTimeObj);
+	    var highchartsProjObj = {
+		chart: { zoomType:'x', animation:false},
+		credits: { enabled: false},
+		title: { text: '' },
+		subtitle: { text: document.ontouchstart === undefined ?
+	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
+		xAxis: {
+		    title : {
+			text:'Thing2'
+		    }
+		},
+		yAxis: {title: { text:'Thing' }},
+		legend: { enabled: false },
+		tooltip: { enabled: false},
+		plotOptions: {
+		    series: {
+			states: {
+			    hover: {
+				enabled: false
+			    }
+			}
+		    }
+		},
+		series: projDataData //[ { type: 'line', name: 'Something', data:  timeData } ]
+	    }
+
 	    
+	    timePlotCan.highcharts(highchartsTimeObj);
+	    projPlotCan.highcharts(highchartsProjObj);
 
 //	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
-	    projPlot=$.plot(projPlotCan,projData,projOptions);
+//	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
 //	    var axes = timePlot.getAxes();
 //	    var realymin = axes.yaxis.min;
