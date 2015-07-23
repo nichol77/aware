@@ -712,25 +712,28 @@ function actuallyDrawTheStuff(awareControl) {
 	    }
 
 	    
-	    timePlotCan.highcharts(highchartsTimeObj);
-	    projPlotCan.highcharts(highchartsProjObj);
+	    var timePlot=timePlotCan.highcharts(highchartsTimeObj);
+	    var projPlot=projPlotCan.highcharts(highchartsProjObj);
 
 //	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 //	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
-//	    var axes = timePlot.getAxes();
-//	    var realymin = axes.yaxis.min;
-//	    var realymax = axes.yaxis.max;
-//	    var realxmin = axes.xaxis.min;
-//	    var realxmax = axes.xaxis.max;
-//	    if(getYAutoScale()) {
-//		setYMin(realymin);
-//		setYMax(realymax);
-//	    }
-//	    if(getXAutoScale()) {
-//		setXMin(realxmin);
-//		setXMax(realxmax);		
-//	    }
+	    var timexAxis = timePlot.xAxis[0];
+	    var timeyAxis = timePlot.yAxis[0];
+	    var yExtremes = timeyAxis.getExtremes();
+	    var xExtremes = timexAxis.getExtremes();
+	    var realymin = yExtremes.min;
+	    var realymax = yExtremes.max;
+	    var realxmin = xExtremes.min;
+	    var realxmax = xExtremes.max;
+	    if(getYAutoScale()) {
+		setYMin(realymin);
+		setYMax(realymax);
+	    }
+	    if(getXAutoScale()) {
+		setXMin(realxmin);
+		setXMax(realxmax);		
+	    }
 	    
 
 	}
