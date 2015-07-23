@@ -752,7 +752,7 @@ function actuallyDrawTheStuff(awareControl) {
 
     }
 
-    var lastMin,lastMax;
+    var lastMin=0,lastMax=0;
     
     function doSomeTimePlotZoomingYaxis(event) {
 	//Need to zoom in on the proj plot
