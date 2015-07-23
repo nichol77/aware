@@ -704,7 +704,7 @@ function actuallyDrawTheStuff(awareControl) {
 			setExtremes: doSomeProjPlotZoomingXaxis
 		    }
 		},
-		yAxis: {title: { text:'Thing' }},
+		yAxis: {title: { text:'' }},
 		legend: { enabled: true , 
 			  floating: true,
 			  align: 'right',
