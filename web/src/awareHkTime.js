@@ -319,7 +319,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		//RJN Flot vs Highcharts
 		//		timeDataList.label=val.label;
 		//		projDataList.label=val.label;
-				
+		timeDataList.type='line';
 		timeDataList.name=val.label;
 		projDataList.name=val.label;
 	       if("color" in val) {
@@ -670,7 +670,7 @@ function actuallyDrawTheStuff(awareControl) {
 		xAxis: {type: 'datetime'},
 		yAxis: { title: 'Something' },
 		legend: { enabled: true },
-		series: [ { type: 'line', name: 'Something', data:  timeData } ]
+		series: timeData //[ { type: 'line', name: 'Something', data:  timeData } ]
 	    }
 
 	    timePlotCan.highcharts(highchartsObj);
