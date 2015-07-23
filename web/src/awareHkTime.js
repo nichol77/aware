@@ -672,6 +672,15 @@ function actuallyDrawTheStuff(awareControl) {
 		yAxis: { title: 'Thing' },
 		legend: { enabled: false },
 		tooltip: { enabled: false},
+		plotOptions: {
+		    series: {
+			states: {
+			    hover: {
+				enabled: false
+			    }
+			}
+		    }
+		},
 		series: timeData //[ { type: 'line', name: 'Something', data:  timeData } ]
 	    }
 
