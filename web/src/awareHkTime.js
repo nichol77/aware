@@ -575,7 +575,66 @@ function actuallyDrawTheStuff(awareControl) {
 	canvas : true
     }
     
-   
+
+    var highchartsTimeObj = {
+	chart: { zoomType:'xy', animation:false},
+	credits: { enabled: false},
+	title: { text: '' },
+	subtitle: { text: document.ontouchstart === undefined ?
+	            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
+	xAxis: {type: 'datetime'},
+	yAxis: {
+	    title: { text:'Thing' },
+	    events: {
+		setExtremes: doSomeTimePlotZoomingYaxis
+	    }
+	},
+	legend: { enabled: false },
+	tooltip: { enabled: false},
+	plotOptions: {
+	    series: {
+		states: {
+		    hover: {
+			enabled: false
+		    }
+		}
+	    }
+	}
+    }
+    
+    var highchartsProjObj = {
+	chart: { zoomType:'x', animation:false},
+	credits: { enabled: false},
+	title: { text: '' },
+	subtitle: { text: document.ontouchstart === undefined ?
+	            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
+	xAxis: {
+	    title : {
+		text:'Thing2'
+	    },
+	    events: {
+		setExtremes: doSomeProjPlotZoomingXaxis
+		    }
+	},
+	yAxis: {title: { text:'' }},
+	legend: { enabled: true , 
+		  floating: true,
+		  align: 'right',
+		  verticalAlign: 'top',
+		  layout: 'vertical'},
+	tooltip: { enabled: false},
+		plotOptions: {
+		    series: {
+			states: {
+			    hover: {
+				enabled: false
+			    }
+			}
+		    }
+		}
+    }
+    
+    
 
     var timePlot;	
     var projPlot;
@@ -662,67 +721,11 @@ function actuallyDrawTheStuff(awareControl) {
 	    //	selection : { mode : "xy" },
 	    //	canvas : true
 	    //  }
+	    
+	    highchartsTimeObj.series=timeData;
+	    highchartsProjObj.series=projData;
 
-	    var highchartsTimeObj = {
-		chart: { zoomType:'xy', animation:false},
-		credits: { enabled: false},
-		title: { text: '' },
-		subtitle: { text: document.ontouchstart === undefined ?
-	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
-		xAxis: {type: 'datetime'},
-		yAxis: {
-		    title: { text:'Thing' },
-		    events: {
-			setExtremes: doSomeTimePlotZoomingYaxis
-		    }
-		},
-		legend: { enabled: false },
-		tooltip: { enabled: false},
-		plotOptions: {
-		    series: {
-			states: {
-			    hover: {
-				enabled: false
-			    }
-			}
-		    }
-		},
-		series: timeData //[ { type: 'line', name: 'Something', data:  timeData } ]
-	    }
-
-	    var highchartsProjObj = {
-		chart: { zoomType:'x', animation:false},
-		credits: { enabled: false},
-		title: { text: '' },
-		subtitle: { text: document.ontouchstart === undefined ?
-	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
-		xAxis: {
-		    title : {
-			text:'Thing2'
-		    },
-		    events: {
-			setExtremes: doSomeProjPlotZoomingXaxis
-		    }
-		},
-		yAxis: {title: { text:'' }},
-		legend: { enabled: true , 
-			  floating: true,
-			  align: 'right',
-			  verticalAlign: 'top',
-			  layout: 'vertical'},
-		tooltip: { enabled: false},
-		plotOptions: {
-		    series: {
-			states: {
-			    hover: {
-				enabled: false
-			    }
-			}
-		    }
-		},
-		series: projData //[ { type: 'line', name: 'Something', data:  timeData } ]
-	    }
-
+	   
 	    
 	    timePlotCan.highcharts(highchartsTimeObj);
 	    projPlotCan.highcharts(highchartsProjObj);
