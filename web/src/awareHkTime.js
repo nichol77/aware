@@ -756,7 +756,7 @@ function actuallyDrawTheStuff(awareControl) {
     
     function doSomeTimePlotZoomingYaxis(event) {
 	//Need to zoom in on the proj plot
-	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
+	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis:"+event.min+" "+event.max+" "+lastMin+" "+lastMax+"</p>");
 	var projPlot=projPlotCan.highcharts();
 	if(lastMin!=event.min || lastMax!=event.max) {	    
 	    if(event.min!=null)
@@ -771,7 +771,7 @@ function actuallyDrawTheStuff(awareControl) {
 
       function doSomeProjPlotZoomingXaxis(event) {
 	//Need to zoom in on the proj plot
-	  $('#debugContainer').append("<p>doSomeProjPlotZoomingXaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
+	  $('#debugContainer').append("<p>doSomeProjPlotZoomingXaxis:"+event.min+" "+event.max+" "+lastMin+" "+lastMax+"</p>");
 	  var timePlot=timePlotCan.highcharts();
 	  if(lastMin!=event.min || lastMax!=event.max) {	      
 	      lastMin=event.min;
