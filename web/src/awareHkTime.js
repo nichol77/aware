@@ -712,12 +712,15 @@ function actuallyDrawTheStuff(awareControl) {
 	    }
 
 	    
-	    var timePlot=timePlotCan.highcharts(highchartsTimeObj);
-	    var projPlot=projPlotCan.highcharts(highchartsProjObj);
+	    timePlotCan.highcharts(highchartsTimeObj);
+	    projPlotCan.highcharts(highchartsProjObj);
 
 //	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 //	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
+	    var timePlot=timePlotCan.highcharts();
+	    var projPlot=projPlotCan.highcharts();
+	    
 	    var timexAxis = timePlot.xAxis[0];
 	    var timeyAxis = timePlot.yAxis[0];
 	    var yExtremes = timeyAxis.getExtremes();
