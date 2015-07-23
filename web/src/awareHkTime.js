@@ -699,7 +699,7 @@ function actuallyDrawTheStuff(awareControl) {
 		xAxis: {
 		    title : {
 			text:'Thing2'
-		    }
+		    },
 		    events: {
 			setExtremes: doSomeProjPlotZoomingXaxis
 		    }
