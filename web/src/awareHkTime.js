@@ -662,14 +662,14 @@ function actuallyDrawTheStuff(awareControl) {
 	    //	canvas : true
 	    //  }
 
-	    var highchartsObj = {
+	    var highchartsTimeObj = {
 		chart: { zoomType:'xy', animation:false},
 		credits: { enabled: false},
 		title: { text: '' },
 		subtitle: { text: document.ontouchstart === undefined ?
 	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 		xAxis: {type: 'datetime'},
-		yAxis: { title: 'Thing' },
+		yAxis: {title: { text:'Thing' }},
 		legend: { enabled: false },
 		tooltip: { enabled: false},
 		plotOptions: {
@@ -684,7 +684,7 @@ function actuallyDrawTheStuff(awareControl) {
 		series: timeData //[ { type: 'line', name: 'Something', data:  timeData } ]
 	    }
 
-	    timePlotCan.highcharts(highchartsObj);
+	    timePlotCan.highcharts(highchartsTimeObj);
 	    
 
 //	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
