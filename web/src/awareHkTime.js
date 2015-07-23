@@ -754,7 +754,7 @@ function actuallyDrawTheStuff(awareControl) {
 
     function doSomeTimePlotZoomingYaxis(event) {
 	//Need to zoom in on the proj plot
-	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis</p>");
+	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
 	if(event.min!=null)
 	    projPlot.xAxis[0].setExtremes(event.min,event.max);
 	else
