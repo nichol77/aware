@@ -663,13 +663,14 @@ function actuallyDrawTheStuff(awareControl) {
 	    //  }
 
 	    var highchartsObj = {
-		chart: { zoomType:'xy'},
+		chart: { zoomType:'xy', animation:false},
 		title: { text: "Some title" },
 		subtitle: { text: document.ontouchstart === undefined ?
 	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 		xAxis: {type: 'datetime'},
 		yAxis: { title: 'Something' },
-		legend: { enabled: true },
+		legend: { enabled: false },
+		tooltip: { enabled: false},
 		series: timeData //[ { type: 'line', name: 'Something', data:  timeData } ]
 	    }
 
