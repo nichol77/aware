@@ -773,15 +773,15 @@ function actuallyDrawTheStuff(awareControl) {
 	//Need to zoom in on the proj plot
 	  $('#debugContainer').append("<p>doSomeProjPlotZoomingXaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
 	  var timePlot=timePlotCan.highcharts();
-	if(lastMin!=event.min || lastMax!=event.max) {
-	if(event.min!=null)
-	    timePlot.yAxis[0].setExtremes(event.min,event.max);
-	else
-	    timePlot.yAxis[0].setExtremes(undefined,undefined);	    	
-	}
-	lastMin=event.min;
-	lastMax=event.max;
-    }
+	  if(lastMin!=event.min || lastMax!=event.max) {	      
+	      lastMin=event.min;
+	      lastMax=event.max;
+	      if(event.min!=null)
+		  timePlot.yAxis[0].setExtremes(event.min,event.max);
+	      else
+		  timePlot.yAxis[0].setExtremes(undefined,undefined);	    	
+	  }
+      }
 
     
     
