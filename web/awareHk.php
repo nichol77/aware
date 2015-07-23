@@ -71,13 +71,12 @@ header("Connection: keep-alive");
   </div>
 </form>
 </div>
-<div id="divTime-1" style="width:70%; height:70%; padding: 0px; float : left; "></div>
-<div id="divProjection-1" style="width:30%; height:70%; padding: 0px; float : left;"></div>
+<div id="divTime-1" style="width:70%; height:90%; padding: 0px; float : left; "></div>
+<div id="divProjection-1" style="width:30%; height:80%; padding: 0px; float : left;"></div>
 <div id="plot-preamble" class="plot-preamble" style="height:10%">
 <span style="float:left;" id="plot-text-1" class="plot-text"></span>
 </div>
-<div id="divChoices-1" style="width:80%; height:10%; padding: 0px; float : left;">
-  <p class="choiceList" id="choices-1" style=""></p></div>
+
 </div>
 </div>
 <div id="debugContainer"></div>
