@@ -321,7 +321,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		//		projDataList.label=val.label;
 		timeDataList.type='line';
 		timeDataList.name=String(val.label);
-		projDataList.name=val.label;
+		projDataList.name=String(val.label);
 		projDataList.type='column';
 		if("color" in val) {
 		    timeDataList.color=val.color;
