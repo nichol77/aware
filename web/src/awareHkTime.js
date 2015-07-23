@@ -697,7 +697,8 @@ function actuallyDrawTheStuff(awareControl) {
 		    }
 		},
 		yAxis: {title: { text:'Thing' }},
-		legend: { enabled: true },
+		legend: { enabled: true , 
+			  floating: true},
 		tooltip: { enabled: false},
 		plotOptions: {
 		    series: {
