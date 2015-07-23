@@ -708,7 +708,7 @@ function actuallyDrawTheStuff(awareControl) {
 			}
 		    }
 		},
-		series: projDataData //[ { type: 'line', name: 'Something', data:  timeData } ]
+		series: projData //[ { type: 'line', name: 'Something', data:  timeData } ]
 	    }
 
 	    
