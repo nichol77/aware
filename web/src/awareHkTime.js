@@ -679,19 +679,19 @@ function actuallyDrawTheStuff(awareControl) {
 //	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
-	    var axes = timePlot.getAxes();
-	    var realymin = axes.yaxis.min;
-	    var realymax = axes.yaxis.max;
-	    var realxmin = axes.xaxis.min;
-	    var realxmax = axes.xaxis.max;
-	    if(getYAutoScale()) {
-		setYMin(realymin);
-		setYMax(realymax);
-	    }
-	    if(getXAutoScale()) {
-		setXMin(realxmin);
-		setXMax(realxmax);		
-	    }
+//	    var axes = timePlot.getAxes();
+//	    var realymin = axes.yaxis.min;
+//	    var realymax = axes.yaxis.max;
+//	    var realxmin = axes.xaxis.min;
+//	    var realxmax = axes.xaxis.max;
+//	    if(getYAutoScale()) {
+//		setYMin(realymin);
+//		setYMax(realymax);
+//	    }
+//	    if(getXAutoScale()) {
+//		setXMin(realxmin);
+//		setXMax(realxmax);		
+//	    }
 	    
 
 	}
