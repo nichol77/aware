@@ -676,7 +676,7 @@ function actuallyDrawTheStuff(awareControl) {
 	    timePlotCan.highcharts(highchartsObj);
 	    
 
-	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
+//	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
 	    var axes = timePlot.getAxes();
