@@ -612,7 +612,11 @@ function actuallyDrawTheStuff(awareControl) {
 		  floating: true,
 		  align: 'right',
 		  verticalAlign: 'top',
-		  layout: 'vertical'},
+		  layout: 'vertical',
+		  itemStyle: {
+                      color: '#000000',
+                      fontSize: '8px'
+		  }},
 	tooltip: { enabled: false},
 		plotOptions: {
 		    series: {
