@@ -642,8 +642,7 @@ function actuallyDrawTheStuff(awareControl) {
 	var smallProj=smallHolder.projDataset;
 
 
-	$.each(smallTime, function(key, val) {
-	    var key = $(this).attr("name");
+	$.each(smallTime, function(key, val) {	  
 	    if (key && smallTime[key]) {
 		timeData.push(smallTime[key]);
 	    }
