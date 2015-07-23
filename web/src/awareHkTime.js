@@ -670,7 +670,10 @@ function actuallyDrawTheStuff(awareControl) {
 		subtitle: { text: document.ontouchstart === undefined ?
 	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 		xAxis: {type: 'datetime'},
-		yAxis: {title: { text:'Thing' }},
+		yAxis: {
+		    title: { text:'Thing' },
+		    setExtremes: doSomeTimePlotZoomingYaxis
+		},
 		legend: { enabled: false },
 		tooltip: { enabled: false},
 		plotOptions: {
@@ -746,6 +749,16 @@ function actuallyDrawTheStuff(awareControl) {
 	}
 
     }
+
+    function doSomeTimePlotZoomingYaxis(event) {
+	//Need to zoom in on the proj plot
+	if(event.min!=null)
+	    projPlot.xAxis[0].setExtremes(event.min,event.max);
+	else
+	    projPlot.xAxis[0].setExtremes(undefined,undefined);	    	
+    }
+
+    
     
     var lastMin=0;
     var lastMax=0;
