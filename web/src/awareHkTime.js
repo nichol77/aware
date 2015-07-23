@@ -315,17 +315,22 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 
 	       var varName=key;
 	       var timeDataList = new Object();
-	       var projDataList = new Object();
-	       timeDataList.label=val.label;
-	       projDataList.label=val.label;
+		var projDataList = new Object();
+		//RJN Flot vs Highcharts
+		//		timeDataList.label=val.label;
+		//		projDataList.label=val.label;
+				
+		timeDataList.name=val.label;
+		projDataList.name=val.label;
 	       if("color" in val) {
 		   timeDataList.color=val.color;
 		   projDataList.color=val.color;
 	       }
-	       if("points" in val) {
-		   timeDataList.points=val.points;
-		   projDataList.points=val.points;
-	       }
+
+		if("points" in val) {
+		    timeDataList.points=val.points;
+		    projDataList.points=val.points;
+		}
 
 	       projDataList.numBins=getMaxProjBins();
 	       projDataList.minVal=projMin;
@@ -388,7 +393,9 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		      if(lastTimePoint>0) {
 			  var dx=1e-3*(timePoint-lastTimePoint);
 			  var dy=dataPoint-lastDataPoint;
-			 timeDataList.data.push([timePoint,dy/dx,stdDev/dx]); 
+			  //RJN: Flot vs Highcharts
+//			  timeDataList.data.push([timePoint,dy/dx,stdDev/dx]);
+			  timeDataList.data.push([timePoint,dy/dx]); 
 			 var bin=Math.floor(((dy/dx)-projDataList.minVal)/projDataList.binSize);			   
 			 if(bin>=0 && bin<projDataList.numBins) {
 			     projDataList.data[bin][1]++;
@@ -399,7 +406,9 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		      lastDataPoint=dataPoint;
 
 		   } else {
-		      timeDataList.data.push([timePoint,dataPoint,stdDev]); 
+		       //RJN: Flot vs Highcharts
+		       //		      timeDataList.data.push([timePoint,dataPoint,stdDev]);
+		       timeDataList.data.push([timePoint,dataPoint]); 
 		   }
 	       }
 	       
@@ -456,7 +465,9 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 
 		if(dataPoint.mean>dataList.yMax) dataList.yMax=dataPoint.mean;
 		if(dataPoint.mean<dataList.yMin) dataList.yMin=dataPoint.mean;
-		dataList.data.push([awareControl.timeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev
+		//RJN: Flot vs Highcharts		
+		//		dataList.data.push([awareControl.timeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev
+		dataList.data.push([awareControl.timeArray[index],dataPoint.mean]); 
 		count++;
 	    }
 	    if(awareControl.maxPoints<count)
@@ -629,6 +640,41 @@ function actuallyDrawTheStuff(awareControl) {
 		$('#debugContainer').append("<p>double valueArray["+numDebugPoints+"]={"+debugValueArray.toString()+"};</p>");
 		$('#debugContainer').append("<p>double rmsArray["+numDebugPoints+"]={"+debugErrorArray.toString()+"};</p>");
 	    }
+
+	    ///At this point we have the following Flot objects
+	    // timeData = [timeObj1, timeObj2, ...     ]
+	    // timeObj1 = {
+	    // data[ [x1,y1,e1],[x2,y2,e2],[x3,y3,e3],...]
+	    // label =
+	    // color =
+	    // points =
+	    // }
+
+
+	    //	      var timeOptions = {
+	    //	yaxes: [{ label:"Fred"}],
+	    //	yaxis: {  },
+	    //	xaxis: {mode: "time", timezone:"UTC"},
+	    //	lines: { show: false },
+	    //	points: { show: true   },
+	    //	legend: { show:false},
+	    //	selection : { mode : "xy" },
+	    //	canvas : true
+	    //  }
+
+	    var highchartsObj = {
+		chart: { zoomType:'x'},
+		title: { text: "Some title" }
+		subtitle: { text: document.ontouchstart === undefined ?
+	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
+		xAxis: {type: 'datetime'},
+		yAxis: { title: 'Something' },
+		legend: { enabled: true },
+		series: [ { type: 'line', name: 'Something', data:  timeData } ]
+	    }
+
+	    timePlotCan.highcharts(highchartsObj);
+	    
 
 	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 	    projPlot=$.plot(projPlotCan,projData,projOptions);
@@ -1024,7 +1070,9 @@ function doMultiRunPlot(awareControl) {
 			awareControl.datasets[varName].yMax=dataPoint.mean;
 		    if(dataPoint.mean<awareControl.datasets[varName].yMin)
 			awareControl.datasets[varName].yMin=dataPoint.mean;
-		    awareControl.datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev 
+		    //RJN: Flot vs Highcharts
+		    //		    awareControl.datasets[varName].data.push([tempTimeArray[index],dataPoint.mean,dataPoint.stdDev]); ///< Need to add stdDev
+		    awareControl.datasets[varName].data.push([tempTimeArray[index],dataPoint.mean]); 
 		}
 	    }
 	}

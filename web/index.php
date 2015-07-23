@@ -1,1 +1,1 @@
-config/ANITA3/index.php
+config/ARA/index.php

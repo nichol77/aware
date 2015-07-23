@@ -10,6 +10,7 @@ header("Connection: keep-alive");
 <link rel="StyleSheet" href="styles/ara.css" type="text/css" media="screen" />
 <title>ARA - AWARE</title><META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
 <script language="javascript" type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
 </head>
 
 
