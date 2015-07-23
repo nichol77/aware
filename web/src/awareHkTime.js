@@ -665,6 +665,7 @@ function actuallyDrawTheStuff(awareControl) {
 	    var highchartsObj = {
 		chart: { zoomType:'xy', animation:false},
 		credits: { enabled: false},
+		title: { text: '' },
 		subtitle: { text: document.ontouchstart === undefined ?
 	                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 		xAxis: {type: 'datetime'},
