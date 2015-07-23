@@ -567,15 +567,6 @@ function actuallyDrawTheStuff(awareControl) {
 	canvas : true
     }
 
-    var projOptions = {
-	yaxis: {},
-	xaxis: {},
-	bars: { show: true, barwidth:10 },
-	selection : { mode : "x" },
-	canvas : true
-    }
-    
-
     var highchartsTimeObj = {
 	chart: { zoomType:'xy', animation:false},
 	credits: { enabled: false},
@@ -649,19 +640,20 @@ function actuallyDrawTheStuff(awareControl) {
 	var xmax=0;
 
 	if(!getXAutoScale() && !awareControl.zoom) {
-	    timeOptions.xaxis.min=getXMin();
-	    timeOptions.xaxis.max=getXMax();	    
+	    highchartsTimeObj.xAxis.min=getXMin();
+	    highchartsTimeObj.xAxis.max=getXMax();
 	}	
 
 
 	if(!getYAutoScale()) {
-	    timeOptions.yaxis.min=getYMin();
-	    timeOptions.yaxis.max=getYMax();	    
+
+	    highchartsTimeObj.yAxis.min=getYMin();
+	    highchartsTimeObj.yAxis.max=getYMax();
 	}
 
-	if("min" in timeOptions.xaxis) {
-	    xmin=timeOptions.xaxis.min;
-	    xmax=timeOptions.xaxis.max;
+	if("min" in highchartsTimeObj.xAxis) {
+	    xmin=highchartsTimeObj.xAxis.min;
+	    xmax=highchartsTimeObj.xAxis.max;
 	}
 
 
@@ -701,27 +693,6 @@ function actuallyDrawTheStuff(awareControl) {
 		$('#debugContainer').append("<p>double rmsArray["+numDebugPoints+"]={"+debugErrorArray.toString()+"};</p>");
 	    }
 
-	    ///At this point we have the following Flot objects
-	    // timeData = [timeObj1, timeObj2, ...     ]
-	    // timeObj1 = {
-	    // data[ [x1,y1,e1],[x2,y2,e2],[x3,y3,e3],...]
-	    // label =
-	    // color =
-	    // points =
-	    // }
-
-
-	    //	      var timeOptions = {
-	    //	yaxes: [{ label:"Fred"}],
-	    //	yaxis: {  },
-	    //	xaxis: {mode: "time", timezone:"UTC"},
-	    //	lines: { show: false },
-	    //	points: { show: true   },
-	    //	legend: { show:false},
-	    //	selection : { mode : "xy" },
-	    //	canvas : true
-	    //  }
-	    
 	    highchartsTimeObj.series=timeData;
 	    highchartsProjObj.series=projData;
 
@@ -786,43 +757,7 @@ function actuallyDrawTheStuff(awareControl) {
 	  }
       }
 
-    
-    
-    var lastMin=0;
-    var lastMax=0;
-    // This is where the zoom function is bound to the projection plot
-    projPlotCan.bind("plotselected", function(event,ranges) {
-		     awareControl.zoom=true; 
-		     timeOptions.yaxis.min=ranges.xaxis.from;
-		     timeOptions.yaxis.max=ranges.xaxis.to;
-		     awareControl.yMin=timeOptions.yaxis.min;
-		     awareControl.yMax=timeOptions.yaxis.max;
-		     
-
-		     if(lastMin!=timeOptions.yaxis.min || lastMax!=timeOptions.yaxis.max) {
-			 lastMin=timeOptions.yaxis.min;
-			 lastMax=timeOptions.yaxis.max;	
-			 plotAccordingToChoices();
-		     }
-		     });
-
-    // This is where the zoom function is bound to the time plot
-    timePlotCan.bind("plotselected", function (event, ranges) {
-	awareControl.zoom=true; 
-	timeOptions.xaxis.min=ranges.xaxis.from;
-	timeOptions.xaxis.max=ranges.xaxis.to;
-	timeOptions.yaxis.min=ranges.yaxis.from;
-	timeOptions.yaxis.max=ranges.yaxis.to;
-	awareControl.yMin=timeOptions.yaxis.min;
-	awareControl.yMax=timeOptions.yaxis.max;
-	
-	if(lastMin!=timeOptions.yaxis.min || lastMax!=timeOptions.yaxis.max) {
-	    lastMin=timeOptions.yaxis.min;
-	    lastMax=timeOptions.yaxis.max;		    	    
-	    plotAccordingToChoices();
-	}
-    });
-
+  
 	
   
     plotAccordingToChoices();
