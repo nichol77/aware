@@ -757,14 +757,14 @@ function actuallyDrawTheStuff(awareControl) {
     function doSomeTimePlotZoomingYaxis(event) {
 	//Need to zoom in on the proj plot
 	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
-//	if(lastMin!=event.min || lastMax!=event.max) {	    
-//	    if(event.min!=null)
-//		projPlot.xAxis[0].setExtremes(event.min,event.max);
-//	    else
-//		projPlot.xAxis[0].setExtremes(undefined,undefined);
-//	}
-	lastMin=eventMin;
-	lastMax=eventMax;
+	if(lastMin!=event.min || lastMax!=event.max) {	    
+	    if(event.min!=null)
+		projPlot.xAxis[0].setExtremes(event.min,event.max);
+	    else
+		projPlot.xAxis[0].setExtremes(undefined,undefined);
+	}
+	lastMin=event.min;
+	lastMax=event.max;
     }
 
 
@@ -777,8 +777,8 @@ function actuallyDrawTheStuff(awareControl) {
 	else
 	    timePlot.yAxis[0].setExtremes(undefined,undefined);	    	
 	}
-	lastMin=eventMin;
-	lastMax=eventMax;
+	lastMin=event.min;
+	lastMax=event.max;
     }
 
     
