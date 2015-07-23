@@ -752,23 +752,34 @@ function actuallyDrawTheStuff(awareControl) {
 
     }
 
+    var lastMin,lastMax;
+    
     function doSomeTimePlotZoomingYaxis(event) {
 	//Need to zoom in on the proj plot
 	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
-	if(event.min!=null)
-	    projPlot.xAxis[0].setExtremes(event.min,event.max);
-	else
-	    projPlot.xAxis[0].setExtremes(undefined,undefined);	    	
+	if(lastMin!=event.min || lastMax!=event.max) {
+	    
+	    if(event.min!=null)
+		projPlot.xAxis[0].setExtremes(event.min,event.max);
+	    else
+		projPlot.xAxis[0].setExtremes(undefined,undefined);
+	}
+	lastMin=eventMin;
+	lastMax=eventMax;
     }
 
 
       function doSomeProjPlotZoomingXaxis(event) {
 	//Need to zoom in on the proj plot
 	$('#debugContainer').append("<p>doSomeProjPlotZoomingXaxis:"+event.min+" "+event.max+" "+event.dataMax+" "+event.dataMin+"</p>");
+	if(lastMin!=event.min || lastMax!=event.max) {
 	if(event.min!=null)
 	    timePlot.yAxis[0].setExtremes(event.min,event.max);
 	else
 	    timePlot.yAxis[0].setExtremes(undefined,undefined);	    	
+	}
+	lastMin=eventMin;
+	lastMax=eventMax;
     }
 
     
@@ -808,28 +819,6 @@ function actuallyDrawTheStuff(awareControl) {
 	}
     });
 
-    function resetZoom() {
-	awareControl.zoom=false;
-	var newxaxis= { mode: "time"};
-	timeOptions.xaxis = newxaxis;
-	var newyaxis = {};
-	timeOptions.yaxis=newyaxis;
-	if(lastMin!=0 || lastMax!=0) {
-	    lastMin=0;
-	    lastMax=0;
-	    plotAccordingToChoices();
-	}
-    }
-
-
-    timePlotCan.bind("plotunselected", function (event, ranges) {
-			 resetZoom();
-		 });
-
-
-    projPlotCan.bind("plotunselected", function (event, ranges) {
-			 resetZoom();
-		 });
 	
   
     plotAccordingToChoices();
