@@ -556,16 +556,7 @@ function actuallyDrawTheStuff(awareControl) {
     choiceContainer.find("input").click(plotAccordingToChoices);
 
     //Set up the options for the time and projection plots
-    var timeOptions = {
-	yaxes: [{ label:"Fred"}],
-	yaxis: {  },
-	xaxis: {mode: "time", timezone:"UTC"},
-	lines: { show: false },
-	points: { show: true   },
-	legend: { show:false},
-	selection : { mode : "xy" },
-	canvas : true
-    }
+  
 
     var highchartsTimeObj = {
 	chart: { zoomType:'xy', animation:false},
@@ -580,7 +571,7 @@ function actuallyDrawTheStuff(awareControl) {
 		setExtremes: doSomeTimePlotZoomingYaxis
 	    }
 	},
-	legend: { enabled: false },
+	legend: { enabled: true },
 	tooltip: { enabled: false},
 	plotOptions: {
 	    series: {
