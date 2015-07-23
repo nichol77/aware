@@ -539,21 +539,6 @@ function actuallyDrawTheStuff(awareControl) {
     var timePlotCan=$("#"+awareControl.timeCanName);
     var projPlotCan=$("#"+awareControl.projCanName);
 
-    // Add some checkboxes to turn plots on and off
-    var countNum=0;
-    var choiceContainer = $("#choices-"+awareControl.plotId);
-    for (var i = 0; i < keyArray.length; i++) {
-	var key = keyArray[i];
-	var dataset = awareControl.datasets[key];
-	if(i%4==0) {
-	    choiceContainer.append("<br />");
-	}
-	choiceContainer.append("<input type='checkbox' name='" + key +
-			       "' checked='checked' id='id" + key + "'></input>" +
-			       "<label for='id" + key + "'>"
-			       + dataset.label + "</label>");
-    }
-    choiceContainer.find("input").click(plotAccordingToChoices);
 
     //Set up the options for the time and projection plots
   
@@ -655,17 +640,19 @@ function actuallyDrawTheStuff(awareControl) {
 	var smallHolder=getDataForPlot(awareControl,xmin,xmax);
 	var smallTime=smallHolder.timeDataset;
 	var smallProj=smallHolder.projDataset;
+
+
+	$.each(smallTime, function(key, val) {
+	    var key = $(this).attr("name");
+	    if (key && smallTime[key]) {
+		timeData.push(smallTime[key]);
+	    }
+	    if (key && smallProj[key]) {
+		projData.push(smallProj[key]);
+	    }
+	});
 	
 
-	choiceContainer.find("input:checked").each(function () {
-						       var key = $(this).attr("name");
-						       if (key && smallTime[key]) {
-							   timeData.push(smallTime[key]);
-						       }
-						       if (key && smallProj[key]) {
-							   projData.push(smallProj[key]);
-						       }
-						   });
 	
 	//	$('#debugContainer').append("<p>timeData.length  "+timeData.length+"</p>");
 	if (timeData.length > 0) {
