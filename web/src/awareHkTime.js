@@ -727,8 +727,8 @@ function actuallyDrawTheStuff(awareControl) {
 //	    timePlot=$.plot(timePlotCan, timeData, timeOptions);
 //	    projPlot=$.plot(projPlotCan,projData,projOptions);
 
-	    var timePlot=timePlotCan.highcharts();
-	    var projPlot=projPlotCan.highcharts();
+	    timePlot=timePlotCan.highcharts();
+	    projPlot=projPlotCan.highcharts();
 	    
 	    var timexAxis = timePlot.xAxis[0];
 	    var timeyAxis = timePlot.yAxis[0];
