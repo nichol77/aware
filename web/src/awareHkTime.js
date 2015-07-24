@@ -725,25 +725,25 @@ function actuallyDrawTheStuff(awareControl) {
 	    //chart.showLoading();
 	    
 	    
-	    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
-	    var smallTime=smallHolder.timeDataset;
-	    var smallProj=smallHolder.projDataset;
+//	    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
+//	    var smallTime=smallHolder.timeDataset;
+//	    var smallProj=smallHolder.projDataset;
 
-	    timeData = Array();
-	    projData = Array();
+//	    timeData = Array();
+//	    projData = Array();
 	    
-	    $.each(smallTime, function(key, val) {	  
-		if (key && smallTime[key]) {
-		    timeData.push(smallTime[key]);
-		}
-		if (key && smallProj[key]) {
-		    projData.push(smallProj[key]);
-		}
-	    });
+//	    $.each(smallTime, function(key, val) {	  
+//		if (key && smallTime[key]) {
+//		    timeData.push(smallTime[key]);
+//		}
+//		if (key && smallProj[key]) {
+//		    projData.push(smallProj[key]);
+//		}
+//	    });
 	
 	    
-	    onGetNewData(chart,timeData,projData);
-	   	    
+//	    onGetNewData(chart,timeData,projData);
+	    plotAccordingToChoices();
 	    return false;
 	}	
     }
