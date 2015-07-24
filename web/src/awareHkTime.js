@@ -550,7 +550,7 @@ function actuallyDrawTheStuff(awareControl) {
 	    events: {
 		selection: selection
 	    }
-	}
+	},
 	credits: { enabled: false},
 	title: { text: '' },
 	subtitle: { text: document.ontouchstart === undefined ?
