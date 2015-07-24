@@ -742,7 +742,9 @@ function actuallyDrawTheStuff(awareControl) {
 //	    });
 	
 	    
-//	    onGetNewData(chart,timeData,projData);
+	    //	    onGetNewData(chart,timeData,projData);
+	    highchartsTimeObj.xAxis.min=xmin;
+	    highchartsTimeObj.xAxis.max=xmax;
 	    plotAccordingToChoices();
 	    return false;
 	}	
