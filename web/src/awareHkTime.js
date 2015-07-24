@@ -319,7 +319,7 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 		//RJN Flot vs Highcharts
 		//		timeDataList.label=val.label;
 		//		projDataList.label=val.label;
-		timeDataList.type='line';
+		timeDataList.type='scatter';
 		timeDataList.name=String(val.label);
 		projDataList.name=String(val.label);
 		projDataList.type='column';
@@ -544,17 +544,20 @@ function actuallyDrawTheStuff(awareControl) {
   
 
     var highchartsTimeObj = {
-	chart: { zoomType:'xy', animation:false},
+	chart: {
+	    zoomType:'xy',
+	    animation:false,	
+	    events: {
+		selection: selection
+	    }
+	}
 	credits: { enabled: false},
 	title: { text: '' },
 	subtitle: { text: document.ontouchstart === undefined ?
 	            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 	xAxis: {type: 'datetime'},
 	yAxis: {
-	    title: { text:'Thing' },
-	    events: {
-		setExtremes: doSomeTimePlotZoomingYaxis
-	    }
+	    title: { text:'Thing' }	  
 	},
 	legend: {
 	    enabled: true ,
@@ -584,10 +587,7 @@ function actuallyDrawTheStuff(awareControl) {
 	xAxis: {
 	    title : {
 		text:'Thing2'
-	    },
-	    events: {
-		setExtremes: doSomeProjPlotZoomingXaxis
-		    }
+	    }
 	},
 	yAxis: {title: { text:'' }},
 	legend: { enabled: false , 
@@ -712,6 +712,69 @@ function actuallyDrawTheStuff(awareControl) {
 	}
 
     }
+
+    function selection(event) {
+	var chart = this;
+	
+	if (event.xAxis) {
+	    var xAxis = event.xAxis[0],
+		xmin = xAxis.min,
+		xmax = xAxis.max;
+	    
+	    // indicate to the user that something's going on
+	    //chart.showLoading();
+	    
+	    
+	    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
+	    var smallTime=smallHolder.timeDataset;
+	    var smallProj=smallHolder.projDataset;
+
+	    timeData = Array();
+	    projData = Array();
+	    
+	    $.each(smallTime, function(key, val) {	  
+		if (key && smallTime[key]) {
+		    timeData.push(smallTime[key]);
+		}
+		if (key && smallProj[key]) {
+		    projData.push(smallProj[key]);
+		}
+	    });
+	
+	    
+	    onGetNewData(chart,timeData,projData);
+	   	    
+	    return false;
+	}	
+    }
+    
+    // Add the new data and display a link to revert
+    function onGetNewData(chart, timeData,projData) {
+	
+	// set the first series' data
+	chart.series[0].setData(timeData);
+	chart.hideLoading();
+	
+	// use jQuery HTML capabilities to add a button to reset the selection 
+	chart.$resetButton = $('<button>Reset view</button>')
+	    .css({
+		position: 'absolute',
+		top: '20px',
+		right: '50px',
+		zIndex: 50
+	    })
+	    .click(function() {
+		resetSelection(chart)
+	    })
+	    .appendTo(chart.container);
+    }
+    
+    // Reset to normal view
+    function resetSelection(chart) {
+	chart.series[0].setData(data);
+	chart.$resetButton.remove();
+    }
+    
 
     var lastMin=0,lastMax=0;
     
