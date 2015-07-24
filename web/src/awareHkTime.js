@@ -720,6 +720,12 @@ function actuallyDrawTheStuff(awareControl) {
 	    var xAxis = event.xAxis[0],
 		xmin = xAxis.min,
 		xmax = xAxis.max;
+
+	    var yAxis = event.yAxis[0],
+		ymin = yAxis.min,
+		ymax = yAxis.max;
+
+
 	    
 	    // indicate to the user that something's going on
 	    //chart.showLoading();
@@ -745,6 +751,8 @@ function actuallyDrawTheStuff(awareControl) {
 	    //	    onGetNewData(chart,timeData,projData);
 	    highchartsTimeObj.xAxis.min=xmin;
 	    highchartsTimeObj.xAxis.max=xmax;
+	    highchartsTimeObj.yAxis.min=ymin;
+	    highchartsTimeObj.yAxis.max=ymax;
 	    plotAccordingToChoices();
 	    return false;
 	}	
