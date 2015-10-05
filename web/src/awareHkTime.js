@@ -700,7 +700,7 @@ function actuallyDrawTheStuff(awareControl) {
 	var series = this.yAxis.series;
 	console.log(series)
 	console.log(event)
-	$('#debugContainer').append("<p>"+series+"</p>");
+	$('#debugContainer').append("<p>legendClickHandler: "+this.index+"</p>");
 	
     }
 
