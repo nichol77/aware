@@ -289,13 +289,12 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 	$.each(awareControl.datasets, function(key, val) {
 		   if(val.yMin<projMin) projMin=val.yMin;
 		   if(val.yMax>projMax) projMax=val.yMax;
-	       });
-	
-	if(yAxisOpt=="dydx") {
-	    needToScaleYAxis=true;
-	}
+	       });	
     }
-
+    if(yAxisOpt=="dydx") {
+	needToScaleYAxis=true;
+    }
+    $('#debugContainer').append("<p>projMin&Max"+" "+projMin+" "+projMax+"</p>");
 
     $('#debugContainer').append("<p>getDataForPlot: "+xaxisMin+" "+xaxisMax+" "+projMin+" "+projMax+"</p>");
 
@@ -766,23 +765,6 @@ function actuallyDrawTheStuff(awareControl) {
 		ymin = yAxis.min,
 		ymax = yAxis.max;
 
-
-	    
-	    // indicate to the user that something's going on
-	    //chart.showLoading();
-	    
-	    
-//	    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
-//	    var smallTime=smallHolder.timeDataset;
-//	    var smallProj=smallHolder.projDataset;
-
-
-	    var yAxis = event.yAxis[0],
-		ymin = yAxis.min,
-		ymax = yAxis.max;
-
-	    
-
 	    $('#debugContainer').append("<p>selection xmin: "+xmin+" xmax: "+xmax+"</p>");
 	    
 	    // indicate to the user that something's going on
@@ -1099,7 +1081,7 @@ function fetchSingleFullHkTime(varNameKey,awareControl) {
 	    if(varName.indexOf(varNameKey)>=0) {
 		//Do something
 		if(varName in jsonObject) {
-		    $('#debugContainer').append("<p>Looking for "+varName+" in jsonObject</p>");
+//		    $('#debugContainer').append("<p>Looking for "+varName+" in jsonObject</p>");
 		    addFullVariableToDataset(awareControl,jsonObject[varName]);
 		}
 		else {
