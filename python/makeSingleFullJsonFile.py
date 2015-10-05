@@ -54,15 +54,18 @@ def main(argv):
             jDict=dict()
             jDict[jFull["full"]["name"]]=jFull["full"]
             jList.append(jDict)
+            jOut.update(jDict)
         else:
             print "Got time"
             jDict=dict()
             jDict["thetimes"]=jFull["full"]
             jList.append(jDict)
+            jOut.update(jDict)q
+            
 
     print len(jList)
 
-    jOut=jList[0]
+#    jOut=jList[0]
 #    for item in jList:
 #        if "name" in item:
 #            jOut[item["name"]]=item
@@ -70,7 +73,7 @@ def main(argv):
 
     
     outJson=json.dumps(jOut)
-    print outJson
+#    print outJson
     outFile = gzip.open(singleFullName,'w')
     outFile.write(outJson)
     outFile.close()
