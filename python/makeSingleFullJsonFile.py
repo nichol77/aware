@@ -24,8 +24,8 @@ def main(argv):
             instrument = arg
         elif opt in ("-r", "--run"):
             run = arg
-    print 'Run is "', run
-    print 'Instrument "', instrument
+    print 'Run is ', run
+    print 'Instrument ', instrument
 
 
     sys.exit(0);
