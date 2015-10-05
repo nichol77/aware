@@ -41,6 +41,7 @@ def main(argv):
     
 
     #Create the output dictionary
+    jList=[]
     jOut = dict()
     
     for inFile in fullFileList:
@@ -50,12 +51,15 @@ def main(argv):
         if "name" in jFull["full"] :
             print jFull["full"]["name"]
             print len(jFull["full"]["timeList"])
+            jList.append(jFull["full"])
             jOut[jFull["full"]["name"]]=jFull["full"]
         else:
             print "Got time"
             jOut["thetimes"]=jFull["full"]
+            jList.append(jFull["full"])
 
-    
+    print len(jList)
+            
 
     outJson=json.dumps(jOut)        
     outFile = gzip.open(singleFullName,'w')
