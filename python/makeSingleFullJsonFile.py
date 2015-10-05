@@ -60,10 +60,10 @@ def main(argv):
 
     print len(jList)
 
-#    jOut={jList[0]["name"] : jList[0]}
-    for item in jList:
-        if "name" in item:
-            jOut[item["name"]]=item
+    jOut={jList[1]["name"] : jList[0]}
+#    for item in jList:
+#        if "name" in item:
+#            jOut[item["name"]]=item
     
 
     
