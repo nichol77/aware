@@ -828,8 +828,8 @@ function actuallyDrawTheStuff(awareControl) {
 
 	var extremes=timeChart.yAxis[0].getExtremes();
 	projChart.xAxis[0].setExtremes(extremes.min,extremes.max);
-	updateScaleMinMax();
 	var projExtremes=projChart.xAxis[0].getExtremes();
+	updateScaleMinMax();
 	
 	$('#debugContainer').append("<p>projExtremes: "+projExtremes.min+" max: "+projExtremes.max+"</p>");
 	    
