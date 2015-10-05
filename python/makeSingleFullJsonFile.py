@@ -29,7 +29,7 @@ def main(argv):
     roundRun=(int(run)//100)*100
     baseRun=(int(run)//10000)*10000
 
-    runDir=awareDir+"/"+instrument+"/runs"+baseRun+"/runs"+roundRun+"/run"+run 
+    runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run 
     print runDir
 
 
