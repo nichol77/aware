@@ -60,7 +60,7 @@ def main(argv):
             jDict=dict()
             jDict["thetimes"]=jFull["full"]
             jList.append(jDict)
-            jOut.update(jDict)q
+            jOut.update(jDict)
             
 
     print len(jList)
