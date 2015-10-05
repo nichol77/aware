@@ -35,6 +35,7 @@ def main(argv):
 
     runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run
     singleFullName=runDir+'/'+fileType+'_full.json.gz'
+    print "Making "+singleFullName
 #    print runDir
     fullFileList=glob.glob(runDir+'/full/'+fileType+"_*")
 #    print fullFileList
