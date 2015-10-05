@@ -829,6 +829,9 @@ function actuallyDrawTheStuff(awareControl) {
 	var extremes=timeChart.yAxis[0].getExtremes();
 //	projChart.xAxis[0].setExtremes(extremes.min,extremes.max);
 	updateScaleMinMax();
+	var projExtremes=projChart.xAxis[0].getExtremes();
+	
+	$('#debugContainer').append("<p>projExtremes: "+projExtremes.min+" max: "+projExtremes.max+"</p>");
 	    
 	// use jQuery HTML capabilities to add a button to reset the selection 
 	timeChart.$resetButton = $('<button>Reset view</button>')
