@@ -277,9 +277,9 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
                 firstInArray=0;
             }
         }
-        FullFile << " ]\n}";
+        FullFile << "]\n}";
     }
-    FullFile << "\n}\n";
+    FullFile << "\n}\n";
     FullFile.flush();
     //  std::cerr << "Here\n";
     
