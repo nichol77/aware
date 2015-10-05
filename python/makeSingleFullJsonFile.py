@@ -10,11 +10,12 @@ def main(argv):
 
     instrument='ARA03'
     run='6000'
+    fileType='eventHk'
 
     try:
-       opts, args = getopt.getopt(argv,"hr:i:",["run=","instrument="])
+       opts, args = getopt.getopt(argv,"hr:i:f:",["run=","instrument=","filetype="])
     except getopt.GetoptError:
-       print 'fixEventRateFull.py -r <run> -i <instrument>'
+       print 'fixEventRateFull.py -r <run> -i <instrument> -f <file type>'
        sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
@@ -22,6 +23,8 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--instrument"):
             instrument = arg
+        elif opt in ("-f", "--fileType"):
+            fileType = arg
         elif opt in ("-r", "--run"):
             run = arg
     print 'Run is ', run
@@ -31,6 +34,8 @@ def main(argv):
 
     runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run 
     print runDir
+    fullFileList=glob.glob(runDir+'/full/'+fileType+"_*")
+    print fullFileList
 
 
 
