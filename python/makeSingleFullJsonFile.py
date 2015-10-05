@@ -27,7 +27,12 @@ def main(argv):
     print 'Run is ', run
     print 'Instrument ', instrument
     roundRun=(int(run)//100)*100
-    print roundRun
+    baseRun=(int(run)//10000)*10000
+
+    runDir=awareDir+"/"+instrument+"/runs"+baseRun+"/runs"+roundRun+"/run"+run 
+    print runDir
+
+
 
     sys.exit(0);
 
