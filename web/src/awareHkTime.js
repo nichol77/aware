@@ -1083,7 +1083,6 @@ function fetchFullHkTime(varNameKey,awareControl) {
  * This function fetches the full hk time JSON files and then does the plotting
  */
 function fetchSingleFullHkTime(varNameKey,awareControl) {
-{
     var singleFullHkUrl=getSingleFullHkName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
 
     /**
