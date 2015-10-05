@@ -850,7 +850,7 @@ function actuallyDrawTheStuff(awareControl) {
 	$('#debugContainer').append("<p>projExtremes: "+projExtremes.min+" max: "+projExtremes.max+"</p>");
 	    
 	// use jQuery HTML capabilities to add a button to reset the selection
-	if($resetButton in timeChart) 	timeChart.$resetButton.remove();
+	if("$resetButton" in timeChart) 	timeChart.$resetButton.remove();
 	timeChart.$resetButton = $('<button>Reset view</button>')
 	    .css({
 		    position: 'absolute',
