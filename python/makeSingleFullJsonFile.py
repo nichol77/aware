@@ -42,7 +42,7 @@ def main(argv):
         gFull = gzip.GzipFile(inFile)
         jFull = json.load(gFull)
         gFull.close()
-        if name in jFull["full"] :
+        if "name" in jFull["full"] :
             print jFull["full"]["name"]
             print len(jFull["full"]["timeList"])
         else:
