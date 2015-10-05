@@ -33,10 +33,12 @@ def main(argv):
     roundRun=(int(run)//100)*100
     baseRun=(int(run)//10000)*10000
 
-    runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run 
+    runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run
+    singleFullName=runDir+'/'+fileType+'_full.json.gz'
     print runDir
     fullFileList=glob.glob(runDir+'/full/'+fileType+"_*")
     print fullFileList
+    
 
     #Create the output dictionary
     jOut = dict()
@@ -51,31 +53,17 @@ def main(argv):
             jOut[jFull["full"]["name"]]=jFull["full"]
         else:
             print "Got time"
+            jOut["time"]=jFull["full"]
 
     
 
-    sys.exit(0);
-
-    # reading
-    gRaw = gzip.GzipFile(rawfilename)
-    jRaw = json.load(gRaw)
-    gRaw.close()
-    
-    
-    gCal = gzip.GzipFile(inputfilename)
-    jCal = json.load(gCal)
-    gCal.close()
-    
-    print len(jRaw["full"]["timeList"])
-    print len(jCal["full"]["timeList"])
-    
-    for i in range(0,len(jCal["full"]["timeList"]),1):
-        jCal["full"]["timeList"][i]*=jRaw["full"]["timeList"][i]*60
-
-    outJson=json.dumps(jCal)        
-    outFile = gzip.open(outputfilename,'w')
+    outJson=json.dumps(jOut)        
+    outFile = gzip.open(singleFullName,'w')
     outFile.write(outJson)
     outFile.close()
+    sys.exit(0);
+
+    # 
         
 if __name__ == "__main__":
     main(sys.argv[1:])
