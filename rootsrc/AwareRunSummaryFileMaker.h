@@ -28,7 +28,9 @@ class AwareRunSummaryFileMaker
 
 
   void writeFullJSONFiles(const char *jsonDir, const char *filePrefix);
-  void writeSummaryJSONFile(const char *jsonName);
+    void writeSingleFullJSONFile(const char *jsonDir, const char *filePrefix);
+
+    void writeSummaryJSONFile(const char *jsonName);
   void writeTimeJSONFile(const char *jsonName);
 
 
