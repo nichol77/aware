@@ -593,6 +593,9 @@ function actuallyDrawTheStuff(awareControl) {
 		    hover: {
 			enabled: false
 		    }
+		},
+		events: {
+		    legendItemClick : legendClickHandler
 		}
 	    }
 	}
@@ -690,6 +693,11 @@ function actuallyDrawTheStuff(awareControl) {
     var fullTimeData = timeData;
     var fullProjData = projData;
 
+
+    function legendClickHandler(event) {
+	$('#debugContainer').append("<p>"+event+"</p>");
+	
+    }
 
     //This function plots the variables according to which checkboxes are ticked
     function plotAccordingToChoices() {
