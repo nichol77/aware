@@ -53,7 +53,7 @@ def main(argv):
             jOut[jFull["full"]["name"]]=jFull["full"]
         else:
             print "Got time"
-            jOut["time"]=jFull["full"]
+            jOut["thetimes"]=jFull["full"]
 
     
 
