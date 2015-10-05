@@ -1099,6 +1099,7 @@ function fetchSingleFullHkTime(varNameKey,awareControl) {
 	    if(varName.indexOf(varNameKey)>=0) {
 		//Do something
 		if(varName in jsonObject) 
+		    $('#debugContainer').append("<p>Looking for "+varName+" in jsonObject</p>");
 		    addFullVariableToDataset(awareControl,jsonObject.varName);
 		else {
 		    $('#debugContainer').append("<p>Can't find "+varName+" in jsonObject</p>");
