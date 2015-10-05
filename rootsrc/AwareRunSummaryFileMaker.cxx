@@ -191,8 +191,10 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
 //    std::vector<std::string> fFileList;
     
     char jsonName[FILENAME_MAX];
-    sprintf(jsonName,"%s/%s_full.json.gz",jsonDir,filePrefix);
+    sprintf(jsonName,"%s/%s_full.json.gz",jsonDir,filePrefix);
     
+    std::cerr << jsonName << "\n";
+
     boost::iostreams::filtering_ostream FullFile;
     FullFile.push(boost::iostreams::gzip_compressor());
     FullFile.push(boost::iostreams::file_sink(jsonName));
@@ -209,7 +211,6 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
     FullFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
     FullFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
     FullFile << "\t\"timeList\" : [\n";
-    
     
     
     std::map<std::string, std::ofstream*> fJsonFileMap;
@@ -234,13 +235,17 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
         firstInArray=0;
     }
     FullFile << " ]\n}\n";
+
+    std::cerr << "Done time\n";
+    
+
     
     fRawMapIt=fRawMap.begin();
     subMapIt=fRawMapIt->second.begin();
     
     //Now loop over the variables the output files
     for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
-        //     std::cerr << subMapIt->first << "\n";
+      std::cerr << subMapIt->first << "\n";
         labelIt=fLabelMap.find(subMapIt->first);
         sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
         FullFile << ",\n";
