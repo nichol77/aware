@@ -704,6 +704,7 @@ function actuallyDrawTheStuff(awareControl) {
 	else
 	    projChart.series[this.index].visible=true;	
 	console.log(projChart.series[this.index]);
+	projChart.redraw()
 	$('#debugContainer').append("<p>legendClickHandler: "+this.index+"</p>");
 	
     }
