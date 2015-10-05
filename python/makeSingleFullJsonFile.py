@@ -34,6 +34,12 @@ def main(argv):
     baseRun=(int(run)//10000)*10000
 
     runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run
+    if not os.path.isdir(runDir):
+        print "Directory does not exist"
+        print runDir
+        sys.exit(2)
+
+    
     singleFullName=runDir+'/'+fileType+'_full.json.gz'
     print "Making "+singleFullName
 #    print runDir
