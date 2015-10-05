@@ -337,6 +337,8 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 	       timeDataList.type='scatter';
 	       timeDataList.name=String(val.label);
 	       projDataList.name=String(val.label);
+	       timeDataList.id=String(varName);
+	       projDataList.id=String(varName);
 	       projDataList.type='column';
 	       if("color" in val) {
 		   timeDataList.color=val.color;
