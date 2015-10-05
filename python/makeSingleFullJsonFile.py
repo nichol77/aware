@@ -52,10 +52,10 @@ def main(argv):
             print jFull["full"]["name"]
             print len(jFull["full"]["timeList"])
             jList.append(jFull["full"])
-            jOut[jFull["full"]["name"]]={jFull["full"]}
+            jOut[jFull["full"]["name"]]=jFull["full"]
         else:
             print "Got time"
-            jOut["thetimes"]={jFull["full"]}
+            jOut["thetimes"]=jFull["full"]
             jList.append(jFull["full"])
 
     print len(jList)
