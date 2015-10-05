@@ -60,7 +60,13 @@ def main(argv):
 
     print len(jList)
 
-    jOut={jList[0]["name"] : jList[0]}
+#    jOut={jList[0]["name"] : jList[0]}
+    for item in jList:
+        if "name" in item:
+            jOut[item["name"]]=item
+    
+
+    
     outJson=json.dumps(jOut)
     print outJson
     outFile = gzip.open(singleFullName,'w')
