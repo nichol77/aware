@@ -51,16 +51,18 @@ def main(argv):
         if "name" in jFull["full"] :
             print jFull["full"]["name"]
             print len(jFull["full"]["timeList"])
-            jList.append(jFull["full"])
-#            jOut[jFull["full"]["name"]]=jFull["full"]
+            jDict=dict()
+            jDict[jFull["full"]["name"]]=jFull["full"]
+            jList.append(jDict)
         else:
             print "Got time"
-            jOut["thetimes"]=jFull["full"]
-#            jList.append(jFull["full"])
+            jDict=dict()
+            jDict["thetimes"]=jFull["full"]
+            jList.append(jDict)
 
     print len(jList)
 
-    jOut={jList[1]["name"] : jList[1]}
+    jOut=jList[0]
 #    for item in jList:
 #        if "name" in item:
 #            jOut[item["name"]]=item
