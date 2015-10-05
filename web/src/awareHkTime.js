@@ -699,8 +699,10 @@ function actuallyDrawTheStuff(awareControl) {
     function legendClickHandler(event) {
 	console.log(event);
 	console.log(projChart.series[this.index]);
-	projChart.series[this.index].visible=false;
-	projChart.redraw()
+	if(projChart.series[this.index].visible)
+	    projChart.series[this.index].hide()
+	else
+	    projChart.series[this.index].show()
 	$('#debugContainer').append("<p>legendClickHandler: "+this.index+"</p>");
 	
     }
