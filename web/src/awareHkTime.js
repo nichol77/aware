@@ -748,8 +748,6 @@ function actuallyDrawTheStuff(awareControl) {
 	    var xAxis = event.xAxis[0],
 		xmin = xAxis.min,
 		xmax = xAxis.max;
-<<<<<<< HEAD
-=======
 
 	    var yAxis = event.yAxis[0],
 		ymin = yAxis.min,
@@ -764,7 +762,7 @@ function actuallyDrawTheStuff(awareControl) {
 //	    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
 //	    var smallTime=smallHolder.timeDataset;
 //	    var smallProj=smallHolder.projDataset;
->>>>>>> 94111f1d8347537b2a51389077008557bf7d6a40
+
 
 	    var yAxis = event.yAxis[0],
 		ymin = yAxis.min,
@@ -782,7 +780,6 @@ function actuallyDrawTheStuff(awareControl) {
 	    highchartsTimeObj.xAxis.max=xmax;
 	    highchartsTimeObj.yAxis.min=ymin;
 	    highchartsTimeObj.yAxis.max=ymax;
-<<<<<<< HEAD
 	    highchartsProjObj.xAxis.min=ymin;
 	    highchartsProjObj.xAxis.max=ymax;
 	    awareControl.zoom=true;
@@ -790,10 +787,6 @@ function actuallyDrawTheStuff(awareControl) {
 	    awareControl.yMax=ymax;
 	    updateChartsWithZoomData();
 	    
-=======
-	    plotAccordingToChoices();
-	    return false;
->>>>>>> 94111f1d8347537b2a51389077008557bf7d6a40
 	}	
     }
     
