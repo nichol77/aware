@@ -1098,7 +1098,11 @@ function fetchSingleFullHkTime(varNameKey,awareControl) {
 	    var varLabel = new String(varPoint.label);
 	    if(varName.indexOf(varNameKey)>=0) {
 		//Do something
-		addFullVariableToDataset(awareControl,jsonObject.varName);
+		if(varName in jsonObject) 
+		    addFullVariableToDataset(awareControl,jsonObject.varName);
+		else {
+		    $('#debugContainer').append("<p>Can't find "+varName+" in jsonObject</p>");
+		}
 	    }	
 	}
 	actuallyDrawTheStuff(awareControl);
