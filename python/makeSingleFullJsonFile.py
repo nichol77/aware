@@ -58,7 +58,9 @@ def main(argv):
         else:
             print "Got time"
             jDict=dict()
-            jDict["thetimes"]=jFull["full"]
+            jFull["full"]["name"]="time"
+            jDict["time"]=jFull["full"]
+            
             jList.append(jDict)
             jOut.update(jDict)
             
