@@ -26,7 +26,8 @@ def main(argv):
             run = arg
     print 'Run is ', run
     print 'Instrument ', instrument
-
+    roundRun=(run//100)*100
+    print roundRun
 
     sys.exit(0);
 
