@@ -253,8 +253,6 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
     smallHolder.timeDataset = new Object();
     smallHolder.projDataset = new Object();
 
-    //    $('#debugContainer').append("<p>getDataForPlot</p>");
-
     var yAxisOpt=getYaxisOpt(getPlotNameFromForm());
     var maxPointsToShow=getMaxTimePointsToShow();
     var doZoom=0;
@@ -284,6 +282,11 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 	    needToScaleYAxis=true;
 	}
     }
+
+
+    $('#debugContainer').append("<p>getDataForPlot: "+xaxisMin+" "+xaxisMax+" "+projMin+" "+projMax+"</p>");
+
+
     
     var haveVoidValue=false;
     awareControl.maxPoints=0;
@@ -315,24 +318,24 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 
 	       var varName=key;
 	       var timeDataList = new Object();
-		var projDataList = new Object();
-		//RJN Flot vs Highcharts
-		//		timeDataList.label=val.label;
-		//		projDataList.label=val.label;
-		timeDataList.type='scatter';
-		timeDataList.name=String(val.label);
-		projDataList.name=String(val.label);
-		projDataList.type='column';
-		if("color" in val) {
-		    timeDataList.color=val.color;
-		    projDataList.color=val.color;
-		}
-
-		if("points" in val) {
-		    timeDataList.points=val.points;
-		    projDataList.points=val.points;
-		}
-
+	       var projDataList = new Object();
+	       //RJN Flot vs Highcharts
+	       //		timeDataList.label=val.label;
+	       //		projDataList.label=val.label;
+	       timeDataList.type='scatter';
+	       timeDataList.name=String(val.label);
+	       projDataList.name=String(val.label);
+	       projDataList.type='column';
+	       if("color" in val) {
+		   timeDataList.color=val.color;
+		   projDataList.color=val.color;
+	       }
+	       
+	       if("points" in val) {
+		   timeDataList.points=val.points;
+		   projDataList.points=val.points;
+	       }
+	       
 	       projDataList.numBins=getMaxProjBins();
 	       projDataList.minVal=projMin;
 	       projDataList.maxVal=projMax;
@@ -548,7 +551,12 @@ function actuallyDrawTheStuff(awareControl) {
 	    zoomType:'xy',
 	    animation:false,	
 	    events: {
-		selection: selection
+		selection: selectionOnTimePlot
+	    },
+	    resetZoomButton: {
+		theme: {
+		    display: 'none'
+		}
 	    }
 	},
 	credits: { enabled: false},
@@ -579,7 +587,18 @@ function actuallyDrawTheStuff(awareControl) {
     }
     
     var highchartsProjObj = {
-	chart: { zoomType:'x', animation:false},
+	chart: { 
+	    zoomType:'x', 
+	    animation:false,
+	    events: {
+		selection: selectionOnProjPlot
+	    },
+	    resetZoomButton: {
+		theme: {
+		    display: 'none'
+		}
+	    }	    
+	},
 	credits: { enabled: false},
 	title: { text: '' },
 	subtitle: { text: document.ontouchstart === undefined ?
@@ -613,201 +632,232 @@ function actuallyDrawTheStuff(awareControl) {
     
     
 
-    var timePlot;	
-    var projPlot;
+    var timeChart;	
+    var projChart;
 
     awareControl.zoom=false;
 
+    var xmin=0;
+    var xmax=0;
+    
+    if(!getXAutoScale() && !awareControl.zoom) {
+	highchartsTimeObj.xAxis.min=getXMin();
+	highchartsTimeObj.xAxis.max=getXMax();
+    }	
+    
+    if(!getYAutoScale()) {
+	
+	highchartsTimeObj.yAxis.min=getYMin();
+	highchartsTimeObj.yAxis.max=getYMax();
+    }
+    
+    if("min" in highchartsTimeObj.xAxis) {
+	xmin=highchartsTimeObj.xAxis.min;
+	xmax=highchartsTimeObj.xAxis.max;
+    }
+    var timeData = [];
+    var projData = [];
+
+
+    $('#debugContainer').append("<p>plotAccordingToChoices xmin: "+xmin+" xmax: "+xmax+"</p>");
+    
+    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
+    var smallTime=smallHolder.timeDataset;
+    var smallProj=smallHolder.projDataset;
+
+
+    $.each(smallTime, function(key, val) {	  
+	       if (key && smallTime[key]) {
+		   timeData.push(smallTime[key]);
+	       }
+	       if (key && smallProj[key]) {
+		   projData.push(smallProj[key]);
+	       }
+	   });
+    
+    var fullTimeData = timeData;
+    var fullProjData = projData;
+
+
     //This function plots the variables according to which checkboxes are ticked
     function plotAccordingToChoices() {
-	var timeData = [];
-	var projData = [];
-	var xmin=0;
-	var xmax=0;
-
-	if(!getXAutoScale() && !awareControl.zoom) {
-	    highchartsTimeObj.xAxis.min=getXMin();
-	    highchartsTimeObj.xAxis.max=getXMax();
-	}	
-
-
-	if(!getYAutoScale()) {
-
-	    highchartsTimeObj.yAxis.min=getYMin();
-	    highchartsTimeObj.yAxis.max=getYMax();
-	}
-
-	if("min" in highchartsTimeObj.xAxis) {
-	    xmin=highchartsTimeObj.xAxis.min;
-	    xmax=highchartsTimeObj.xAxis.max;
-	}
-
-
-	var smallHolder=getDataForPlot(awareControl,xmin,xmax);
-	var smallTime=smallHolder.timeDataset;
-	var smallProj=smallHolder.projDataset;
-
-
-	$.each(smallTime, function(key, val) {	  
-	    if (key && smallTime[key]) {
-		timeData.push(smallTime[key]);
-	    }
-	    if (key && smallProj[key]) {
-		projData.push(smallProj[key]);
-	    }
-	});
 	
-
-	
-	//	$('#debugContainer').append("<p>timeData.length  "+timeData.length+"</p>");
 	if (timeData.length > 0) {
-	    
-	    if($('#debugContainer').is(":visible")) {
-		var numDebugPoints=timeData[0].data.length;
-		
-		var debugTimeArray= new Array();
-		var debugValueArray= new Array();
-		var debugErrorArray= new Array();
-		for(var i=0;i<numDebugPoints;i++) {
-		    debugTimeArray.push(timeData[0].data[i][0]);
-		    debugValueArray.push(timeData[0].data[i][1]);
-		    debugErrorArray.push(timeData[0].data[i][2]);
-		}
-
-		$('#debugContainer').append("<p>Num debug points "+numDebugPoints+"</p>");
-		$('#debugContainer').append("<p>double timeArray["+numDebugPoints+"]={"+debugTimeArray.toString()+"};</p>");
-		$('#debugContainer').append("<p>double valueArray["+numDebugPoints+"]={"+debugValueArray.toString()+"};</p>");
-		$('#debugContainer').append("<p>double rmsArray["+numDebugPoints+"]={"+debugErrorArray.toString()+"};</p>");
-	    }
 
 	    highchartsTimeObj.series=timeData;
 	    highchartsProjObj.series=projData;
-
-	   
-	    
+	   	    
 	    timePlotCan.highcharts(highchartsTimeObj);
 	    projPlotCan.highcharts(highchartsProjObj);
 
-	    timePlot=timePlotCan.highcharts();
-	    projPlot=projPlotCan.highcharts();
-	    
-	    var timexAxis = timePlot.xAxis[0];
-	    var timeyAxis = timePlot.yAxis[0];
-	    var yExtremes = timeyAxis.getExtremes();
-	    var xExtremes = timexAxis.getExtremes();
-	    var realymin = yExtremes.min;
-	    var realymax = yExtremes.max;
-	    var realxmin = xExtremes.min;
-	    var realxmax = xExtremes.max;
-	    if(getYAutoScale()) {
-		setYMin(realymin);
-		setYMax(realymax);
-	    }
-	    if(getXAutoScale()) {
-		setXMin(realxmin);
-		setXMax(realxmax);		
-	    }
-	    
+	    timeChart=timePlotCan.highcharts();
+	    projChart=projPlotCan.highcharts();
+	    updateScaleMinMax();
 
 	}
 
     }
 
-    function selection(event) {
-	var chart = this;
+    function updateScaleMinMax() {
+	var timexAxis = timeChart.xAxis[0];
+	var timeyAxis = timeChart.yAxis[0];
+	var yExtremes = timeyAxis.getExtremes();
+	var xExtremes = timexAxis.getExtremes();
+	var realymin = yExtremes.min;
+	var realymax = yExtremes.max;
+	var realxmin = xExtremes.min;
+	var realxmax = xExtremes.max;
+	if(getYAutoScale()) {
+	    setYMin(realymin);
+	    setYMax(realymax);
+	}
+	if(getXAutoScale()) {
+	    setXMin(realxmin);
+	    setXMax(realxmax);		
+	}
+    }
+
+
+    function selectionOnProjPlot(event) {
+
+	$('#debugContainer').append("<p>selectionOnProjPlot event triggered</p>");
+	if (event.xAxis) {
+	    var xAxis = event.xAxis[0],
+		ymin = xAxis.min,
+		ymax = xAxis.max;
 	
+	    // indicate to the user that something's going on
+	    timeChart.showLoading();
+	    projChart.showLoading();    
+	    highchartsTimeObj.yAxis.min=ymin;
+	    highchartsTimeObj.yAxis.max=ymax;
+	    highchartsProjObj.xAxis.min=ymin;
+	    highchartsProjObj.xAxis.max=ymax;
+	    awareControl.zoom=true;
+	    awareControl.yMin=ymin;
+	    awareControl.yMax=ymax;
+	    $('#debugContainer').append("<p>"+ymin+" "+ymax+"</p>");
+	    updateChartsWithZoomData();
+	}
+    }
+
+
+    function selectionOnTimePlot(event) {
+	$('#debugContainer').append("<p>selectionOnTimePlot event triggered</p>");
 	if (event.xAxis) {
 	    var xAxis = event.xAxis[0],
 		xmin = xAxis.min,
 		xmax = xAxis.max;
+
+	    var yAxis = event.yAxis[0],
+		ymin = yAxis.min,
+		ymax = yAxis.max;
+
+	    
+
+	    $('#debugContainer').append("<p>selection xmin: "+xmin+" xmax: "+xmax+"</p>");
 	    
 	    // indicate to the user that something's going on
-	    //chart.showLoading();
-	    
-	    
-//	    var smallHolder=getDataForPlot(awareControl,xmin,xmax);
-//	    var smallTime=smallHolder.timeDataset;
-//	    var smallProj=smallHolder.projDataset;
-
-//	    timeData = Array();
-//	    projData = Array();
-	    
-//	    $.each(smallTime, function(key, val) {	  
-//		if (key && smallTime[key]) {
-//		    timeData.push(smallTime[key]);
-//		}
-//		if (key && smallProj[key]) {
-//		    projData.push(smallProj[key]);
-//		}
-//	    });
-	
-	    
-	    //	    onGetNewData(chart,timeData,projData);
+	    timeChart.showLoading();
+	    projChart.showLoading();
+	    	    	
 	    highchartsTimeObj.xAxis.min=xmin;
 	    highchartsTimeObj.xAxis.max=xmax;
-	    plotAccordingToChoices();
-	    return false;
+	    highchartsTimeObj.yAxis.min=ymin;
+	    highchartsTimeObj.yAxis.max=ymax;
+	    highchartsProjObj.xAxis.min=ymin;
+	    highchartsProjObj.xAxis.max=ymax;
+	    awareControl.zoom=true;
+	    awareControl.yMin=ymin;
+	    awareControl.yMax=ymax;
+	    updateChartsWithZoomData();
+	    
 	}	
     }
     
-    // Add the new data and display a link to revert
-    function onGetNewData(chart, timeData,projData) {
+
+    function updateChartsWithZoomData() {
+	var xmin=0;
+	var xmax=0;
+	if("min" in highchartsTimeObj.xAxis) {
+	    xmin=highchartsTimeObj.xAxis.min;
+	    xmax=highchartsTimeObj.xAxis.max;
+	}
 	
-	// set the first series' data
-	chart.series[0].setData(timeData);
-	chart.hideLoading();
+	var smallHolder=getDataForPlot(awareControl,xmin,xmax);
+	var smallTime=smallHolder.timeDataset;
+	var smallProj=smallHolder.projDataset;
 	
+	timeData = Array();
+	projData = Array();
+	
+	$.each(smallTime, function(key, val) {	  
+		   if (key && smallTime[key]) {
+		       timeData.push(smallTime[key]);
+		   }
+		   if (key && smallProj[key]) {
+		       projData.push(smallProj[key]);
+		   }
+	       });
+
+	//	    console.log(projData[0]);
+	for(var i=0;i<timeData.length;i++) {
+	    timeChart.series[i].setData(timeData[i].data,false);
+	}
+	
+	for(var i=0;i<projData.length;i++) {
+	    projChart.series[i].setData(projData[i].data,false);
+	}
+	timeChart.hideLoading();
+	//	timeChart.redraw();
+	if("min" in highchartsTimeObj.yAxis) {
+	    timeChart.yAxis[0].setExtremes(highchartsTimeObj.yAxis.min,highchartsTimeObj.yAxis.max);
+	}
+	projChart.hideLoading();
+	$('#debugContainer').append("<p>highchartsProjObj.xAxis.min: "+highchartsProjObj.xAxis.min+" xmax: "+highchartsProjObj.xAxis.max+"</p>");
+
+	var extremes=timeChart.yAxis[0].getExtremes();
+	projChart.xAxis[0].setExtremes(extremes.min,extremes.max);
+	updateScaleMinMax();
+	    
 	// use jQuery HTML capabilities to add a button to reset the selection 
-	chart.$resetButton = $('<button>Reset view</button>')
+	timeChart.$resetButton = $('<button>Reset view</button>')
 	    .css({
-		position: 'absolute',
-		top: '20px',
-		right: '50px',
-		zIndex: 50
-	    })
+		    position: 'absolute',
+			top: '20px',
+			right: '50px',
+			zIndex: 50
+			})
 	    .click(function() {
-		resetSelection(chart)
-	    })
-	    .appendTo(chart.container);
+		       resetSelection()
+			   })
+	    .appendTo(timeChart.container);
+	
     }
+   
     
     // Reset to normal view
-    function resetSelection(chart) {
-	chart.series[0].setData(data);
-	chart.$resetButton.remove();
-    }
-    
+    function resetSelection() {
+	delete highchartsTimeObj.xAxis.min;
+	delete highchartsTimeObj.xAxis.max;
 
-    var lastMin=0,lastMax=0;
-    
-    function doSomeTimePlotZoomingYaxis(event) {
-	//Need to zoom in on the proj plot
-	$('#debugContainer').append("<p>doSomeTimePlotZoomingYaxis:"+event.min+" "+event.max+" "+lastMin+" "+lastMax+"</p>");
-	var projPlot=projPlotCan.highcharts();
-	if(lastMin!=event.min || lastMax!=event.max) {	 
-	    lastMin=event.min;
-	    lastMax=event.max;   
-	    if(event.min!=null)
-		projPlot.xAxis[0].setExtremes(event.min,event.max);
-	    else
-		projPlot.xAxis[0].setExtremes(undefined,undefined);
+
+	awareControl.zoom=false;
+	for(var i=0;i<fullTimeData.length;i++) {
+	    timeChart.series[i].setData(fullTimeData[i].data,false);
 	}
+	timeChart.$resetButton.remove();
+	timeChart.redraw();
+	timeChart.xAxis[0].setExtremes(undefined,undefined);
+	timeChart.yAxis[0].setExtremes(undefined,undefined);
+
+	for(var i=0;i<fullProjData.length;i++) {
+	    projChart.series[i].setData(fullProjData[i].data,false);
+	}
+	var extremes=timeChart.yAxis[0].getExtremes();
+	projChart.xAxis[0].setExtremes(extremes.min,extremes.max);
     }
-
-
-      function doSomeProjPlotZoomingXaxis(event) {
-	//Need to zoom in on the proj plot
-	  $('#debugContainer').append("<p>doSomeProjPlotZoomingXaxis:"+event.min+" "+event.max+" "+lastMin+" "+lastMax+"</p>");
-	  var timePlot=timePlotCan.highcharts();
-	  if(lastMin!=event.min || lastMax!=event.max) {	      
-	      lastMin=event.min;
-	      lastMax=event.max;
-	      if(event.min!=null)
-		  timePlot.yAxis[0].setExtremes(event.min,event.max);
-	      else
-		  timePlot.yAxis[0].setExtremes(undefined,undefined);	    	
-	  }
-      }
+    
 
   
 	
