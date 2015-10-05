@@ -6,35 +6,29 @@ import gzip
 import json
 
 def main(argv):
-    awareDir=os.getenv('AWARE_OUTPUT_DIR', "/unix/ara/data/aware/output/");
-    print awareDir
+    awareDir=os.getenv('AWARE_OUTPUT_DIR', "/unix/ara/data/aware/output/")
 
-
-    sys.exit(0);
-
-    rawfilename='' #'/Users/rjn/Sites/aware/web/output/ARA03/2014/0120/run2028/full/header_rawEventRate.json.gz'
-    inputfilename=''  #'/Users/rjn/Sites/aware/web/output/ARA03/2014/0120/run2028/full/header_calEventRate.json.gz'
-    outputfilename=''
+    instrument='ARA03'
+    run='6000'
 
     try:
-       opts, args = getopt.getopt(argv,"hr:o:i:",["rfile=","ofile=","ifile="])
+       opts, args = getopt.getopt(argv,"hr:i:",["run=","instrument="])
     except getopt.GetoptError:
-       print 'fixEventRateFull.py -r <rawfile> -i <inputfile> -o <outputfile>'
+       print 'fixEventRateFull.py -r <run> -i <instrument>'
        sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'fixEventRateFull.py -r <rawfile> -i <inputfile> -o <outputfile>'
+            print 'fixEventRateFull.py -r <run> -i <instrument>'
             sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputfilename = arg
-        elif opt in ("-o", "--ofile"):
-            outputfilename = arg
-        elif opt in ("-r", "--rfile"):
-            rawfilename = arg
-    print 'Raw file is "', rawfilename
-    print 'Input file is "', inputfilename
-    print 'Output file is "', outputfilename
+        elif opt in ("-i", "--instrument"):
+            instrument = arg
+        elif opt in ("-r", "--run"):
+            run = arg
+    print 'Run is "', run
+    print 'Instrument "', instrument
 
+
+    sys.exit(0);
 
     # reading
     gRaw = gzip.GzipFile(rawfilename)
