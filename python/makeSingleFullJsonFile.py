@@ -38,6 +38,9 @@ def main(argv):
     fullFileList=glob.glob(runDir+'/full/'+fileType+"_*")
     print fullFileList
 
+    #Create the output dictionary
+    jOut = dict()
+    
     for inFile in fullFileList:
         gFull = gzip.GzipFile(inFile)
         jFull = json.load(gFull)
@@ -45,6 +48,7 @@ def main(argv):
         if "name" in jFull["full"] :
             print jFull["full"]["name"]
             print len(jFull["full"]["timeList"])
+            jOut[jFull["full"]["name"]]=jFull["full"]
         else:
             print "Got time"
 
