@@ -695,7 +695,8 @@ function actuallyDrawTheStuff(awareControl) {
 
 
     function legendClickHandler(event) {
-	$('#debugContainer').append("<p>"+event+"</p>");
+	var series = this.yAxis.series;
+	$('#debugContainer').append("<p>"+series.name+"</p>");
 	
     }
 
