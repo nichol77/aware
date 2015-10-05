@@ -245,7 +245,7 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
         //     std::cerr << subMapIt->first << "\n";
         labelIt=fLabelMap.find(subMapIt->first);
         sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
-        FullFile << ",\n";
+        FullFile << ",\n";
         //Start of runSum
         FullFile << "\t\"" << subMapIt->first.c_str() << "\":{\n";
         FullFile << "\t\"run\" : " << fRun <<  ",\n";
