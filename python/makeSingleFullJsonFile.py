@@ -75,7 +75,7 @@ def main(argv):
 
     
     outJson=json.dumps(jOut,sort_keys=True,
-                       indent=4)
+                       indent=1)
 #    print outJson
     outFile = gzip.open(singleFullName,'w')
     outFile.write(outJson)
