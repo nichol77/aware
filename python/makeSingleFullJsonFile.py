@@ -38,7 +38,14 @@ def main(argv):
     fullFileList=glob.glob(runDir+'/full/'+fileType+"_*")
     print fullFileList
 
+    for inFile in fullFileList:
+        gFull = gzip.GzipFile(inFile)
+        jFull = json.load(gFull)
+        gFull.close()
+        print jFull["full"].name
+        print len(jFull["full"]["timeList"])
 
+    
 
     sys.exit(0);
 
