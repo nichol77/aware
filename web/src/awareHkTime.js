@@ -827,7 +827,7 @@ function actuallyDrawTheStuff(awareControl) {
 	$('#debugContainer').append("<p>highchartsProjObj.xAxis.min: "+highchartsProjObj.xAxis.min+" max: "+highchartsProjObj.xAxis.max+"</p>");
 
 	var extremes=timeChart.yAxis[0].getExtremes();
-//	projChart.xAxis[0].setExtremes(extremes.min,extremes.max);
+	projChart.xAxis[0].setExtremes(extremes.min,extremes.max);
 	updateScaleMinMax();
 	var projExtremes=projChart.xAxis[0].getExtremes();
 	
