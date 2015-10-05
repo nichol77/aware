@@ -184,8 +184,22 @@ function getTimeString(dateObj) {
 * @params jsonObject is an object corresponding to an AWARE Full JSON file
 */
 function fillFullTimeArray(awareControl,jsonObject) {
-    for(var index=0;index<jsonObject.full.timeList.length;index++) {
-	var timePoint=jsonObject.full.timeList[index];
+    timeList=null
+    if ("time" in jsonObject) {
+	timeList=jsonObject.time.timeList;
+    }
+    else if("full" in jsonObject) {
+	timeList=jsonObject.full.timeList;
+    }
+    else {
+	var canContainer = $("#titleContainer");
+	canContainer.append("<p>Can not find time list</p>");
+	return
+    }
+	
+    
+    for(var index=0;index<timeList.length;index++) {
+	var timePoint=timeList[index];
 	awareControl.timeArray.push(timePoint*1000); ///< Javascript needs the number in milliseconds
     }
 }
@@ -196,8 +210,7 @@ function fillFullTimeArray(awareControl,jsonObject) {
 * @params awareControl is the global aware control object
 * @params jsonObject is an object corresponding to an AWARE Full JSON file
 */
-function addFullVariableToDataset(awareControl,jsonObject) {    
-    var varPoint=jsonObject.full;
+function addFullVariableToDataset(awareControl,varPoint) { 
     var varName=varPoint.name;
     var dataList = new Object();
     dataList.label=varPoint.label;
@@ -980,7 +993,11 @@ function fullHkPlotDrawer(awareControl) {
 	setTimeAndVarList(awareControl,jsonObject);
 
 	//Actual fetch the full hk files
-	fetchFullHkTime(getPlotNameFromForm(),awareControl);
+	//Old method which uses individual json files for each variable
+	//	fetchFullHkTime(getPlotNameFromForm(),awareControl);
+
+	//New method which uses one bog json file per run
+	fetchSingleFullHkTime(getPlotNameFromForm(),awareControl);
     }
 
     //The ajax jquery function gets the JSON file from the URL and then calls file handler
@@ -1048,8 +1065,8 @@ function fetchFullHkTime(varNameKey,awareControl) {
      * This function counts the number of full hk files that can be fetched
      */
     function handleFullHkJsonFile(jsonObject) { 
-	countFilesGot++;
-	addFullVariableToDataset(awareControl,jsonObject);
+	countFilesGot++;	   
+	addFullVariableToDataset(awareControl,jsonObject.full);
 	if(countFilesNeeded==countFilesGot) {
 	    actuallyDrawTheStuff(awareControl);
 	}
@@ -1062,6 +1079,46 @@ function fetchFullHkTime(varNameKey,awareControl) {
 	type: "GET",
 	dataType: "json",
 	success: handleFullHkTimeJsonFile,
+	error: handleAjaxError
+    }); 
+}
+
+
+
+
+/**
+ * This function fetches the full hk time JSON files and then does the plotting
+ */
+function fetchSingleFullHkTime(varNameKey,awareControl) {
+{
+    var singleFullHkUrl=getSingleFullHkName(getInstrumentNameFromForm(),getStartRunFromForm(),awareControl.year,awareControl.dateCode,awareControl.hkType);
+
+    /**
+     * This function handles the unpacking of a full hk time JSON file
+     */
+    function handleSingleFullHkJsonFile(jsonObject) { 
+	///First step is fill the full time list
+
+	fillFullTimeArray(awareControl,jsonObject);
+	for(var varIndex=0;varIndex<awareControl.varList.length;varIndex++) {
+	    var varPoint=awareControl.varList[varIndex];
+	    var varName = new String(varPoint.name);
+	    var varLabel = new String(varPoint.label);
+	    if(varName.indexOf(varNameKey)>=0) {
+		//Do something
+		addFullVariableToDataset(awareControl,jsonObject.varName);
+	    }	
+	}
+	actuallyDrawTheStuff(awareControl);
+    }
+        
+    //The jquery ajax call to fetch the full hk time file
+    ajaxLoadingLog(singleFullHkUrl);
+    $.ajax({
+	url: singleFullHkUrl,
+	type: "GET",
+	dataType: "json",
+	success: handleSingleFullHkJsonFile,
 	error: handleAjaxError
     }); 
 }

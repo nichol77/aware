@@ -201,6 +201,15 @@ function getFullHkName(instrument,run,year,datecode,hkFile,hkType) {
     return name;
 }
 
+/**
+* Utility function that returns the name of the single full hk JSON file
+* @returns {String}
+*/
+function getSingleFullHkName(instrument,run,year,datecode,hkType) {   
+    var name="output/"+instrument+"/runs"+which10000(run)+"/runs"+which100(run)+"/run"+run+"/"+hkType+"_full.json.gz"; 
+    return name;
+}
+
 
 /**
 * Utility function that returns the name of the full hk time JSON file
