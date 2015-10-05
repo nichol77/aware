@@ -193,6 +193,8 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
     char jsonName[FILENAME_MAX];
     sprintf(jsonName,"%s/%s_full.json.gz",jsonDir,filePrefix);
     
+    
+    
     boost::iostreams::filtering_ostream FullFile;
     FullFile.push(boost::iostreams::gzip_compressor());
     FullFile.push(boost::iostreams::file_sink(jsonName));
@@ -243,8 +245,7 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
         //     std::cerr << subMapIt->first << "\n";
         labelIt=fLabelMap.find(subMapIt->first);
         sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
-        FullFile << ",\n";
-        FullFile << "{\n";
+        FullFile << ",\n";
         //Start of runSum
         FullFile << "\t\"" << subMapIt->first.c_str() << "\":{\n";
         FullFile << "\t\"run\" : " << fRun <<  ",\n";
@@ -275,9 +276,9 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
                 firstInArray=0;
             }
         }
-        FullFile << " ]\n}\n";
+        FullFile << " ]";
     }
-    FullFile << "}\n";
+    FullFile << "\n}\n";
     FullFile.flush();
     //  std::cerr << "Here\n";
     
