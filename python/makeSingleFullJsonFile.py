@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import glob
 import os
 import sys, getopt
 import gzip
