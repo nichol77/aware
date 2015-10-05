@@ -35,9 +35,9 @@ def main(argv):
 
     runDir=awareDir+"/"+instrument+"/runs"+str(baseRun)+"/runs"+str(roundRun)+"/run"+run
     singleFullName=runDir+'/'+fileType+'_full.json.gz'
-    print runDir
+#    print runDir
     fullFileList=glob.glob(runDir+'/full/'+fileType+"_*")
-    print fullFileList
+#    print fullFileList
     
 
     #Create the output dictionary
@@ -49,14 +49,14 @@ def main(argv):
         jFull = json.load(gFull)
         gFull.close()
         if "name" in jFull["full"] :
-            print jFull["full"]["name"]
-            print len(jFull["full"]["timeList"])
+#            print jFull["full"]["name"]
+#            print len(jFull["full"]["timeList"])
             jDict=dict()
             jDict[jFull["full"]["name"]]=jFull["full"]
             jList.append(jDict)
             jOut.update(jDict)
         else:
-            print "Got time"
+ #           print "Got time"
             jDict=dict()
             jFull["full"]["name"]="time"
             jDict["time"]=jFull["full"]
@@ -65,7 +65,7 @@ def main(argv):
             jOut.update(jDict)
             
 
-    print len(jList)
+#    print len(jList)
 
 #    jOut=jList[0]
 #    for item in jList:
