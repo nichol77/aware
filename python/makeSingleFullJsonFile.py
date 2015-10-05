@@ -45,7 +45,7 @@ def main(argv):
         if name in jFull["full"] :
             print jFull["full"]["name"]
             print len(jFull["full"]["timeList"])
-        else
+        else:
             print "Got time"
 
     
