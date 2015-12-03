@@ -622,7 +622,7 @@ function actuallyDrawTheStuff(awareControl) {
 	            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 	xAxis: {
 	    title : {
-		text:'Thing2'
+		text:plotLabel
 	    }
 	},
 	yAxis: {title: { text:'' }},
