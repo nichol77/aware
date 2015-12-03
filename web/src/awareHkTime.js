@@ -558,7 +558,7 @@ function actuallyDrawTheStuff(awareControl) {
 
 
     //Set up the options for the time and projection plots
-  
+    var plotLabel=getPlotLabelFromForm();  
 
     var highchartsTimeObj = {
 	chart: {
@@ -579,7 +579,7 @@ function actuallyDrawTheStuff(awareControl) {
 	            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'},
 	xAxis: {type: 'datetime'},
 	yAxis: {
-	    title: { text:'Thing' }	  
+	    title: { text:plotLabel }	  
 	},
 	legend: {
 	    enabled: true ,
