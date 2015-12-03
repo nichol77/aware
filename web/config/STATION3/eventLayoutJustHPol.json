@@ -1,1 +1,13 @@
-../ARA/eventLayoutJustHPol.json
+{
+	"numRows" : 4,
+	"numCols" : 2,
+	"rowContLabel" : "4up",
+	"colContLabel" : "2up",
+	"containerLabel" : "4x2up",
+	"rowLabels" : ["TH","TH","BH","BH"],
+	"colLabels" : ["S1/3","S2/4"],
+	"chanOrder" : [[8,9],[10,11],[12,13],[14,15]],
+	"showXaxis" : [[1,1],[1,1],[1,1],[1,1]],
+	"showYaxis" : [[1,1],[1,1],[1,1],[1,1]],
+	"chanScale" : [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2]
+}

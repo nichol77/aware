@@ -1,1 +1,14 @@
-../ARA/eventLayoutVPolCSum.json
+{
+	"numRows" : 2,
+	"numCols" : 1,
+	"rowContLabel" : "2up",
+	"colContLabel" : "1up",
+	"containerLabel" : "1up",
+	"rowLabels" : ["CS","Map"],
+	"colLabels" : ["VPol"],
+	"inputChanList" : [0,1,2,3,4,5,6,7],
+	"chanOrder" : [["CSum"],["Map"]],
+	"showXaxis" : [[1],[1]],
+	"showYaxis" : [[1],[1]],
+	"chanScale" : [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2]
+}
