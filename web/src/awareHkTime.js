@@ -519,11 +519,12 @@ function actuallyDrawTheStuff(awareControl) {
     keyArray.sort(sortKeyNames);
 
     
-
+    var colourArray=['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', 
+		     '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'];
     var count=0;
     for (var i = 0; i < keyArray.length; i++) {
 	var key = keyArray[i];
-	fakeArray.push(count);
+	fakeArray.push(colourArray[i%10]);
 	count++;
     }
     var len=count;
