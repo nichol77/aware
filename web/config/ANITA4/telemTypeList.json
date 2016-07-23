@@ -1,0 +1,6 @@
+[			  
+	{"sym":"numFileBytes","desc":"Num. File Bytes","hkCode":"all"},
+	{"sym":"numFileEventBytes","desc":"Num. Event Bytes.","hkCode":"all"},
+	{"sym":"packetByte","desc":"Num. Bytes","hkCode":"all"},
+	{"sym":"packetNum","desc":"Num. Packets","hkCode":"all"}
+	]						

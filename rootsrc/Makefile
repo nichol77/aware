@@ -10,17 +10,20 @@ include Makefile.arch
 ifdef ANITA_UTIL_INSTALL_DIR
 UTIL_LIB_DIR=${ANITA_UTIL_INSTALL_DIR}/lib
 UTIL_INC_DIR=${ANITA_UTIL_INSTALL_DIR}/include
+UTIL_BIN_DIR=${ANITA_UTIL_INSTALL_DIR}/bin
 LD_UTIL=-L$(ANITA_UTIL_LIB_DIR)
 INC_UTIL=-I$(ANITA_UTIL_INC_DIR)
 else 
 ifdef ARA_UTIL_INSTALL_DIR
 UTIL_LIB_DIR=${ARA_UTIL_INSTALL_DIR}/lib
 UTIL_INC_DIR=${ARA_UTIL_INSTALL_DIR}/include
+UTIL_BIN_DIR=${ARA_UTIL_INSTALL_DIR}/bin
 LD_UTIL=-L$(ARA_UTIL_LIB_DIR)
 INC_UTIL=-I$(ARA_UTIL_INC_DIR)
 else
 UTIL_LIB_DIR=/usr/local/lib
 UTIL_INC_DIR=/usr/local/include
+UTIL_BIN_DIR=/usr/local/bin
 endif
 endif
 
@@ -44,6 +47,7 @@ ROOT_LIBRARY = libAwareWeb.so
 LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o AwareRunDatabase.o AwareWaveformEventFileMaker.o AwareEventDatabase.o AwareWaveformChannel.o awareDict.o
 CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h AwareRunDatabase.h AwareWaveformEventFileMaker.h AwareEventDatabase.h AwareWaveformChannel.h
 
+DICT = awareDict
 
 all : $(ROOT_LIBRARY) 
 
@@ -62,12 +66,12 @@ else
 endif
 endif
 else
-	$(LD) $(SOFLAGS) $(LDFLAGS) $(LIBS) $(LIB_OBJS) -o $@
+	$(LD) $(SOFLAGS) $(LDFLAGS)  $(LIB_OBJS) -o $@ $(LIBS)
 endif
 
 
 
-awareDict.C: $(CLASS_HEADERS)
+$(DICT).C: $(CLASS_HEADERS)
 
 	@echo "Generating dictionary ..."
 	@ rm -f *Dict* 
@@ -88,9 +92,15 @@ clean:
 install: $(ROOT_LIBRARY)
 	install -d $(UTIL_INC_DIR)
 	install -d $(UTIL_LIB_DIR)
+	install -d $(UTIL_BIN_DIR)
 ifeq ($(PLATFORM),macosx)
 	@install -c -m 755 $(ROOT_LIBRARY) $(subst .$(DllSuf),.so,$(ROOT_LIBRARY)) $(UTIL_LIB_DIR)
 else
 	install -c -m 755 $(ROOT_LIBRARY) $(UTIL_LIB_DIR)
 endif
 	install -c -m 644 $(CLASS_HEADERS) $(UTIL_INC_DIR)
+
+	@if [ $(shell root-config --version | cut -c1) -ge 6 ]; then \
+	install -c -m 755 $(DICT)_rdict.pcm $(UTIL_LIB_DIR) ;\
+	fi # Additional install command for ROOTv6
+
