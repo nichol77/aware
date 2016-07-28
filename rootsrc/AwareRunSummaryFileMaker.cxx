@@ -181,6 +181,113 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
 }
 
+
+void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, const char *filePrefix)
+{
+    std::cout << fRawMap.size() << "\n";
+    
+    if(fRawMap.size()==0) return;
+    
+//    std::vector<std::string> fFileList;
+    
+    char jsonName[FILENAME_MAX];
+    sprintf(jsonName,"%s/%s_full.json.gz",jsonDir,filePrefix);
+    
+    boost::iostreams::filtering_ostream FullFile;
+    FullFile.push(boost::iostreams::gzip_compressor());
+    FullFile.push(boost::iostreams::file_sink(jsonName));
+    //Need to add a check the file is open
+    
+    //For now we will justr take the time from the first variable in the map;
+    std::map<std::string,AwareVariableSummary>::iterator sumIt=summaryMap.begin();
+    //We have some data
+    FullFile << "{\n";
+    //Start of runSum
+    FullFile << "\t\"time\":{\n";
+    FullFile << "\t\"run\" : " << fRun <<  ",\n";
+    FullFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
+    FullFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
+    FullFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
+    FullFile << "\t\"timeList\" : [\n";
+    
+    
+    std::map<std::string, std::ofstream*> fJsonFileMap;
+    
+    //For now get the first time point in the raw map
+    std::map<Double_t, std::map<std::string, Double_t> >::iterator fRawMapIt=fRawMap.begin();
+    std::map<Double_t, std::map<std::string, Double_t> >::iterator fRawMapIt2=fRawMap.begin();
+    //Then get an iterator for all the variables at the first timePoint
+    std::map<std::string, Double_t>::iterator subMapIt=fRawMapIt->second.begin();
+    std::map<std::string, Double_t>::iterator subMapIt2=fRawMapIt->second.begin();
+    
+    std::map<std::string, std::string>::iterator labelIt;
+    
+    
+    ///Now fill the time file
+    int firstInArray=1;
+    //Now loop over the fRawMap
+    for(fRawMapIt=fRawMap.begin();fRawMapIt!=fRawMap.end();fRawMapIt++) {
+        //First do the time file
+        if(!firstInArray) FullFile << ",\n";
+        FullFile <<  std::setw( 20 ) << std::setprecision( 10 ) << fRawMapIt->first;
+        firstInArray=0;
+    }
+    FullFile << " ]\n}\n";
+
+    std::cerr << "Done time\n";
+    
+
+    
+    fRawMapIt=fRawMap.begin();
+    subMapIt=fRawMapIt->second.begin();
+    
+    //Now loop over the variables the output files
+    for(;subMapIt!=fRawMapIt->second.end();subMapIt++) {
+      std::cerr << subMapIt->first << "\n";
+        labelIt=fLabelMap.find(subMapIt->first);
+        sumIt=summaryMap.find(subMapIt->first); //Point the summary iterator to the correct summary
+        FullFile << ",\n";
+        //Start of runSum
+        FullFile << "\t\"" << subMapIt->first.c_str() << "\":{\n";
+        FullFile << "\t\"run\" : " << fRun <<  ",\n";
+        FullFile << "\t\"instrument\" : \"" << fInstrumentName.c_str() <<  "\",\n";
+        FullFile << "\t\"name\" : \"" << subMapIt->first.c_str() <<  "\",\n";
+        FullFile << "\t\"label\" : \"" << labelIt->second.c_str() <<  "\",\n";
+        FullFile << "\t\"startTime\" : \"" << sumIt->second.getFirstTimeString() <<  "\",\n";
+        FullFile << "\t\"numPoints\" : " << fRawMap.size() <<  ",\n";
+        //    std::cerr << subMapIt->first.c_str() << "\t" << fRawMap.size() << "\t" << sumIt->second.getVoidFlag() << "\t" << sumIt->second.getVoidValue() << "\t"<< sumIt->second.getNumSecondsPerPoint() << "\n";
+        
+        if(sumIt->second.getVoidFlag()) {
+            FullFile << "\t\"voidValue\" : " << sumIt->second.getVoidValue() << ",\n";
+        }
+        if(sumIt->second.getAverageType()!=AwareAverageType::kAngleDegree) {
+            FullFile << "\t\"avgType\" : \"angleDegree\",\n";
+        }
+        FullFile << "\t\"timeList\" : [\n";
+        //    fJsonFileMap.insert( std::pair <std::string, std::ofstream*> (subMapIt->first, VarFile) );
+        
+        
+        int firstInArray=1;
+        //Now loop over the time file again
+        for(fRawMapIt2=fRawMap.begin();fRawMapIt2!=fRawMap.end();fRawMapIt2++) {
+            subMapIt2=fRawMapIt2->second.find(subMapIt->first);
+            if(subMapIt2!=fRawMapIt2->second.end()) {	   
+                if(!firstInArray) FullFile << ",\n";
+                FullFile <<  subMapIt2->second;
+                firstInArray=0;
+            }
+        }
+        FullFile << "]\n}";
+    }
+    FullFile << "\n}\n";
+    FullFile.flush();
+    //  std::cerr << "Here\n";
+    
+    
+}
+
+
+
 void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
 {
 

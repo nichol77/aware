@@ -1,1 +1,0 @@
-config/ANITA4/index.php

@@ -1,1 +1,13 @@
-../ARA/eventLayoutJustVPol.json
+{
+	"numRows" : 4,
+	"numCols" : 2,
+	"rowContLabel" : "4up",
+	"colContLabel" : "2up",
+	"containerLabel" : "4x2up",
+	"rowLabels" : ["TV","TV","BV","BV"],
+	"colLabels" : ["S1/3","S2/4"],
+	"chanOrder" : [[0,1],[2,3],[4,5],[6,7]],
+	"showXaxis" : [[1,1],[1,1],[1,1],[1,1]],
+	"showYaxis" : [[1,1],[1,1],[1,1],[1,1]],
+	"chanScale" : [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2]
+}
