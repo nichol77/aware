@@ -185,6 +185,8 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
     
     char jsonName[FILENAME_MAX];
     sprintf(jsonName,"%s/%s_full.json.gz",jsonDir,filePrefix);
+    std::cout << "Writing " << jsonName << "\n";
+
     
     boost::iostreams::filtering_ostream FullFile;
     FullFile.push(boost::iostreams::gzip_compressor());
@@ -229,8 +231,6 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
 
     
     fRawMapVecIt=fRawMapVec.begin();
-    
-    //Now loop over the variables the output files
     
   for(elementIt=fElementIndexMap.begin();elementIt!=fElementIndexMap.end();elementIt++) {
     int index=elementIt->second;
