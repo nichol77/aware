@@ -40,7 +40,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     //Insert new summary
     AwareVariableSummary newSummary(fNumSecondsPerPoint,avgType,hasVoidValue,voidValue);
     newSummary.addDataPoint(timeStamp,variable);
-    fSummaryVec.push_back(newSummary)
+    fSummaryVec.push_back(newSummary);
     if(index>maxIndex) maxIndex=index;    
   }
   else {
