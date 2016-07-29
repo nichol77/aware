@@ -14,6 +14,7 @@
 #include "AwareVariable.h"
 
 #include <map>
+#include <vector>
 
 
 
@@ -28,9 +29,9 @@ class AwareRunSummaryFileMaker
 
 
   void writeFullJSONFiles(const char *jsonDir, const char *filePrefix);
-    void writeSingleFullJSONFile(const char *jsonDir, const char *filePrefix);
-
-    void writeSummaryJSONFile(const char *jsonName);
+  void writeSingleFullJSONFile(const char *jsonDir, const char *filePrefix);
+  
+  void writeSummaryJSONFile(const char *jsonName);
   void writeTimeJSONFile(const char *jsonName);
 
 
@@ -41,11 +42,17 @@ class AwareRunSummaryFileMaker
   Int_t fRun;
   Int_t fNumSecondsPerPoint;
   std::string fInstrumentName;
-  std::map<std::string,AwareVariableSummary> summaryMap;
-  std::map<std::string,std::string> fLabelMap;
-  
-  std::map<Double_t, std::map<std::string, Double_t> > fRawMap;
+  /* std::map<std::string,AwareVariableSummary> summaryMap; */
+  /* std::map<std::string,std::string> fLabelMap; */
+  /* std::map<Double_t, std::map<std::string, Double_t> > fRawMap; */
 
+  //Vector
+  std::map<std::string,Int_t> fElementIndexMap;
+  std::vector<std::string> fLabelVec;
+  std::vector<AwareVariableSummary> fSummaryVec;
+  std::map<Double_t, std::vector<Double_t>> fRawMapVec;
+  
+  
 
 };
 
