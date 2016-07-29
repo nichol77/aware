@@ -56,7 +56,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     try
       {
 	rawIt->second.at(index)=variable;
-      }s
+      }
     catch(std::out_of_range const & e)
       {
 	rawIt->second.resize(maxIndex+1);
