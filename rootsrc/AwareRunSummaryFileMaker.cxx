@@ -40,7 +40,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     //Insert new summary
     AwareVariableSummary newSummary(fNumSecondsPerPoint,avgType,hasVoidValue,voidValue);
     newSummary.addDataPoint(timeStamp,variable);
-    fSummaryVec.push_back(newSummary);
+    fSummaryVec.push_back(newSummary)
     if(index>maxIndex) maxIndex=index;    
   }
   else {
@@ -56,16 +56,16 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     try
       {
 	rawIt->second.at(index)=variable;
-      }
+      }s
     catch(std::out_of_range const & e)
       {
-	rawIt->second.resize(maxIndex);
+	rawIt->second.resize(maxIndex+1);
 	rawIt->second.at(index)=variable;
       }
   }
   else {
     //First time for this time new to make vector
-    std::vector<Double_t> newTimeVec(maxIndex);
+    std::vector<Double_t> newTimeVec(maxIndex+1);
     newTimeVec.at(index)=variable;
     fRawMapVec.insert(std::pair<Double_t,std::vector<Double_t>>(timeStamp.AsDouble(),newTimeVec));
   }
