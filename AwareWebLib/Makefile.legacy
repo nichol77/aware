@@ -5,6 +5,11 @@
 ##############################################################################
 include Makefile.arch
 
+### Package subdirectories
+LIBDIR=lib
+BUILDDIR=build
+INCLUDEDIR=include
+BINDIR=bin
 
 
 ifdef ANITA_UTIL_INSTALL_DIR
@@ -43,20 +48,32 @@ LIBS          = $(ROOTLIBS)  -lMinuit $(SYSLIBS)  $(FFTLIBS) -lboost_iostreams
 GLIBS         = $(ROOTGLIBS) $(SYSLIBS)
 
 ROOT_LIBRARY = libAwareWeb.so
-
-LIB_OBJS = AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o AwareRunDatabase.o AwareWaveformEventFileMaker.o AwareEventDatabase.o AwareWaveformChannel.o awareDict.o
-CLASS_HEADERS = AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h AwareRunDatabase.h AwareWaveformEventFileMaker.h AwareEventDatabase.h AwareWaveformChannel.h
-
 DICT = awareDict
+LIB_OBJS = $(addprefix $(BUILDDIR)/, AwareRunSummaryFileMaker.o AwareVariableSummary.o AwareVariable.o AwareRunDatabase.o AwareWaveformEventFileMaker.o AwareEventDatabase.o AwareWaveformChannel.o $(DICT).o)
+CLASS_HEADERS =  $(addprefix $(INCLUDEDIR)/, AwareRunSummaryFileMaker.h AwareVariableSummary.h AwareVariable.h AwareRunDatabase.h AwareWaveformEventFileMaker.h AwareEventDatabase.h AwareWaveformChannel.h)
 
-all : $(ROOT_LIBRARY) 
+
+all : $(ROOT_LIBRARY)
+
+
+
+$(LIB_OBJS): | $(BUILDDIR) 
+
+$(BINDIR): 
+	mkdir -p $(BINDIR)
+
+$(BUILDDIR): 
+	mkdir -p $(BUILDDIR)
+
+$(LIBDIR): 
+	mkdir -p $(LIBDIR)
 
 #The library
-$(ROOT_LIBRARY) : $(LIB_OBJS) 
+$(ROOT_LIBRARY) : $(LIB_OBJS)  | $(LIBDIR)
 	@echo "Linking $@ ..."
 ifeq ($(PLATFORM),macosx)
 # We need to make both the .dylib and the .so
-		$(LD) $(SOFLAGS)$@ $(LIBS) $(LDFLAGS) $^ $(OutPutOpt) $@
+		$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@
 ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
 ifeq ($(MACOSX_MINOR),4)
 		ln -sf $@ $(subst .$(DllSuf),.so,$@)
@@ -66,23 +83,26 @@ else
 endif
 endif
 else
-	$(LD) $(SOFLAGS) $(LDFLAGS)  $(LIB_OBJS) -o $@ $(LIBS)
+	$(LD) $(SOFLAGS) $(LDFLAGS) $(LIB_OBJS) -o $@  $(LIBS)
 endif
+	@if [ $(shell root-config --version | cut -c1) -ge 6 ]; then \
+	cp $(BUILDDIR)/*.pcm $(LIBDIR); \
+	fi; # Additional install command for ROOTv6
 
 
+$(BUILDDIR)/%.$(OBJSUF) : src/%.$(SRCSUF) $(CLASS_HEADERS) Makefile | $(BUILDDIR) 
+	@echo "<**Compiling**> "$<
+	$(CXX) -I$(INCLUDEDIR) $(CXXFLAGS)  -c $< -o  $@
 
-$(DICT).C: $(CLASS_HEADERS)
+$(BUILDDIR)/%.$(OBJSUF) : $(BUILDDIR)/%.C
+	@echo "<**Compiling**> "$<
+	$(CXX) -I$(INCLUDEDIR) -I./ $(CXXFLAGS) -c $< -o  $@
 
+
+$(BUILDDIR)/$(DICT).C: $(CLASS_HEADERS)
 	@echo "Generating dictionary ..."
 	@ rm -f *Dict* 
-	rootcint $@ -c $(INC_ANITA_UTIL) $(CLASS_HEADERS) LinkDef.h
-
-
-
-%.$(OBJSUF) : %.$(SRCSUF)
-	@echo "<**Compiling**> "$<
-	$(CXX) $(CXXFLAGS) -c $< -o  $@
-
+	rootcint -f $@ -c -p -I$(shell $(RC) --incdir) $(SYSINCLUDES) $(CINTFLAGS) $(CLASS_HEADERS) LinkDef.h
 
 clean:
 	@rm -f *Dict*
@@ -101,6 +121,6 @@ endif
 	install -c -m 644 $(CLASS_HEADERS) $(UTIL_INC_DIR)
 
 	@if [ $(shell root-config --version | cut -c1) -ge 6 ]; then \
-	install -c -m 755 $(DICT)_rdict.pcm $(UTIL_LIB_DIR) ;\
+	install -c -m 755 $(BUILDDIR)/$(DICT)_rdict.pcm $(UTIL_LIB_DIR) ;\
 	fi # Additional install command for ROOTv6
 
