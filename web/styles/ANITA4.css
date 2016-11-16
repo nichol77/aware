@@ -1,0 +1,18 @@
+@media screen {
+   DIV.heading {
+                 background: url("../images/anitaLaunchSmaller.jpg")  ;
+                 background-repeat: repeat-y;
+                 background-position: center;
+		 margin:5px;
+   }
+  DIV.heading H1 {	
+                   padding:1em;             
+                }
+
+  img.magicDisplay {
+      max-width: 100%;
+      max-height: 100%;
+  }
+
+
+}             

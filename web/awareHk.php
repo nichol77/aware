@@ -24,8 +24,9 @@ header("Connection: keep-alive");
 <script type="text/javascript" src="src/flot/jquery.flot.canvas.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.resize.min.js.gz"></script>
-<script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script  type="text/javascript" src="src/highcharts/highcharts.js"></script>
+<script  type="text/javascript" src="src/highcharts/exporting.js"></script>
+
 <script type="text/javascript">
 
   $(function() {
