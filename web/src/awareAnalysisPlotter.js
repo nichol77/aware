@@ -132,7 +132,7 @@ function loadEventJson(startRunNum, stopRunNum) {
 		try {
 		$.ajax({ 
 			type: 'GET', 
-			url: 'output/ANITA3/runs'+runThousand+'/runs'+runHundred+'/run'+runNum+'/config/Acqd.json',
+			url: 'output/ANITA4/runs'+runThousand+'/runs'+runHundred+'/run'+runNum+'/config/Acqd.json',
 			success: function (data) { 
 				var configs = $.parseJSON(data);
 				//consoleLog(configs);
