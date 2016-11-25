@@ -18,7 +18,7 @@ header("Connection: keep-alive");
 
 
 <DIV class="heading">
-<h1>ANITA Raw Data Monitor</h1>
+<h1>ANITA Web Monitor</h1>
 </DIV>
 <DIV class=single>
 <DIV class=content>
@@ -29,10 +29,48 @@ header("Connection: keep-alive");
 // Events are considered fresh untill an hour old (green)
 // then they mid aged (orange) then after the old point (red)
 $oldPoint = 86400; //In seconds 86400 is 24 hours
-$midPoint = 10800;  //three hours
+$midPoint = 3600;  //One hour
 
 
-echo "<h3>Data Types</h3>";
+echo "<h3>Telemetry Types</h3>";
+
+
+$telemType_array = parse_ini_file("config/ANITA4/telemTypeList.ini", true);
+
+foreach($telemType_array as $inst => $properties){
+  $key=$properties[name];
+  $Key= ucfirst($key);
+  $value=$properties[title];
+  # echo "$key";
+  $lastTelem="output/ANITA4/last$Key";
+if (file_exists($lastTelem)) {
+    $timeStarted =  " from " . date ("F d Y H:i. e", filemtime($lastTelem));
+    $timeSinceLast = floor((time()-filemtime($lastTelem)));
+    $colourString = "class='lastBoxNew'";
+    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
+    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
+    $colourString= "class='lastBoxMiddle'";}
+    else {$colourString = "class='lastBoxNew'";}
+  }
+  else {
+    $colourString = "class='lastBoxOld'";
+  }
+
+
+  echo "<a href=\"telem.php?instrument=ANITA4&telemType=$key\">";
+  echo "<div ".$colourString."  >";
+  echo "Last $value:";
+  echo "<span id=\"lastTelem\">";
+  include $lastTelem ;
+  echo "</span>";
+  echo $timeStarted;
+  #echo " ".$timeSinceLast." ".$oldPoint." ".$midPoint." ";
+  echo "</div>";
+  echo "</a>";
+
+}
+
+echo "<h3>Packet Types</h3>";
 
 echo '<a href="events.php?instrument=ANITA4">';
 $lastEvent='output/ANITA4/lastEvent';
