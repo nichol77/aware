@@ -177,7 +177,7 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
 
 void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, const char *filePrefix)
 {
-    std::cout << fRawMapVec.size() << "\n";
+  std::cout << fRawMapVec.size() << "\t" << "writeSingleFullJSONFile" << "\n";
     
     if(fRawMapVec.size()==0) return;
     
@@ -192,6 +192,8 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
     FullFile.push(boost::iostreams::gzip_compressor());
     FullFile.push(boost::iostreams::file_sink(jsonName));
     //Need to add a check the file is open
+
+    std::cout << jsonName << "\n";
     
     //For now we will justr take the time from the first variable in the map;
     //    std::map<std::string,AwareVariableSummary>::iterator sumIt=summaryMap.begin();
@@ -231,9 +233,12 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
 
     
     fRawMapVecIt=fRawMapVec.begin();
+
+    
     
   for(elementIt=fElementIndexMap.begin();elementIt!=fElementIndexMap.end();elementIt++) {
     int index=elementIt->second;
+    //    std::cerr << elementIt->first << "\t" << index << "\n";
     //Element = elementIt->first
     //Label = fLabelVec[index]
     //Summary = fSummaryVec[index]
@@ -258,8 +263,12 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
       
     int firstInArray=1;
     //Now loop over the time file again
+    //    std::cerr << "Index:\t" << index << "\n";
     for(fRawMapVecIt=fRawMapVec.begin();fRawMapVecIt!=fRawMapVec.end();fRawMapVecIt++) {	   
        if(!firstInArray) FullFile << ",\n";
+
+       //       std::cerr << "Size: " << fRawMapVecIt->first << "\t" << fRawMapVecIt->second.size() << "\n";
+       
        FullFile << fRawMapVecIt->second.at(index);  //Should add a try catch
        firstInArray=0;
     }

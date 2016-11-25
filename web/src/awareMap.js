@@ -67,7 +67,7 @@ function initialiseAwareMap() {
 	
     }
 
-    posSumUrl="output/ANITA3/map/posSum.json";
+    posSumUrl="output/ANITA4/map/posSum.json";
        
     $.ajax({
 	url: posSumUrl,
@@ -94,7 +94,7 @@ function getRunSourceMap() {
     }
 
 
-    mapRunUrl="output/ANITA3/map/mapRun"+AwareMap.runNumber+".json";
+    mapRunUrl="output/ANITA4/map/mapRun"+AwareMap.runNumber+".json";
        
     $.ajax({
 	url: mapRunUrl,
