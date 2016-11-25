@@ -925,11 +925,17 @@ function updateLastRun(setStartToLast, doUpdateHk) {
     //	var tempString="output/"+hkValues.instrument+"/lastRun";
     var tempString="output/"+AwareUtils.instrument+"/last"+capitaliseFirstLetter(AwareUtils.hkType);
 
+    if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>updateLastRun..."+setStartToLast+" "+doUpdateHk+"</p>");
+    
     function actuallyUpdateLastRun(runString) {
+	if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>actuallyUpdateLastRun..."+runString+"</p>");
 	setLastRun(Number(runString));
 	if(setStartToLast) {
 	    setStartRunOnForm(Number(runString));
 	    if(typeof(setEndRunOnForm) == "function") {
+		$('#debugContainer').append("<p>setEndRunOnForm..."+runString+"</p>");
 		setEndRunOnForm(Number(runString));
 	    }
 
@@ -1085,6 +1091,8 @@ function getRunInstrumentDateAndPlot(plotFunc,awareControl) {
     function handleRunList(jsonObject) {
 	var gotRun=0;
 	for(var i=0;i<jsonObject.runList.length;i++) {
+//	    if($('#debugContainer').is(":visible"))
+//		$('#debugContainer').append("<p>handleRunList... "+jsonObject.runList[i][0]+"</p>");
 	    if(jsonObject.runList[i][0]==startRun) {
 		awareControl.year=jsonObject.runList[i][1];
 		awareControl.dateCode=jsonObject.runList[i][2]; ///RJN need to zero pad the string
