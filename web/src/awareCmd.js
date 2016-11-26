@@ -45,15 +45,17 @@ function writeCmdSentList(cmdList,cmdSentDiv) {
 
     var table = $('<table></table>').addClass('commandTable');
     var hrow=$('<tr></tr>').addClass('headRow');
-    hrow.append('<th>Count</th><th>Time</th><th>Link-Route</th><th>Code</th><th>Bytes</th><th>Response</th><th>Description</th></tr>');
+    hrow.append('<th>Count</th><th>Time (UTC)</th><th>Link-Route</th><th>Code</th><th>Bytes</th><th>Response</th><th>Description</th></tr>');
     table.append(hrow);
     for(i=0; i<=endValue; i++){
+	var newarray=[];
+	for (j=0; j<=cmdList[i].cmd.length; j+=2) newarray[j/2]=cmdList[i].cmd[j+1];
 	var row = $('<tr></tr>').addClass('bar');
 	row.append('<td>'+cmdList[i].cmdNumber+'</td>'+
 		   '<td>'+timeConverter(cmdList[i].time)+'</td>'+
 		   '<td>'+cmdList[i].cmdLink+'-'+cmdList[i].cmdRoute+'</td>'+
 		   '<td>'+cmdList[i].cmd[1]+'</td>'+
-		   '<td>'+cmdList[i].cmd+'</td>'+
+		   '<td>'+newarray+'</td>'+
 		   '<td>'+responseAsString(cmdList[i].response)+'</td>'+
 		   '<td>'+cmdList[i].cmdLog+'</td>');
 		   
@@ -88,7 +90,7 @@ function writeCmdEchoList(cmdList,cmdEchoDiv) {
 
     var table = $('<table></table>').addClass('commandTable');
     var hrow=$('<tr></tr>').addClass('headRow');
-    hrow.append('<th>Time</th><th>Code</th><th>Bytes</th><th>Flag</th><th>Description</th></tr>');
+    hrow.append('<th>Time (UTC)</th><th>Code</th><th>Bytes</th><th>Flag</th><th>Description</th></tr>');
     table.append(hrow);
     for(i=0; i<=endValue; i++){
 	var row = $('<tr></tr>').addClass('bar');
@@ -122,7 +124,6 @@ function showCmdSent(cmdUrl,cmdSentDiv) {
     var countFilesGot=0;
     var cmdSentList = [];
     
-
     function handleCmdJsonFile(cmd) {
 	countFilesGot++; ///For now will just do this silly thing
 	cmdSentList.push(cmd);
