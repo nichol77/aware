@@ -1079,7 +1079,7 @@ function doMultiFilePlot(awareControl) {
     var startFile=getTelemFileFromForm();
     var endFile=getTelemEndFileFromForm();
     if(endFile<=startFile) {
-	return drawHisotgram(awareControl);	
+	return drawHistogram(awareControl);	
     }
 
 
