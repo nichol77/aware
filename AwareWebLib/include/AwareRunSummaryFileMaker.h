@@ -50,7 +50,7 @@ class AwareRunSummaryFileMaker
   std::map<std::string,Int_t> fElementIndexMap;
   std::vector<std::string> fLabelVec;
   std::vector<AwareVariableSummary> fSummaryVec;
-  std::map<Double_t, std::vector<Double_t>> fRawMapVec;
+  std::map<Double_t, std::vector<Double_t> > fRawMapVec;
   
   
 
