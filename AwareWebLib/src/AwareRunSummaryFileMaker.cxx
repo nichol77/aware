@@ -50,7 +50,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
 
 
   //Now deal with the raw map
-  std::map<Double_t, std::vector<Double_t>>::iterator rawIt=fRawMapVec.find(timeStamp.AsDouble());
+  std::map<Double_t, std::vector<Double_t> >::iterator rawIt=fRawMapVec.find(timeStamp.AsDouble());
   if(rawIt!=fRawMapVec.end()) {
     //Already have this time point;
     try
@@ -67,7 +67,7 @@ void AwareRunSummaryFileMaker::addVariablePoint(const char *elName, const char *
     //First time for this time new to make vector
     std::vector<Double_t> newTimeVec(maxIndex+1);
     newTimeVec.at(index)=variable;
-    fRawMapVec.insert(std::pair<Double_t,std::vector<Double_t>>(timeStamp.AsDouble(),newTimeVec));
+    fRawMapVec.insert(std::pair<Double_t,std::vector<Double_t> >(timeStamp.AsDouble(),newTimeVec));
   }
   //  std::map<UInt_t, std::map<std::string, Double_t> > fRawMap;  
 }
