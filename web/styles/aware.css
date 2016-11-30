@@ -255,7 +255,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;
 }
@@ -271,7 +271,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;
 }
@@ -317,7 +317,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;
 }
@@ -333,7 +333,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:6%;
-	max-width:90%
+	max-width:90%;
 	min-height:6%;
 	max-height:60%;
 }
@@ -349,7 +349,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:6%;
-	max-width:90%
+	max-width:90%;
 	min-height:6%;
 	max-height:60%;
 }
@@ -365,7 +365,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:6%;
-	max-width:90%
+	max-width:90%;
 	min-height:6%;
 	max-height:60%;
 }
@@ -381,7 +381,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;
 }
@@ -397,7 +397,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;
 }
@@ -413,7 +413,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;
 }
@@ -429,7 +429,7 @@ For the AWARE web event display
 	resize:both;
 	overflow:hidden;
 	min-width:20%;
-	max-width:90%
+	max-width:90%;
 	min-height:15%;
 	max-height:60%;	
 }
@@ -492,5 +492,9 @@ td.legendLabel { font-size: 50%; }
 
 p.choiceList {font-size: 50%;}
 
-.runsum-header { height:10%; width:100%;padding: 0.1em; margin:0em; margin-bottom:0.25em}
-.runsum-cont { height:90%; width:100%; padding: 0.1em; margin:0em}
+.runsum-header { height:5%; width:100%;padding: 0em; margin:0em; margin-bottom:0.5em}
+.runsum-cont { height:95%; width:100%; padding: 0.1em; margin:0em}
+
+DIV.runsum-header H4 {	
+    font-size: 80%;             
+}

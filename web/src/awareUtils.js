@@ -842,15 +842,22 @@ function initialiseTimeViewButtons() {
 
 }
 
-
-function initialisePlotHolder() {
+function setPlotHolderHeightDefault() {
     var docHeight=$(window).height();
     var docWidth=$(window).width();
-    var heightPercentage=60;
+    var heightPercentage=80;
     if(docWidth>=800) heightPercentage=80;
     var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
     $('#plot-holder-1').height(maxPlotHeight); 
 
+
+
+}
+
+
+
+function initialisePlotHolder() {
+    setPlotHolderHeightDefault();
 
     $('#divProjection-1').show();
 
@@ -883,11 +890,14 @@ function initialisePlotHolder() {
 
 function updateHkType(thisHkType) {
     AwareUtils.hkType=thisHkType;	
+
+
     
     function actuallyUpdateHkType(plotFormArray) {
 	var tempArray = $.grep( plotFormArray, function(elem){ return elem.hkCode  == thisHkType; });	   
 	fillPlotFormAndPlotTypeList(tempArray);
-
+	setPlotHolderHeightDefault();
+	
         if($('#debugContainer').is(":visible"))
 	    $('#debugContainer').append("<p>actuallyUpdateHkType... drawPlots</p>");
 	drawPlots(AwareUtils);	   

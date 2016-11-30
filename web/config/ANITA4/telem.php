@@ -14,7 +14,7 @@ header("Connection: keep-alive");
 <link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
 <link rel="StyleSheet" href="styles/local.css" type="text/css" media="screen" >
 
-<title>AWARE Events</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+<title>AWARE Telemetry</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
 <script src="src/awareUtils.js"></script>
 <script src="src/awareTelem.js"></script>
 <script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>

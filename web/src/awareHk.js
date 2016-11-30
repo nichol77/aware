@@ -235,13 +235,21 @@ function makePlotGrid(awareControl) {
 function drawPlots(plotControl) {
     plotControl.plotList=getPlotNameLabelList();
     plotControl.numPlots=plotControl.plotList.length;
-    plotControl.numRows=Math.floor(Math.sqrt(plotControl.numPlots));
-    plotControl.numPerRow=Math.floor(plotControl.numPlots/plotControl.numRows);
+    plotControl.numPerRow=Math.floor(Math.sqrt(plotControl.numPlots));
+    if(plotControl.numPerRow>5) plotControl.numPerRow=5;
+    plotControl.numRows=Math.floor(plotControl.numPlots/plotControl.numPerRow);
     if(plotControl.numRows*plotControl.numPerRow<plotControl.plotList.length) plotControl.numRows++;
-
+    
     plotControl.width=100/plotControl.numPerRow;
+
     plotControl.height=95/plotControl.numRows;
-	     
+    if(plotControl.height<20) {
+	maxPlotHeight= $('#plot-holder-1').height();
+	maxPlotHeight=maxPlotHeight*20/plotControl.height;
+	$('#plot-holder-1').height(maxPlotHeight); 
+//	plotControl.height=20;
+    }
+    
     $("#debugContainer").append("plotList.length  "+plotControl.plotList.length);
     $("#debugContainer").append("numRows  "+plotControl.numRows);
     $("#debugContainer").append("numPerRow  "+plotControl.numPerRow);
