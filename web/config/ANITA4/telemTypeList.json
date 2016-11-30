@@ -1,6 +1,8 @@
-[			  
-	{"sym":"numFileBytes","desc":"Num. File Bytes","hkCode":"all"},
-	{"sym":"numFileEventBytes","desc":"Num. Event Bytes.","hkCode":"all"},
-	{"sym":"packetByte","desc":"Num. Bytes","hkCode":"all"},
-	{"sym":"packetNum","desc":"Num. Packets","hkCode":"all"}
-	]						
+[
+    {"sym":"fileRate","desc":"Rate (kbps)","hkCode":"all"},
+    {"sym":"numFileBytes","desc":"Num. File Bytes","hkCode":"all"},
+    {"sym":"numFileEventBytes","desc":"Num. Event Bytes.","hkCode":"all"},
+    {"sym":"packetByte","desc":"Num. Bytes","hkCode":"all"},
+    {"sym":"packetNum","desc":"Num. Packets","hkCode":"all"},
+    {"sym":"totalBytes","desc":"Total Bytes","hkCode":"all"}
+]						
