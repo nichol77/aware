@@ -22,7 +22,6 @@ header("Connection: keep-alive");
 </DIV>
 <DIV class=single>
 <DIV class=content>
-<h2>ANITA-4</h2>
 <?php 
 
 
@@ -30,7 +29,10 @@ header("Connection: keep-alive");
 // then they mid aged (orange) then after the old point (red)
 $oldPoint = 86400; //In seconds 86400 is 24 hours
 $midPoint = 3600;  //One hour
+$nowString=date ("F d Y H:i. e", time());
+$titleString="<h2>ANITA-4 -- $nowString</h2>";
 
+echo "$titleString";
 
 echo "<h3>Telemetry Types</h3>";
 
