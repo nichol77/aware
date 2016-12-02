@@ -560,5 +560,14 @@
 	{"sym":"rms13_","desc":"RMS Phi 13","hkCode":"waveform"},
 	{"sym":"rms14_","desc":"RMS Phi 14","hkCode":"waveform"},
 	{"sym":"rms15_","desc":"RMS Phi 15","hkCode":"waveform"},
-	{"sym":"rms16_","desc":"RMS Phi 16","hkCode":"waveform"}
+	{"sym":"rms16_","desc":"RMS Phi 16","hkCode":"waveform"},
+  {"sym":"notch_","desc":"Notch -- All","hkCode":"tuff"},
+	{"sym":"irfcm","desc":"IRFCM Temps-- All","hkCode":"tuff"},
+	{"sym":"correctphinotch0","desc":"Notch 0","hkCode":"tuff"},
+	{"sym":"correctphinotch1","desc":"Notch 1","hkCode":"tuff"},
+	{"sym":"correctphinotch2","desc":"Notch 2","hkCode":"tuff"},
+	{"sym":"irfcm0","desc":"IRFCM 0-Temp","hkCode":"tuff"},
+	{"sym":"irfcm1","desc":"IRFCM 1-Temp","hkCode":"tuff"},
+	{"sym":"irfcm1","desc":"IRFCM 2-Temp","hkCode":"tuff"},
+	{"sym":"irfcm3","desc":"IRFCM 3-Temp","hkCode":"tuff"}
 	]
