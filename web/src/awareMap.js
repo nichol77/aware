@@ -30,6 +30,7 @@ function initialiseAwareMap() {
     if(docWidth>=800) heightPercentage=80;
     var maxPlotHeight=Math.round((heightPercentage*docHeight)/100);
     $('#divMap-1').height(maxPlotHeight); 
+    $('#divMap-1').width(maxPlotHeight); 
     $("#mapRadio").buttonset();
 
     AwareMap.gotRunSourceMap=false;
@@ -219,10 +220,11 @@ function actuallyDrawMap() {
     				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
     				      +"<li>"+AwareMap.pulserNames[minPulser]+"</li>"
 				      +"<ul><li>Dist = "+pulserDist[minPulser].toFixed(2)+"km</li>"
-				      +"<ul><li>Time = "+pulserTime[minPulser].toFixed(0)+"ns</li></ul>"
+				      +"<li>Time = "+pulserTime[minPulser].toFixed(0)+"ns</li>"
     				      +"</ul>");		
 	    }
-	    else if(item.seriesIndex==2) {
+	    //	    else if(item.seriesIndex==2) {
+	    else {
 		$("#divMapInfo").html("<ul>"+"<li>Pulser: "+AwareMap.pulserNames[item.dataIndex]+"</li></ul>");
 	    }
    	}
