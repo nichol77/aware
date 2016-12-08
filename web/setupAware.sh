@@ -11,7 +11,7 @@ if [ -d "config/$1" ]; then
     echo "Found config/$1"
 
     for file in config/$1/*.php; do
-	rm ${file##*/} 
+	rm -f ${file##*/} 
 	ln -sf $file
 	echo "Linking $file"
     done
