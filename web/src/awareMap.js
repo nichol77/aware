@@ -33,10 +33,19 @@ function initialiseAwareMap() {
     $('#divMap-1').width(maxPlotHeight); 
     $("#mapRadio").buttonset();
 
-    AwareMap.gotRunSourceMap=false;
     AwareMap.pulserPoints=getCalPulserPositionList();
 
 
+    
+    $('#runInput').change(function(e) {
+	  e.stopPropagation();
+	  
+	  if($('#debugContainer').is(":visible"))
+	     $('#debugContainer').append("<p>run input changed</p>");
+	  //	  actuallyDrawMap();	  
+	  reloadAndDraw();
+       });
+    
 
     $("input:radio[name=mapRadio]").click(function() { 
         if($('#debugContainer').is(":visible"))
@@ -44,7 +53,15 @@ function initialiseAwareMap() {
 	actuallyDrawMap();
     });
 
-    
+
+    reloadAndDraw();
+}
+
+
+function reloadAndDraw() {
+   
+    AwareMap.gotRunSourceMap=false;
+
     function handlePosSumFile(jsonObject) {
 	AwareMap.object=jsonObject;
 	AwareMap.lapXYPoints = new Array();
@@ -59,7 +76,7 @@ function initialiseAwareMap() {
 		lapNum=1;	    
 	    AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
-	if(false) {
+	if(true) {
 	    getRunSourceMap();
 	}
 	else {
@@ -79,17 +96,27 @@ function initialiseAwareMap() {
     });
 	
 
+
+
 }
 
+
+
+
 function getRunSourceMap() {
-    AwareMap.runNumber=65;
+   AwareMap.runNumber=getRunFromForm();
 
     function handleMapRunFile(jsonObject) {
 		AwareMap.gotRunSourceMap=true;
 		AwareMap.mapRun=jsonObject;
 		AwareMap.mapRunPoints = new Array();
+		AwareMap.mapRunIndex = new Array();
 		for(var i=0;i<jsonObject.poslist.length;i++) {
-			AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
+		   //		   if(jsonObject.poslist[i].priority<5)
+		   if(jsonObject.poslist[i].fakeTheta==0 && jsonObject.poslist[i].priority<5 ) {
+		      AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
+		      AwareMap.mapRunIndex.push(i);
+		   }
 		}
 		actuallyDrawMap();	
     }
@@ -198,7 +225,7 @@ function actuallyDrawMap() {
 	    
 
 	    
-	    if(item.seriesIndex==2) {		
+	    if(item.seriesIndex==1) {		
     		var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);
 		var cartCos=getCartesianCoords(AwareMap.object.poslist[item.dataIndex].latitude,
 					       AwareMap.object.poslist[item.dataIndex].longitude,
@@ -220,18 +247,34 @@ function actuallyDrawMap() {
 
 
     		$("#divMapInfo").html("<ul>"
-    				      +"<li>Date: "+d.toUTCString()+"</li>"
+   				      +"<li>Date: "+d.toUTCString()+"</li>"
     				      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
     				      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
-    				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"</li>"
+    				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"Hz.</li>"
     				      +"<li>"+AwareMap.pulserNames[minPulser]+"</li>"
 				      +"<ul><li>Dist = "+pulserDist[minPulser].toFixed(2)+"km</li>"
 				      +"<li>Time = "+pulserTime[minPulser].toFixed(0)+"ns</li>"
     				      +"</ul>");		
 	    }
-	    //	    else if(item.seriesIndex==2) {
-	    else {
-		$("#divMapInfo").html("<ul>"+"<li>Pulser: "+AwareMap.pulserNames[item.dataIndex]+"</li></ul>");
+	    else if(item.seriesIndex==3) {
+		$("#divMapInfo").html("<ul><li>Pulser: "+AwareMap.pulserNames[item.dataIndex]+"</li></ul>");
+	    }
+	    else if(item.seriesIndex==4) {
+	       var mapIndex=AwareMap.mapRunIndex[item.dataIndex];
+	       var d = new Date(AwareMap.mapRun.poslist[mapIndex].unixTime*1000);
+	       $("#divMapInfo").html("<ul>"    				     
+				     +"<li>Date: "+d.toUTCString()+"</li>"
+				     +"<li>Run: "+AwareMap.mapRun.poslist[mapIndex].run+"</li>"
+				     +"<li>Event: "+AwareMap.mapRun.poslist[mapIndex].eventNumber+"</li>"
+				     +"<li>Trigger Time: "+AwareMap.mapRun.poslist[mapIndex].triggerTimeNs+"ns</li>"
+				     +"<li>Priority: "+AwareMap.mapRun.poslist[mapIndex].priority+"</li>"
+				     +"<li>Source Latitude: "+AwareMap.mapRun.poslist[mapIndex].sourceLat+"</li>"
+				     +"<li>Source Longitude: "+AwareMap.mapRun.poslist[mapIndex].sourceLon+"</li>"
+				     +"<li>Heading: "+AwareMap.mapRun.poslist[mapIndex].heading+"</li>"
+				     +"<li>Peak Phi: "+AwareMap.mapRun.poslist[mapIndex].phiWave*(180/Math.PI)+"</li>"
+				     +"<li>Peak Theta: "+AwareMap.mapRun.poslist[mapIndex].thetaWave*(180/Math.PI)+"</li>"
+				     //				     +"<li>Fake Theta: "+AwareMap.mapRun.poslist[mapIndex].fakeTheta+"</li>"
+				     +"</ul>");
 	    }
    	}
         });
@@ -351,4 +394,31 @@ function getCartesianCoords(lat, lon, alt)
 function getDistance(p1,p2)
 {
     return Math.sqrt((p1[0]-p2[0])*(p1[0]-p2[0])+(p1[1]-p2[1])*(p1[1]-p2[1])+(p1[2]-p2[2])*(p1[2]-p2[2]));
-}   
+}
+
+
+
+
+/**
+ * The UI interface function that gets the run from the runInput form.
+ * @returns {number}
+ */
+function getRunFromForm() {
+    return document.getElementById("runInput").value;
+    //    return AwareEvent.runNumber;
+} 
+
+/**
+ * The UI interface function that sets the run on the runInput form.
+ */
+function setRunOnForm(thisRun) {
+    document.getElementById("runInput").value=thisRun;
+} 
+
+
+/**
+ * The UI interface function that sets the maximum run on the runInput form.
+ */
+function setLastRun(thisRun) {
+    document.getElementById("runInput").max=thisRun;
+}    
