@@ -82,7 +82,7 @@ function initialiseAwareMap() {
 }
 
 function getRunSourceMap() {
-    AwareMap.runNumber=347;
+    AwareMap.runNumber=65;
 
     function handleMapRunFile(jsonObject) {
 		AwareMap.gotRunSourceMap=true;
@@ -193,8 +193,12 @@ function actuallyDrawMap() {
 	
     mapPlotCan.bind("plothover", function (event, pos, item) {		
     	if (item) {	   
+	    if($('#debugContainer').is(":visible"))
+		$('#debugContainer').append("<p>item"+item.seriesIndex+"drawPlots</p>");
+	    
 
-	    if(item.seriesIndex==1) {		
+	    
+	    if(item.seriesIndex==2) {		
     		var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);
 		var cartCos=getCartesianCoords(AwareMap.object.poslist[item.dataIndex].latitude,
 					       AwareMap.object.poslist[item.dataIndex].longitude,
@@ -203,8 +207,10 @@ function actuallyDrawMap() {
 		var pulserDist = new Array();
 		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]); //m
  		pulserDist[1]=getDistance(cartCos,AwareMap.pulserCartArray[1]); //m
+ 		pulserDist[2]=getDistance(cartCos,AwareMap.pulserCartArray[2]); //m
 		var minPulser=0;
 		if(pulserDist[1]<pulserDist[0]) minPulser=1;
+		if(pulserDist[2]<pulserDist[1] && pulserDist[2]<pulserDist[0]) minPulser=2;
 
 		var pulserTime=new Array();
 		for(var i=0;i<pulserDist.length;i++) {
@@ -274,15 +280,18 @@ function getXYFromLatLong(latitude, longitude) {
 
 
 function getCalPulserPositionList() {
+    var ldbLatLon=[-77.8543044,+167.1932148,-22];
     var sipleDomeLatLon=[-81.65232,-149.00016,650];
     var waisLatLon=[-79.46562,-112.1125,1775.68];
-    AwareMap.pulserNames=["Siple Dome","WAIS"];    
+    AwareMap.pulserNames=["Siple Dome","WAIS","LDB"];    
     AwareMap.pulserArray=new Array();
     AwareMap.pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
     AwareMap.pulserArray.push(getXYFromLatLong(waisLatLon[0],waisLatLon[1]));
+    AwareMap.pulserArray.push(getXYFromLatLong(ldbLatLon[0],ldbLatLon[1]));
     AwareMap.pulserCartArray=new Array();
     AwareMap.pulserCartArray.push(getCartesianCoords(sipleDomeLatLon[0],sipleDomeLatLon[1],sipleDomeLatLon[2]));
     AwareMap.pulserCartArray.push(getCartesianCoords(waisLatLon[0],waisLatLon[1],waisLatLon[2]));
+    AwareMap.pulserCartArray.push(getCartesianCoords(ldbLatLon[0],ldbLatLon[1],ldbLatLon[2]));
     return AwareMap.pulserArray;
 }
 
