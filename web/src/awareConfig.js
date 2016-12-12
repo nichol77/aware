@@ -38,20 +38,22 @@ function getList(item, $list) {
 function showConfig() {
     var configUrl=getConfigName(getInstrumentNameFromForm(),getStartRunFromForm(),getConfigFromForm());
     $("#plot-content-1").empty();
-    function handleConfigJsonFile(jsonObject) {
-	var $ul = $('<ul></ul>');
-	getList(jsonObject.sectionList,$ul);
-	$("#plot-content-1").append($ul);
-	//	$("#debugContainer").append("<p>"+jsonObject+"</p>")
-    }
+    $("#plot-header-1").empty();
 
 
     ajaxLoadingLog(configUrl);
-    $.ajax({
+    xhr = $.ajax({
 	url: configUrl,
 	type: "GET",
 	dataType: "json",
-	success: handleConfigJsonFile,
+		success: function (jsonObject) {
+		var $head=$('<h3>'+getConfigFromForm()+'.config</h3><h4>From: '+xhr.getResponseHeader("Last-Modified")+'</h4>');
+		$("#plot-header-1").append($head);	       	
+		var $ul = $('<ul></ul>');
+		getList(jsonObject.sectionList,$ul);
+		$("#plot-content-1").append($ul);
+		//	$("#debugContainer").append("<p>"+jsonObject+"</p>")
+	    },
 	error: handleAjaxError
     }); 
 
@@ -61,6 +63,7 @@ function showConfig() {
 function showFile() {
     
     $("#plot-content-1").empty();
+    $("#plot-header-1").empty();
     function handleFile(file) {
 	$("#plot-content-1").append("<pre>"+file+"</pre>");
     }
