@@ -173,6 +173,7 @@
 	{"sym":"rmsThreshold7_","desc":"RMS Thresholds SURF 8","hkCode":"avgSurfHk"},
 	{"sym":"rmsThreshold8_","desc":"RMS Thresholds SURF 9","hkCode":"avgSurfHk"},
 	{"sym":"rmsThreshold9_","desc":"RMS Thresholds SURF 10","hkCode":"avgSurfHk"},
+	{"sym":"phiL2Scaler","desc":"L2 Scalers All","hkCode":"surfHk"},
 	{"sym":"phiL1Scaler","desc":"L1 Scalers All","hkCode":"surfHk"},
 	{"sym":"phiL1Scaler1_","desc":"L1 Scalers Phi 1","hkCode":"surfHk"},
 	{"sym":"phiL1Scaler2_","desc":"L1 Scalers Phi 2","hkCode":"surfHk"},
