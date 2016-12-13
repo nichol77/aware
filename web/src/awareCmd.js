@@ -24,20 +24,21 @@ function timeSortCmdEcho(a,b) {
     return b.unixTime-a.unixTime;
 }
 
-function writeCmdSentList(cmdList,cmdSentDiv) {
+function writeCmdSentList(cmdList,cmdSentDiv,cmdTotalLength) {
     cmdList.sort(timeSortCmdSent);
 
+    var cmdDiffLength=cmdTotalLength-50;
 
     //First thing is determine how many to show
-    document.getElementById(cmdSentDiv+"End").value=cmdList.length;
+    document.getElementById(cmdSentDiv+"End").value=cmdTotalLength;
     var startValue=1;
     if(! $("#"+cmdSentDiv+"Start").val()) {
 	startValue=cmdList.length-9;
 	if(startValue<1) startValue=1;
-	document.getElementById(cmdSentDiv+"Start").value=startValue;
+	document.getElementById(cmdSentDiv+"Start").value=startValue+cmdDiffLength;
     }
     else {
-	startValue=document.getElementById(cmdSentDiv+"Start").value;
+	startValue=document.getElementById(cmdSentDiv+"Start").value-cmdDiffLength;
     }
     var endValue=cmdList.length-startValue;
 	
@@ -68,20 +69,20 @@ function writeCmdSentList(cmdList,cmdSentDiv) {
 }
 
 
-function writeCmdEchoList(cmdList,cmdEchoDiv) {
+function writeCmdEchoList(cmdList,cmdEchoDiv,cmdTotalLength) {
     cmdList.sort(timeSortCmdEcho);   
 
-
+    var cmdDiffLength=cmdTotalLength-50;
     //First thing is determine how many to show
-    document.getElementById(cmdEchoDiv+"End").value=cmdList.length;
+    document.getElementById(cmdEchoDiv+"End").value=cmdTotalLength;
     var startValue=1;
     if(! $("#"+cmdEchoDiv+"Start").val()) {
 	startValue=cmdList.length-9;
 	if(startValue<1) startValue=1;
-	document.getElementById(cmdEchoDiv+"Start").value=startValue;
+	document.getElementById(cmdEchoDiv+"Start").value=startValue+cmdDiffLength;
     }
     else {
-	startValue=document.getElementById(cmdEchoDiv+"Start").value;
+	startValue=document.getElementById(cmdEchoDiv+"Start").value-cmdDiffLength;
     }
     var endValue=cmdList.length-startValue;
 	
@@ -123,13 +124,14 @@ function showCmdSent(cmdUrl,cmdSentDiv) {
     var countFilesNeeded=0;
     var countFilesGot=0;
     var cmdSentList = [];
+    var realCmdLength;
     
     function handleCmdJsonFile(cmd) {
 	countFilesGot++; ///For now will just do this silly thing
 	cmdSentList.push(cmd);
 	//	$("#debugContainer").append("<p>"+cmd+"</p>")	
 	if(countFilesNeeded==countFilesGot) {
-	    writeCmdSentList(cmdSentList,cmdSentDiv);
+	    writeCmdSentList(cmdSentList,cmdSentDiv,realCmdLength);
 	}
     }
 
@@ -139,13 +141,17 @@ function showCmdSent(cmdUrl,cmdSentDiv) {
     function handleCmdJsonFileError() {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
-	    writeCmdSentList(cmdSentList,cmdSentDiv);
+	    writeCmdSentList(cmdSentList,cmdSentDiv,realCmdLength);
 	}
     }
 
 
     function handleCmdListJsonFile(cmdList) {
-	for (i=0;i<cmdList.length;i++){
+	realCmdLength=cmdList.length;
+	var startIndex=cmdList.length-50;
+	if (startIndex<0) startIndex=0;
+
+	for (i=startIndex;i<cmdList.length;i++){
 	    countFilesNeeded++;
 	    
 	    ajaxLoadingLog(cmdList[i].name);
@@ -178,14 +184,14 @@ function showCmdEchos(cmdUrl,cmdEchoDiv) {
     var countFilesNeeded=0;
     var countFilesGot=0;
     var cmdEchoList = [];
-    
+    var realCmdLength;
 
     function handleCmdJsonFile(cmd) {
 	countFilesGot++; ///For now will just do this silly thing
 	cmdEchoList.push(cmd);
 	//	$("#debugContainer").append("<p>"+cmd+"</p>")	
 	if(countFilesNeeded==countFilesGot) {
-	    writeCmdEchoList(cmdEchoList,cmdEchoDiv);
+	    writeCmdEchoList(cmdEchoList,cmdEchoDiv,realCmdLength);
 	}
     }
 
@@ -195,13 +201,16 @@ function showCmdEchos(cmdUrl,cmdEchoDiv) {
     function handleCmdJsonFileError() {
 	countFilesGot++; ///For now will just do this silly thing	
 	if(countFilesNeeded==countFilesGot) {
-	    writeCmdEchoList(cmdEchoList,cmdEchoDiv);
+	    writeCmdEchoList(cmdEchoList,cmdEchoDiv,realCmdLength);
 	}
     }
 
 
     function handleCmdListJsonFile(cmdList) {
-	for (i=0;i<cmdList.length;i++){
+	realCmdLength=cmdList.length;
+	var startIndex=cmdList.length-50;
+	if (startIndex<0) startIndex=0;
+	for (i=startIndex;i<cmdList.length;i++){
 	    countFilesNeeded++;
 	    
 	    ajaxLoadingLog(cmdList[i].name);
