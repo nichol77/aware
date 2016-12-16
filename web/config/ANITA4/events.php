@@ -1,4 +1,4 @@
-<? 
+<?php
 ob_start("ob_gzhandler"); 
 header("Connection: keep-alive");
 ?>
@@ -15,8 +15,6 @@ header("Connection: keep-alive");
 <link rel="StyleSheet" href="styles/local.css" type="text/css" media="screen" >
 
 <title>AWARE Events</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
-<script src="src/awareUtils.js"></script>
-<script src="src/awareMagicDisplay.js"></script>
 <script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
 <script src="src/jqueryui/js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.js.gz"></script>
@@ -25,7 +23,8 @@ header("Connection: keep-alive");
 <script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.resize.js.gz"></script>
 <script type="text/javascript" src="src/flot/jquery.flot.symbol.js.gz"></script>
-
+<script src="src/awareUtils.js"></script>
+<script src="src/awareMagicDisplay.js"></script>
 <script type="text/javascript">
 
   $(function() {
