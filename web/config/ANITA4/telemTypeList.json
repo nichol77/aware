@@ -4,5 +4,6 @@
     {"sym":"numFileEventBytes","desc":"Num. Event Bytes.","hkCode":"all"},
     {"sym":"packetByte","desc":"Num. Bytes","hkCode":"all"},
     {"sym":"packetNum","desc":"Num. Packets","hkCode":"all"},
-    {"sym":"totalBytes","desc":"Total Bytes","hkCode":"all"}
+    {"sym":"totalBytes","desc":"Total Bytes","hkCode":"all"},
+    {"sym":"totalBy","desc":"Other Rate","hkCode":"all","yAxis":"dydx"}
 ]						
