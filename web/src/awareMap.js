@@ -22,6 +22,8 @@
 AwareMap = new Object();
 
 
+
+
 function initialiseAwareMap() {
     $("#debugContainer").hide();
     var docHeight=$(window).height();
@@ -72,7 +74,7 @@ function reloadAndDraw() {
 	var lapNum=0;
 
 	for(var i=0;i<jsonObject.poslist.length;i++) {
-	    if(jsonObject.poslist[i].run>382) 
+	    if(jsonObject.poslist[i].run>168) 
 		lapNum=1;	    
 	    AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
 	}
@@ -106,24 +108,41 @@ function reloadAndDraw() {
 function getRunSourceMap() {
    AwareMap.runNumber=getRunFromForm();
 
+
+    if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>getRunSourceMap "+AwareMap.runNumber+"</p>");
+
+
     function handleMapRunFile(jsonObject) {
 		AwareMap.gotRunSourceMap=true;
 		AwareMap.mapRun=jsonObject;
 		AwareMap.mapRunPoints = new Array();
-		AwareMap.mapRunIndex = new Array();
+		AwareMap.mapRunIndex = new Array();		
+		
+	
+		if($('#debugContainer').is(":visible"))
+		    $('#debugContainer').append("<p>poslist "+jsonObject.poslist.length+"</p>");
+		
 		for(var i=0;i<jsonObject.poslist.length;i++) {
 		   //		   if(jsonObject.poslist[i].priority<5)
-		   if(jsonObject.poslist[i].fakeTheta==0 && jsonObject.poslist[i].priority<5 ) {
+		   if(jsonObject.poslist[i].priority<5 ) {
 		      AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
 		      AwareMap.mapRunIndex.push(i);
 		   }
 		}
+		if($('#debugContainer').is(":visible"))
+		    $('#debugContainer').append("<p>mapRunPoints "+AwareMap.mapRunPoints.length+"</p>");
+
 		actuallyDrawMap();	
     }
 
 
     mapRunUrl="output/ANITA4/map/mapRun"+AwareMap.runNumber+".json";
        
+
+    if($('#debugContainer').is(":visible"))
+	$('#debugContainer').append("<p>mapRunUrl "+mapRunUrl+"</p>");
+
     $.ajax({
 	url: mapRunUrl,
 	type: "GET",
@@ -235,9 +254,11 @@ function actuallyDrawMap() {
 		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]); //m
  		pulserDist[1]=getDistance(cartCos,AwareMap.pulserCartArray[1]); //m
  		pulserDist[2]=getDistance(cartCos,AwareMap.pulserCartArray[2]); //m
+ 		pulserDist[3]=getDistance(cartCos,AwareMap.pulserCartArray[3]); //m
 		var minPulser=0;
 		if(pulserDist[1]<pulserDist[0]) minPulser=1;
 		if(pulserDist[2]<pulserDist[1] && pulserDist[2]<pulserDist[0]) minPulser=2;
+		if(pulserDist[3]<pulserDist[2] && pulserDist[3]<pulserDist[1] && pulserDist[3]<pulserDist[0]) minPulser=3;
 
 		var pulserTime=new Array();
 		for(var i=0;i<pulserDist.length;i++) {
@@ -273,7 +294,7 @@ function actuallyDrawMap() {
 				     +"<li>Heading: "+AwareMap.mapRun.poslist[mapIndex].heading+"</li>"
 				     +"<li>Peak Phi: "+AwareMap.mapRun.poslist[mapIndex].phiWave*(180/Math.PI)+"</li>"
 				     +"<li>Peak Theta: "+AwareMap.mapRun.poslist[mapIndex].thetaWave*(180/Math.PI)+"</li>"
-				     //				     +"<li>Fake Theta: "+AwareMap.mapRun.poslist[mapIndex].fakeTheta+"</li>"
+				     +"<li>Fake Theta: "+AwareMap.mapRun.poslist[mapIndex].fakeTheta+"</li>"
 				     +"</ul>");
 	    }
    	}
@@ -326,15 +347,22 @@ function getCalPulserPositionList() {
     var ldbLatLon=[-77.8543044,+167.1932148,-22];
     var sipleDomeLatLon=[-81.65232,-149.00016,650];
     var waisLatLon=[-79.46562,-112.1125,1775.68];
-    AwareMap.pulserNames=["Siple Dome","WAIS","LDB"];    
+    //    var hicalLatLon=[-78.9914,+141.048,37000];
+    var hicalLatLon=[-79+(44.25/60),+87+(42.92/60),36000];
+    var hical2LatLon=[-77+(52.65/60.), +117+(3.18/60.),35000];
+    AwareMap.pulserNames=["Siple Dome","WAIS","LDB","HiCal1","HiCal2"];    
     AwareMap.pulserArray=new Array();
     AwareMap.pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
     AwareMap.pulserArray.push(getXYFromLatLong(waisLatLon[0],waisLatLon[1]));
     AwareMap.pulserArray.push(getXYFromLatLong(ldbLatLon[0],ldbLatLon[1]));
+    AwareMap.pulserArray.push(getXYFromLatLong(hicalLatLon[0],hicalLatLon[1]));
+    AwareMap.pulserArray.push(getXYFromLatLong(hical2LatLon[0],hical2LatLon[1]));
     AwareMap.pulserCartArray=new Array();
     AwareMap.pulserCartArray.push(getCartesianCoords(sipleDomeLatLon[0],sipleDomeLatLon[1],sipleDomeLatLon[2]));
     AwareMap.pulserCartArray.push(getCartesianCoords(waisLatLon[0],waisLatLon[1],waisLatLon[2]));
     AwareMap.pulserCartArray.push(getCartesianCoords(ldbLatLon[0],ldbLatLon[1],ldbLatLon[2]));
+    AwareMap.pulserCartArray.push(getCartesianCoords(hicalLatLon[0],hicalLatLon[1],hicalLatLon[2]));
+    AwareMap.pulserCartArray.push(getCartesianCoords(hical2LatLon[0],hical2LatLon[1],hical2LatLon[2]));
     return AwareMap.pulserArray;
 }
 
