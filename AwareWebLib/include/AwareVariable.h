@@ -16,7 +16,8 @@
 namespace AwareAverageType {
    typedef enum EAwareAverageType {
       kDefault,
-      kAngleDegree
+      kAngleDegree,
+      kSampleNotAverage
    } AwareAverageType_t;
 }
 

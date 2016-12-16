@@ -40,6 +40,10 @@ void AwareVariable::addValue(Double_t variable) {
       }          
       
    }
+   else if(fAvgType==AwareAverageType::kSampleNotAverage && numEnts>0) {
+     //     Do nothing if we are in this situation
+     return;
+   }
    mean+=variable;
    meanSq+=variable*variable;
    numEnts++;
