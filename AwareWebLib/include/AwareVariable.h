@@ -17,7 +17,7 @@ namespace AwareAverageType {
    typedef enum EAwareAverageType {
       kDefault,
       kAngleDegree,
-      kSampleNotAverage
+      kBitMask
    } AwareAverageType_t;
 }
 
@@ -38,8 +38,6 @@ class AwareVariable
    Int_t getNumEnts() {return numEnts;}
    Double_t getMean() ;
    UInt_t getDuration() {return fDuration;}
-   
-   
 
    
  private : 

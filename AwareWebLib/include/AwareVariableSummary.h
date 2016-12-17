@@ -19,14 +19,17 @@
 class AwareVariableSummary
 {
  public :
+   //Okay so here we are going to have to overload voidValue for bitmask
+
    AwareVariableSummary(Int_t numSecondsPerPoint=300,AwareAverageType::AwareAverageType_t avgType=AwareAverageType::kDefault, Bool_t hasVoidValue=kFALSE, Double_t voidValue=-500);
   void addDataPoint(TTimeStamp timeStamp, Double_t variable);
 
   const char *getFirstTimeString() { return firstTimeStamp.AsString("sl"); }
   Int_t getDuration() {return (lastTimeStamp.GetSec()-firstTimeStamp.GetSec());}
-  Double_t getRunMean() { return runValue.getMean();}
-  Double_t getRunStdDev() { return runValue.getStdDev();}
   Int_t getRunNumEnts() { return runValue.getNumEnts();}
+  Double_t getRunMean();
+  Double_t getRunStdDev();
+
 
   int timeMapSize() { return timeMap.size();}
   std::map<UInt_t,AwareVariable>::iterator timeMapBegin() {return timeMap.begin();}

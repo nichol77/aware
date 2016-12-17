@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "AwareVariableSummary.h"
+#include <iostream>
 
 AwareVariableSummary::AwareVariableSummary(Int_t numSecondsPerPoint,AwareAverageType::AwareAverageType_t avgType, Bool_t hasVoidValue, Double_t voidValue)
    :fNumSecondsPerPoint(numSecondsPerPoint),firstTimeStamp(0,0),lastTimeStamp(0,0),fAvgType(avgType),fHasVoidValue(hasVoidValue),fVoidValue(voidValue)
@@ -47,4 +48,20 @@ void AwareVariableSummary::addDataPoint(TTimeStamp timeStamp,Double_t variable)
      timeMap[minuteIndex]=newPoint;
   }
   
+}
+
+Double_t AwareVariableSummary::getRunMean() 
+{
+  //  std::cout << fAvgType << "\t" << runValue.getMean() << "\t" << fVoidValue << "\n";
+   if(fAvgType==AwareAverageType::kBitMask)
+      return runValue.getMean()/fVoidValue;
+   return runValue.getMean();
+}
+
+
+Double_t AwareVariableSummary::getRunStdDev() 
+{ 
+   if(fAvgType==AwareAverageType::kBitMask)
+      return runValue.getStdDev()/fVoidValue;
+   return runValue.getStdDev();
 }
