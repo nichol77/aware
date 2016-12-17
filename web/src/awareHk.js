@@ -30,52 +30,78 @@ function updatePlotTitleHk() {
 /* Globals */
 
 function drawHkBarChart(canName,varNameKey,colour,dpList) {
-    var dataArray = [];
-    var dataArrayErrors = [];
-    var countData=0;
+
+    //    $("#debugContainer").append("<p>drawHkBarChart  "+varNameKey+ " "+colour+"</p>");
+    
+    var highchartsObj = {
+	title: {
+	    text:''
+	},
+	subtitle: {
+	    text:''
+	},
+	xAxis: {
+	    categories : [ ],
+	    crosshair:true
+	},
+	yAxis: {
+	    min:0
+	},
+	tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        }
+    };
+
+    var dataObject = {
+	type: 'column',
+	data: []
+    };
+
+    var errorObject = {
+	type: 'errorbar',
+	data: []
+    };
+	    
+
+
     for(var index=0;index<dpList.length;index++) {
 	var dp2=dpList[index];
 	var dpName=new String(dp2.name);
-	var n=dpName.indexOf(varNameKey);
+	var n=dpName.indexOf(varNameKey);	
 	if(n>=0) {
-	    dataArray.push([countData,dp2.mean]);
+
+	    //	    $("#debugContainer").append("<p>Got point  "+dpName+" "+justNum+" </p>"); 
+	    highchartsObj.xAxis.categories.push(dp2.label);
+	    dataObject.data.push(dp2.mean);
 	    if(dp2.numEnts>0) {
-		dataArrayErrors.push(dp2.stdDev/Math.sqrt(dp2.numEnts));
+		var error=dp2.stdDev/Math.sqrt(dp2.numEnts);
+		errorObject.data.push([dp2.mean-error,dp2.mean+error]);
 	    }
 	    else {
-		dataArrayErrors.push(0);
+		errorObject.data.push([dp2.mean,dp2.mean]);
 	    }
-
-	    countData++;
 	}
     }
     
-    
-    var data3_points = {
-	//do not show points	
-	radius: 0,
-	errorbars: "y", 
-	yerr: {show:true, upperCap: "-", lowerCap: "-", radius: 5}
-    };
+    highchartsObj.series=[];
+    highchartsObj.series.push(dataObject);
+    highchartsObj.series.push(errorObject);
     
 
-	
-    for (var i = 0; i < dataArray.length; i++) {
-	dataArrayErrors[i] = dataArray[i].concat(dataArrayErrors[i])
-	    }
-    
-    var flotData = [
-		// bars with errors
-    {data: dataArray, color: colour, bars: {show: true, align: "center", barWidth: 1}},
-    {data: dataArrayErrors, color: colour, lines: {show: false }, points: data3_points}
-    ];
 
-    var flotOptions = { 
-	xaxis: {show:true, labelHeight:30, font:{size:8, color:"black"}}, 
-	yaxes: [{show:true, labelWidth:30, font:{size:8, color:"black"}, label:"Boo"}]
-    }
-
-    $.plot($("#"+canName), flotData, flotOptions );
+    var hkPlotCan=$("#"+canName);    
+    hkPlotCan.highcharts(highchartsObj);
 
 }
 
@@ -85,7 +111,7 @@ function drawHk2DChart(canName,varNameKey,xNameKey,colour,dpList,legendShowOpt) 
     var dataArrayErrors = [];
     var countData=0;
 
-    //    $("#debugContainer").append("<p>drawHk2DChart  "+varNameKey+ " "+xNameKey+"</p>");
+    $("#debugContainer").append("<p>drawHk2DChart  "+varNameKey+ " "+xNameKey+"</p>");
 
 
     var xObject = {};
