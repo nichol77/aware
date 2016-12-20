@@ -498,3 +498,22 @@ p.choiceList {font-size: 50%;}
 DIV.runsum-header H4 {	
     font-size: 80%;             
 }
+
+#form {
+  position: relative; /* labels need this on the their parent element */
+}
+
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+fieldset {display: inline-block; vertical-align: middle;}
+
+label {
+   top: 5px; 
+   left: auto; 
+   margin-left: 5px; 
+   font-weight: bold;
+}

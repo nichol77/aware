@@ -20,8 +20,51 @@
 //////////////////////////////////////////////////////////////////////////////
 
 AwareMap = new Object();
+var theChart; //Global
+var numPoints=0; //Global
+var lastPlotted=0;
+var numCalled=0;
+var newData = [];
 
 
+
+/**
+ * Add points to the map and set timeout to do it again
+ */
+function addPointsToLap() {
+    var seriesIndex=0;
+    if(numPoints>=AwareMap.lapXYPoints[0].length) {
+	if(numPoints-AwareMap.lapXYPoints[1].length) {
+	    if(numPoints==AwareMap.lapXYPoints[0].length) {
+		newData = [];
+	    }
+
+	    seriesIndex=1;
+	    point=AwareMap.lapXYPoints[1][numPoints-AwareMap.lapXYPoints[0].length];
+	}
+	else 
+	    return;
+    }
+    else {
+	point=AwareMap.lapXYPoints[0][numPoints];
+    }
+
+    //    if($('#debugContainer').is(":visible"))
+    //    	$('#debugContainer').append("<p>"+theChart.series[seriesIndex].data.length+"</p>");
+    
+    newData.push(point);
+
+
+    // add the point
+    theChart.series[seriesIndex].setData(newData);
+    //    theChart.redraw()
+    lastPlotted=numPoints;
+    numPoints++;
+    
+    // call it again after one millisecond
+    setTimeout(addPointsToLap, 1);    
+
+}
 
 
 function initialiseAwareMap() {
@@ -37,26 +80,48 @@ function initialiseAwareMap() {
 
     AwareMap.pulserPoints=getCalPulserPositionList();
 
-
+    
     
     $('#runInput').change(function(e) {
-	  e.stopPropagation();
+	    e.stopPropagation();
 	  
 	  if($('#debugContainer').is(":visible"))
-	     $('#debugContainer').append("<p>run input changed</p>");
+	      $('#debugContainer').append("<p>run input changed</p>");
 	  //	  actuallyDrawMap();	  
 	  reloadAndDraw();
        });
     
 
     $("input:radio[name=mapRadio]").click(function() { 
-        if($('#debugContainer').is(":visible"))
-	    $('#debugContainer').append("<p>color clicked... drawPlots</p>");
-	actuallyDrawMap();
-    });
+	    if($('#debugContainer').is(":visible"))
+		$('#debugContainer').append("<p>color clicked... drawPlots</p>");
+	    actuallyDrawMap();
+	});
+
+    $("input:radio[name=showRun]").click(function() {
+	    if($('#debugContainer').is(":visible"))
+                $('#debugContainer').append("<p>Show run clicked... drawPlots</p>");
+	    //	    actuallyDrawMap();
+	    reloadAndDraw();
+        });
 
 
-    reloadAndDraw();
+    $("input:radio[name=showAbove]").click(function() {
+	    if($('#debugContainer').is(":visible"))
+                $('#debugContainer').append("<p>Show above clicked... drawPlots</p>");
+	    //	    actuallyDrawMap();
+	    reloadAndDraw();
+        });
+
+    $("#checkboxPri-1, #checkboxPri-2, #checkboxPri-3, #checkboxPri-4, #checkboxPri-5, #checkboxPri-6, #checkboxPri-7, #checkboxPri-8, #checkboxPri-9").click(function(){
+	    reloadAndDraw();
+	});
+
+
+
+    //    reloadAndDraw();
+
+    setRunToLastRun();
 }
 
 
@@ -76,7 +141,9 @@ function reloadAndDraw() {
 	for(var i=0;i<jsonObject.poslist.length;i++) {
 	    if(jsonObject.poslist[i].run>168) 
 		lapNum=1;	    
-	    AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
+	    if(jsonObject.poslist[i].latitude<-70) {
+		AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
+	    }
 	}
 	if(true) {
 	    getRunSourceMap();
@@ -106,11 +173,39 @@ function reloadAndDraw() {
 
 
 function getRunSourceMap() {
+    
+    if($('#showRunYes').is(':checked')) { }
+    if($('#showRunNo').is(':checked')) { 
+	//	alert("no is checked"); 
+	AwareMap.gotRunSourceMap=false;
+	AwareMap.mapRunPoints=[];
+	AwareMap.mapRunIndex=[];
+	    //return;
+	actuallyDrawMap();
+	return;
+    }
+
+    AwareMap.showFakeTheta=false;
+    if($('#showAboveYes').is(':checked')) {
+	AwareMap.showFakeTheta=true;
+    }
+
+    var prisToShow = [false,false,false,false,false,false,false,false,false,false];
+    for(var pri=1;pri<=9;pri++) {
+	if($("#checkboxPri-"+pri).is(':checked')) prisToShow[pri]=true;
+    }
+    
+
+
+
+
    AwareMap.runNumber=getRunFromForm();
 
 
+
+
     if($('#debugContainer').is(":visible"))
-	$('#debugContainer').append("<p>getRunSourceMap "+AwareMap.runNumber+"</p>");
+	$('#debugContainer').append("<p>getRunSourceMap "+prisToShow+"</p>");
 
 
     function handleMapRunFile(jsonObject) {
@@ -125,10 +220,13 @@ function getRunSourceMap() {
 		
 		for(var i=0;i<jsonObject.poslist.length;i++) {
 		   //		   if(jsonObject.poslist[i].priority<5)
-		   if(jsonObject.poslist[i].priority<5 ) {
-		      AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
-		      AwareMap.mapRunIndex.push(i);
-		   }
+
+		    if(jsonObject.poslist[i].fakeTheta && !AwareMap.showFakeTheta) continue;
+		    
+		    if(prisToShow[jsonObject.poslist[i].priority] ) {
+			AwareMap.mapRunPoints.push(getXYFromLatLong(jsonObject.poslist[i].sourceLat,jsonObject.poslist[i].sourceLon));
+			AwareMap.mapRunIndex.push(i);
+		    }
 		}
 		if($('#debugContainer').is(":visible"))
 		    $('#debugContainer').append("<p>mapRunPoints "+AwareMap.mapRunPoints.length+"</p>");
@@ -199,6 +297,65 @@ function actuallyDrawMap() {
     }
     
 
+    var highchartsObj = {
+        chart: {
+            type: 'line',
+            plotBackgroundImage: AwareMap.pngName,
+	    renderTo: 'divMap-1',
+	    zoomType:'xy',
+	    animation:false
+        },
+	title:{
+	    text:''
+	},
+	subTitle:{
+	    text:''
+	},
+	xAxis: { min: AwareMap.xMin, 
+		 max: AwareMap.xMax, 
+		 lineWidth: 0,
+		 minorGridLineWidth: 0,
+		 lineColor: 'transparent',
+		 labels: {
+		enabled: false
+	    },
+		 minorTickLength: 0,
+		 tickLength: 0 },
+	yAxis: { min: AwareMap.yMin, 
+		 max: AwareMap.yMax, 
+		 lineWidth: 0,
+		 minorGridLineWidth: 0,
+		 lineColor: 'transparent',
+		 gridLineColor: 'transparent',
+		 labels: {
+		enabled: false
+	    },
+		 minorTickLength: 0,
+		 tickLength: 0,
+		 title: {
+		text:null
+	    }},
+	legend: {
+            enabled: false
+        }, 
+	plotOptions: {
+            series: {
+                animation: {
+                    duration: 0
+                }
+            }
+        },
+	tooltip: { enabled: false},
+		plotOptions: {
+		    series: {
+			states: {
+			    hover: {
+				enabled: false
+			    }
+			}
+		    }
+		}
+    };
 
 
     var PulserData= { data: AwareMap.pulserPoints, 
@@ -229,6 +386,18 @@ function actuallyDrawMap() {
 	selection: {mode: "xy"}
 	
     };
+
+	
+    for(var lap=0;lap<AwareMap.lapXYPoints.length;lap++) {	
+    	for(var i=0;i<AwareMap.lapXYPoints[lap].length;i++) {	    
+    	    data[lap].data.push(AwareMap.lapXYPoints[lap][i]);
+    	}
+    }
+
+
+
+    highchartsObj.series=data;
+   
     
     function doPlot() {
 	var graph = $.plot.image.loadDataImages(data, options, function () {
@@ -239,8 +408,8 @@ function actuallyDrawMap() {
 	
     mapPlotCan.bind("plothover", function (event, pos, item) {		
     	if (item) {	   
-	    if($('#debugContainer').is(":visible"))
-		$('#debugContainer').append("<p>item"+item.seriesIndex+"drawPlots</p>");
+	    //	    if($('#debugContainer').is(":visible"))
+	    //		$('#debugContainer').append("<p>item"+item.seriesIndex+"drawPlots</p>");
 	    
 
 	    
@@ -254,11 +423,11 @@ function actuallyDrawMap() {
 		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]); //m
  		pulserDist[1]=getDistance(cartCos,AwareMap.pulserCartArray[1]); //m
  		pulserDist[2]=getDistance(cartCos,AwareMap.pulserCartArray[2]); //m
- 		pulserDist[3]=getDistance(cartCos,AwareMap.pulserCartArray[3]); //m
+		// 		pulserDist[3]=getDistance(cartCos,AwareMap.pulserCartArray[3]); //m
 		var minPulser=0;
 		if(pulserDist[1]<pulserDist[0]) minPulser=1;
 		if(pulserDist[2]<pulserDist[1] && pulserDist[2]<pulserDist[0]) minPulser=2;
-		if(pulserDist[3]<pulserDist[2] && pulserDist[3]<pulserDist[1] && pulserDist[3]<pulserDist[0]) minPulser=3;
+		//		if(pulserDist[3]<pulserDist[2] && pulserDist[3]<pulserDist[1] && pulserDist[3]<pulserDist[0]) minPulser=3;
 
 		var pulserTime=new Array();
 		for(var i=0;i<pulserDist.length;i++) {
@@ -355,14 +524,14 @@ function getCalPulserPositionList() {
     AwareMap.pulserArray.push(getXYFromLatLong(sipleDomeLatLon[0],sipleDomeLatLon[1]));
     AwareMap.pulserArray.push(getXYFromLatLong(waisLatLon[0],waisLatLon[1]));
     AwareMap.pulserArray.push(getXYFromLatLong(ldbLatLon[0],ldbLatLon[1]));
-    AwareMap.pulserArray.push(getXYFromLatLong(hicalLatLon[0],hicalLatLon[1]));
-    AwareMap.pulserArray.push(getXYFromLatLong(hical2LatLon[0],hical2LatLon[1]));
+    //    AwareMap.pulserArray.push(getXYFromLatLong(hicalLatLon[0],hicalLatLon[1]));
+    //    AwareMap.pulserArray.push(getXYFromLatLong(hical2LatLon[0],hical2LatLon[1]));
     AwareMap.pulserCartArray=new Array();
     AwareMap.pulserCartArray.push(getCartesianCoords(sipleDomeLatLon[0],sipleDomeLatLon[1],sipleDomeLatLon[2]));
     AwareMap.pulserCartArray.push(getCartesianCoords(waisLatLon[0],waisLatLon[1],waisLatLon[2]));
     AwareMap.pulserCartArray.push(getCartesianCoords(ldbLatLon[0],ldbLatLon[1],ldbLatLon[2]));
-    AwareMap.pulserCartArray.push(getCartesianCoords(hicalLatLon[0],hicalLatLon[1],hicalLatLon[2]));
-    AwareMap.pulserCartArray.push(getCartesianCoords(hical2LatLon[0],hical2LatLon[1],hical2LatLon[2]));
+    //    AwareMap.pulserCartArray.push(getCartesianCoords(hicalLatLon[0],hicalLatLon[1],hicalLatLon[2]));
+    //    AwareMap.pulserCartArray.push(getCartesianCoords(hical2LatLon[0],hical2LatLon[1],hical2LatLon[2]));
     return AwareMap.pulserArray;
 }
 
@@ -450,3 +619,23 @@ function setRunOnForm(thisRun) {
 function setLastRun(thisRun) {
     document.getElementById("runInput").max=thisRun;
 }    
+
+function setRunToLastRun(){
+    if($('#debugContainer').is(":visible"))
+        $('#debugContainer').append("<p>setRunToLastRun</p>");
+
+    var tempString="output/ANITA4/lastRun";
+    function actuallyUpdateLastRun(runString) {
+        $('#debugContainer').append("<p>setRunToLastRun "+runString+"</p>");
+        setRunOnForm(Number(runString));
+	reloadAndDraw();
+    }
+
+    $.ajax({
+            url: tempString,
+                type: "GET",
+                dataType: "text",
+                success: actuallyUpdateLastRun
+                });
+
+}
