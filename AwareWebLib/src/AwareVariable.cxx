@@ -28,6 +28,8 @@ Double_t AwareVariable::getMean() {
    return tempMean;
 }
 
+
+
 void AwareVariable::addValue(Double_t variable) {
    if(fHasVoidValue && TMath::Abs(variable-fVoidValue)<1e-6) return;
    //For now try and just avoid the case of void values.... will result in difficulties down the line
@@ -40,7 +42,7 @@ void AwareVariable::addValue(Double_t variable) {
       }          
       
    }
-   else if(fAvgType==AwareAverageType::kSampleNotAverage && numEnts>0) {
+   else if(fAvgType==AwareAverageType::kBitMask && numEnts>0) {
      //     Do nothing if we are in this situation
      return;
    }

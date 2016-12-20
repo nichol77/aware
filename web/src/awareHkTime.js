@@ -229,6 +229,13 @@ function addFullVariableToDataset(awareControl,varPoint) {
        dataList.voidValue=varPoint.voidValue;
     }
 
+    dataList.avgFlag=false;
+    if("avgType" in varPoint) {
+	dataList.avgFlag=true;
+	dataList.avgType=varPoint.avgType;
+    }
+
+
     for(var index=0;index<varTimeList.length;index++) {
 	var timePoint=awareControl.timeArray[index];
  	var dataPoint=varTimeList[index];
@@ -300,11 +307,13 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 
 
     
+    var isABitMask=false;
     var haveVoidValue=false;
     awareControl.maxPoints=0;
     $.each(awareControl.datasets, function(key, val) {
-	    //	    $('#debugContainer').append("<p>"+key+" "+val.data.length+"</p>");
 	    if(val.data.length>0) {
+		if(val.avgType=="bitMask") isABitMask=true;
+		//		$('#debugContainer').append("<p>"+key+" "+val.avgType+" "+isABitMask+"</p>");	       
 	       if(val.voidFlag) haveVoidValue=true;
 	       if(fullTimePoints.length==0 || haveVoidValue) {
 		   fullTimePoints=new Array();
@@ -394,17 +403,20 @@ function getDataForPlot(awareControl,xaxisMin,xaxisMax) {
 			       }
 			   }
 
-
-			   count++;
-			   dataPoint+=dataPoint2;
-			   deltaT+=(fullTimePoints[index2-firstTimeIndex]-fullTimePoints[index-firstTimeIndex]);
-			   dp2+=(val.data[index2][1]*val.data[index2][1]);
+			   if(!isABitMask) {
+			       count++;
+			       dataPoint+=dataPoint2;
+			       deltaT+=(fullTimePoints[index2-firstTimeIndex]-fullTimePoints[index-firstTimeIndex]);
+			       dp2+=(val.data[index2][1]*val.data[index2][1]);
+			   }
 		       }
-		       dataPoint/=count;
-		       deltaT/=count;
-		       timePoint+=deltaT;
-		       dp2/=count;
-		       stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
+		       if(!isABitMask) {
+			   dataPoint/=count;
+			   deltaT/=count;
+			   timePoint+=deltaT;
+			   dp2/=count;
+			   stdDev=Math.sqrt(dp2-dataPoint*dataPoint);
+		       }
 		   }	
 		   if(yAxisOpt=="dydx") {
 		      //Want to plot the derivative
@@ -471,6 +483,12 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 		dataList.voidValue=varPoint.voidValue;
 	    }	    
 
+	    dataList.avgFlag=false;
+	    if("avgType" in varPoint) {
+		dataList.avgFlag=true;
+		dataList.avgType=varPoint.avgType;
+	    }
+
 
 	    var varTimeList=varPoint.timeList;
 	    awareControl.maxPoints=0;
@@ -480,6 +498,7 @@ function drawSimpleHkTime(varNameKey,awareControl) {
 		
 		if(dataList.voidFlag)
 		    if(Math.abs(dataPoint.mean-dataList.voidValue)<1e-3) continue;
+
 
 		if(dataPoint.mean>dataList.yMax) dataList.yMax=dataPoint.mean;
 		if(dataPoint.mean<dataList.yMin) dataList.yMin=dataPoint.mean;

@@ -155,8 +155,11 @@ void AwareRunSummaryFileMaker::writeFullJSONFiles(const char *jsonDir, const cha
      if(fSummaryVec[index].getVoidFlag()) {
 	FullFile << "\t\"voidValue\" : " << fSummaryVec[index].getVoidValue() << ",\n";
      }
-     if(fSummaryVec[index].getAverageType()!=AwareAverageType::kAngleDegree) {
+     if(fSummaryVec[index].getAverageType()==AwareAverageType::kAngleDegree) {
 	FullFile << "\t\"avgType\" : \"angleDegree\",\n";
+     } 
+     if(fSummaryVec[index].getAverageType()==AwareAverageType::kBitMask) {
+	FullFile << "\t\"avgType\" : \"bitMask\",\n";
      } 
      FullFile << "\t\"timeList\" : [\n";
      
@@ -255,8 +258,11 @@ void AwareRunSummaryFileMaker::writeSingleFullJSONFile(const char *jsonDir, cons
     if(fSummaryVec[index].getVoidFlag()) {
       FullFile << "\t\"voidValue\" : " << fSummaryVec[index].getVoidValue() << ",\n";
     }
-    if(fSummaryVec[index].getAverageType()!=AwareAverageType::kAngleDegree) {
+    if(fSummaryVec[index].getAverageType()==AwareAverageType::kAngleDegree) {
       FullFile << "\t\"avgType\" : \"angleDegree\",\n";
+    }
+    if(fSummaryVec[index].getAverageType()==AwareAverageType::kBitMask) {
+      FullFile << "\t\"avgType\" : \"bitMask\",\n";
     }
     FullFile << "\t\"timeList\" : [\n";
       
@@ -363,8 +369,11 @@ void AwareRunSummaryFileMaker::writeTimeJSONFile(const char *jsonName)
     if(fSummaryVec[index].getVoidFlag()) {
        TimeFile << "\t\"voidValue\" : " << fSummaryVec[index].getVoidValue() << ",\n";
     }
-    if(fSummaryVec[index].getAverageType()!=AwareAverageType::kAngleDegree) {
+    if(fSummaryVec[index].getAverageType()==AwareAverageType::kAngleDegree) {
       TimeFile << "\t\"avgType\" : \"angleDegree\",\n";
+    }     
+    if(fSummaryVec[index].getAverageType()==AwareAverageType::kBitMask) {
+      TimeFile << "\t\"avgType\" : \"bitMask\",\n";
     }     
     TimeFile << "\t\"timeList\" : [\n";
     int firstInArray=1;
@@ -440,6 +449,16 @@ void AwareRunSummaryFileMaker::writeSummaryJSONFile(const char *jsonName)
     jsonFile << "{\n";
     jsonFile << " \"name\":  \"" << elementName << "\",\n";
     jsonFile << "\t\"label\" : \"" << fLabelVec[index] << "\",\n";
+    if(fSummaryVec[index].getVoidFlag()) {
+       jsonFile << "\t\"voidValue\" : " << fSummaryVec[index].getVoidValue() << ",\n";
+    }
+    if(fSummaryVec[index].getAverageType()==AwareAverageType::kAngleDegree) {
+      jsonFile << "\t\"avgType\" : \"angleDegree\",\n";
+    }     
+    if(fSummaryVec[index].getAverageType()==AwareAverageType::kBitMask) {
+      jsonFile << "\t\"avgType\" : \"bitMask\",\n";
+    }     
+
     jsonFile << " \"mean\":  " << fSummaryVec[index].getRunMean() << ",\n";
     jsonFile << " \"stdDev\":  " << fSummaryVec[index].getRunStdDev() << ",\n";
     jsonFile << " \"numEnts\":  " << fSummaryVec[index].getRunNumEnts() << "\n";
