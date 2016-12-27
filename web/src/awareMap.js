@@ -135,14 +135,26 @@ function reloadAndDraw() {
 
 	AwareMap.lapXYPoints[0] = new Array(); // lap 1
 	AwareMap.lapXYPoints[1] = new Array(); // lap 2
+	AwareMap.lapXYPoints[2] = new Array(); // lap 3
+	AwareMap.lapXYPoints[3] = new Array(); // lap 4
 	
+	AwareMap.lapIndex = new Array();
+	AwareMap.lapIndex[0] = new Array();
+	AwareMap.lapIndex[1] = new Array();
+	AwareMap.lapIndex[2] = new Array();
+	AwareMap.lapIndex[3] = new Array();
+      
+
 	var lapNum=0;
 
 	for(var i=0;i<jsonObject.poslist.length;i++) {
-	    if(jsonObject.poslist[i].run>168) 
+	    if(jsonObject.poslist[i].run>324) 
+		lapNum=2;	   
+	    else if(jsonObject.poslist[i].run>169) 
 		lapNum=1;	    
 	    if(jsonObject.poslist[i].latitude<-70) {
 		AwareMap.lapXYPoints[lapNum].push(getXYFromLatLong(jsonObject.poslist[i].latitude,jsonObject.poslist[i].longitude));
+		AwareMap.lapIndex[lapNum].push(i);
 	    }
 	}
 	if(true) {
@@ -383,7 +395,8 @@ function actuallyDrawMap() {
 	yaxis: { min: AwareMap.yMin, max: AwareMap.yMax },
 	lines: { show: true },
 	grid: { hoverable: true, clickable: true },
-	selection: {mode: "xy"}
+	selection: {mode: "xy"},
+	colors: [ 'black','red','orange','green','blue','black','purple']
 	
     };
 
@@ -413,11 +426,13 @@ function actuallyDrawMap() {
 	    
 
 	    
-	    if(item.seriesIndex==1) {		
-    		var d = new Date(AwareMap.object.poslist[item.dataIndex].unixTime*1000);
-		var cartCos=getCartesianCoords(AwareMap.object.poslist[item.dataIndex].latitude,
-					       AwareMap.object.poslist[item.dataIndex].longitude,
-					       AwareMap.object.poslist[item.dataIndex].altitude);
+	    if(item.seriesIndex<4) {		
+		var index = AwareMap.lapIndex[item.seriesIndex-1][item.dataIndex];
+
+    		var d = new Date(AwareMap.object.poslist[index].unixTime*1000);
+		var cartCos=getCartesianCoords(AwareMap.object.poslist[index].latitude,
+					       AwareMap.object.poslist[index].longitude,
+					       AwareMap.object.poslist[index].altitude);
 
 		var pulserDist = new Array();
 		pulserDist[0]=getDistance(cartCos,AwareMap.pulserCartArray[0]); //m
@@ -437,22 +452,26 @@ function actuallyDrawMap() {
 
 
     		$("#divMapInfo").html("<ul>"
+				      //				      +"<li>item"+item.seriesIndex+"drawPlots</li>"
    				      +"<li>Date: "+d.toUTCString()+"</li>"
-    				      +"<li>Run: "+AwareMap.object.poslist[item.dataIndex].run+"</li>"
-    				      +"<li>Event: "+AwareMap.object.poslist[item.dataIndex].eventNumber+"</li>"
-    				      +"<li>Rate: "+AwareMap.object.poslist[item.dataIndex].eventRate+"Hz.</li>"
+    				      +"<li>Run: "+AwareMap.object.poslist[index].run+"</li>"
+    				      +"<li>Event: "+AwareMap.object.poslist[index].eventNumber+"</li>"
+    				      +"<li>Rate: "+AwareMap.object.poslist[index].eventRate+"Hz.</li>"
     				      +"<li>"+AwareMap.pulserNames[minPulser]+"</li>"
 				      +"<ul><li>Dist = "+pulserDist[minPulser].toFixed(2)+"km</li>"
 				      +"<li>Time = "+pulserTime[minPulser].toFixed(0)+"ns</li>"
     				      +"</ul>");		
 	    }
-	    else if(item.seriesIndex==3) {
-		$("#divMapInfo").html("<ul><li>Pulser: "+AwareMap.pulserNames[item.dataIndex]+"</li></ul>");
+	    else if(item.seriesIndex==5) {
+		$("#divMapInfo").html("<ul>"				      
+				      //				      +"<li>item"+item.seriesIndex+"drawPlots</li>"
+				      +"<li>Pulser: "+AwareMap.pulserNames[item.dataIndex]+"</li></ul>");
 	    }
-	    else if(item.seriesIndex==4) {
+	    else if(item.seriesIndex==6) {
 	       var mapIndex=AwareMap.mapRunIndex[item.dataIndex];
 	       var d = new Date(AwareMap.mapRun.poslist[mapIndex].unixTime*1000);
 	       $("#divMapInfo").html("<ul>"    				     
+				     //				     +"<li>item"+item.seriesIndex+"drawPlots</li>"
 				     +"<li>Date: "+d.toUTCString()+"</li>"
 				     +"<li>Run: "+AwareMap.mapRun.poslist[mapIndex].run+"</li>"
 				     +"<li>Event: "+AwareMap.mapRun.poslist[mapIndex].eventNumber+"</li>"
