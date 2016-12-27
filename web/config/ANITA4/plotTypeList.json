@@ -53,6 +53,7 @@
 	{"sym":"ppsNum","desc":"PPS Number","hkCode":"header"},
 	{"sym":"c3poNum","desc":"C3PO Number","hkCode":"header"},
 	{"sym":"l3TrigBit","desc":"L3 Trigger","hkCode":"header"},
+	{"sym":"timeSinceLastL3","desc":"Phi Mask Stuck??","hkCode":"header"},
 	{"sym":"bufferDepth","desc":"Buffer Depth","hkCode":"header"},
 	{"sym":"l2TrigMask","desc":"L2 Mask","hkCode":"header"},
 	{"sym":"numL2Mask","desc":"Num. L2 Mask","hkCode":"header"},
