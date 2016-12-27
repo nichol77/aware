@@ -46,6 +46,9 @@ echo "</li>";
 </li>
 
 </ul>
+<form class="bedmapForm" id="bedmapForm" action="">
+<ul>
+<li>
  <fieldset>
     <legend>Priorities: </legend>
     <label for="checkboxPri-1">1</label>
@@ -67,5 +70,19 @@ echo "</li>";
     <label for="checkboxPri-9">9</label>
     <input type="checkbox" name="checkboxPri-9" id="checkboxPri-9">
   </fieldset>
+</li>
+<li>
+    <label>Background Image: </label>  <br>
+  Type: <select class="bedmapType" id="bedmapType">
+  <option value="IceMap" selected="seclected">Ice Depth</option>
+  <option value="SurfaceMap">Surface Map</option>
+  <option value="BedMap">Bed Map</option>
+</select> <br>
+  Size: <select class="bedmapSize" id="bedmapSize">
+  <option value="_small" selected="seclected">Normal</option>
+  <option value="">Huge</option>
 
-
+</select>
+</li>
+</ul>
+<form>
