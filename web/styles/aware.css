@@ -11,7 +11,7 @@ form, fieldset, legend, ol, li {
 	padding: 0;
 }
 
-form.scaleForm,form.runForm {
+form.scaleForm,form.runForm,form.bedmapForm {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -19,18 +19,18 @@ form.scaleForm,form.runForm {
 	width: 180px;
 }
 
-form.scaleForm fieldset, form.runForm fieldset {
+form.scaleForm fieldset, form.runForm fieldset ,form.bedmapForm fieldset {
 	border: none;
 	margin-bottom: 5px;
 }
 
-form.scaleForm legend, form.runForm legend {
+form.scaleForm legend, form.runForm legend, form.bedmapForm legend  {
 	font-size: 16px;
 	font-weight: bold;
 	padding-bottom: 2px;
 }
 
-form.scaleForm li, form.runForm li  {
+form.scaleForm li, form.runForm li, form.bedmapForm li  {
 	background: rgba(255,255,255,.3);
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -42,7 +42,7 @@ form.scaleForm li, form.runForm li  {
         margin-left: -2em;
 }
 
-form.scaleForm label, form.runForm label  {
+form.scaleForm label, form.runForm label   {
 float: left;
 }
 

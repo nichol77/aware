@@ -91,6 +91,9 @@ function initialiseAwareMap() {
 	  reloadAndDraw();
        });
     
+    $('select').on('change', function() {
+	    reloadAndDraw();
+	});
 
     $("input:radio[name=mapRadio]").click(function() { 
 	    if($('#debugContainer').is(":visible"))
@@ -267,25 +270,12 @@ function getRunSourceMap() {
 
 
 function actuallyDrawMap() {
-    if ( $('#mapRadio :checked').attr('id') == 'mapLow' ) {
-	AwareMap.pngName="antarcticaIceMap_small.png";
-	AwareMap.xMin=-3333.5;
-	AwareMap.xMax=+3333.5;
-	AwareMap.yMin=-3333.5;
-	AwareMap.yMax=+3333.5;
-    } else if ( $('#mapRadio :checked').attr('id') == 'mapHigh' ) {
-	AwareMap.pngName="antarcticaIceMap.png";
-	AwareMap.xMin=-3333.5;
-	AwareMap.xMax=+3333.5;
-	AwareMap.yMin=-3333.5;
-	AwareMap.yMax=+3333.5;
-    } else {
-	AwareMap.pngName="antarcticaIceMapOld.png";
-	AwareMap.xMin=-3000;
-	AwareMap.xMax=+3000;
-	AwareMap.yMin=-2500;
-	AwareMap.yMax=+2500;	
-    }
+    AwareMap.pngName=getBackgroundImageName();
+    AwareMap.xMin=-3333.5;
+    AwareMap.xMax=+3333.5;
+    AwareMap.yMin=-3333.5;
+    AwareMap.yMax=+3333.5;
+
     
 
     mapPlotCan=$("#divMap-1");
@@ -623,6 +613,15 @@ function getRunFromForm() {
     return document.getElementById("runInput").value;
     //    return AwareEvent.runNumber;
 } 
+
+function getBackgroundImageName() {
+    var mapType=document.getElementById("bedmapType").value;
+    var mapSize=document.getElementById("bedmapSize").value;
+    var pngName="antarctica"+mapType+mapSize+".png"
+	//    $('#debugContainer').append("<p>"+pngName+"</p>");
+    return pngName;
+}
+
 
 /**
  * The UI interface function that sets the run on the runInput form.
