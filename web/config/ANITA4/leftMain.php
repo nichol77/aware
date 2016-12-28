@@ -40,6 +40,12 @@ function checkFiles() {
 "leftBar" title="Events" href="events.php"
 >Events</a>
 
+<a class=
+"leftBar" title="Spectra" href="spectrum.php"
+>Spectra</a>
+
+
+
 
 <a class=
 "leftBar" title="Housekeeping" href="awareHk.php"

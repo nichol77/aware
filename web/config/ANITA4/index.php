@@ -100,6 +100,33 @@ $lastEvent='output/ANITA4/lastEvent';
   echo "</div>";
   echo "</a>";
 
+echo '<a href="spectrum.php?instrument=ANITA4">';
+$lastSpectrum='output/ANITA4/lastGpuPowerSpectra';
+
+  if (file_exists($lastSpectrum)) {
+    $timeStarted =  " started " . date ("F d Y H:i. e", filemtime($lastSpectrum));
+    $timeSinceLast = floor((time()-filemtime($lastSpectrum)));
+    $colourString = "class='lastBoxNew'";
+    if ($timeSinceLast>$oldPoint) {$colourString = "class='lastBoxOld'";}
+    else if ($timeSinceLast>$midPoint&&$timeSinceLast<$oldPoint){
+    $colourString= "class='lastBoxMiddle'";}
+    else {$colourString = "class='lastBoxNew'";}
+  }
+  else {
+    $colourString = "class='lastBoxOld'";
+  }
+
+
+  echo "<div ".$colourString."  >";
+  echo "Last GPU Spectra:";
+  echo "<span id=\"lastSpectrum\">";
+  include $lastSpectrum ;
+  echo "</span>";
+  echo $timeStarted;
+  echo "</div>";
+  echo "</a>";
+
+
 
 
 $hkType_array = parse_ini_file("config/ANITA4/hkTypeList.ini", true);

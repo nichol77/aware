@@ -1,0 +1,68 @@
+<?php
+ob_start("ob_gzhandler"); 
+header("Connection: keep-alive");
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" 
+  content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link rel="StyleSheet" href="styles/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/base.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/aware.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/help.css" type="text/css" media="screen" >
+<link rel="StyleSheet" href="styles/local.css" type="text/css" media="screen" >
+
+<title>AWARE Spectra</title><META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
+<script type="text/javascript" src="src/flot/jquery.min.js.gz"></script>
+<script src="src/jqueryui/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.errorbars.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.time.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.selection.min.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.resize.js.gz"></script>
+<script type="text/javascript" src="src/flot/jquery.flot.symbol.js.gz"></script>
+<script src="src/awareUtils.js"></script>
+<script src="src/awareSpectrumDisplay.js"></script>
+<script type="text/javascript">
+
+  $(function() {
+  	       initialiseAwareSpectrumDisplay();
+  	       
+});  
+
+</script>
+</head>
+
+
+
+<body>
+
+
+<DIV class="heading">
+<h1>AWARE Spectrum Display</h1>
+</DIV>
+<DIV class=middle>
+<DIV class=content>
+<div id="debugContainer"></div>
+<div id="titleContainer"></div>
+<img id="loader" src="images/ajaxLoading.gif" style="visibility:hidden">
+<div id="divEvent" style="width:100%; height:100%; padding: 0px; float : left;"></div>
+
+
+</div></div>
+
+<div class="leftBar" id="leftbar">
+<?php
+include("leftSpectrum.php");
+?>
+</div>
+
+
+
+
+
+
+</body></html>
+
