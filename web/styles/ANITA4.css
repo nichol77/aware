@@ -14,5 +14,10 @@
       max-height: 100%;
   }
 
+  img.spectrumDisplay {
+      max-width: 1024;
+      max-height: 100%;
+  }
+
 
 }             

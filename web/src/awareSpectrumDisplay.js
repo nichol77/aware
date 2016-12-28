@@ -122,7 +122,7 @@ function plotEvent() {
     //    $("#debugContainer").append("<p>"+AwareSpectrum.eventIndex+" "+AwareSpectrum.pngList.length+"</p>");
     //    $("#debugContainer").append("<p>getEventPngName: "+getEventPngName()+"</p>");
     $("#divEvent").empty();
-    $("#divEvent").append("<img class=\"spectrumDisplay\" src=\""+getEventPngName()+"\">");
+    $("#divEvent").append("<a target=\"_zoom\" href=\""+getEventPngName()+"\"><img class=\"spectrumDisplay\" src=\""+getEventPngName()+"\"></a>");
     //    $("#img").attr("src", getEventPngName());
     $("#loader").css("visibility","hidden");
 
